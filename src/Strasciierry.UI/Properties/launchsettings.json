@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "Strasciierry.UI (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "Strasciierry.UI (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}
