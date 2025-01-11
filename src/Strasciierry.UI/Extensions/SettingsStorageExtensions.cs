@@ -1,12 +1,9 @@
 ﻿using Strasciierry.UI.Core.Helpers;
-
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace Strasciierry.UI.Helpers;
+namespace Strasciierry.UI.Extensions;
 
-// Use these extension methods to store and retrieve local and roaming app data
-// More details regarding storing and retrieving app data at https://docs.microsoft.com/windows/apps/design/app-settings/store-and-retrieve-app-data
 public static class SettingsStorageExtensions
 {
     private const string FileExtension = ".json";
@@ -80,7 +77,7 @@ public static class SettingsStorageExtensions
     {
         var item = await folder.TryGetItemAsync(fileName).AsTask().ConfigureAwait(false);
 
-        if ((item != null) && item.IsOfType(StorageItemTypes.File))
+        if (item != null && item.IsOfType(StorageItemTypes.File))
         {
             var storageFile = await folder.GetFileAsync(fileName);
             var content = await storageFile.ReadBytesAsync();

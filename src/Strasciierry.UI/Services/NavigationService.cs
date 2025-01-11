@@ -5,12 +5,10 @@ using Microsoft.UI.Xaml.Navigation;
 
 using Strasciierry.UI.Contracts.Services;
 using Strasciierry.UI.Contracts.ViewModels;
-using Strasciierry.UI.Helpers;
+using Strasciierry.UI.Extensions;
 
 namespace Strasciierry.UI.Services;
 
-// For more information on navigation between pages see
-// https://github.com/microsoft/TemplateStudio/blob/main/docs/WinUI/navigation.md
 public class NavigationService : INavigationService
 {
     private readonly IPageService _pageService;
@@ -51,34 +49,28 @@ public class NavigationService : INavigationService
     private void RegisterFrameEvents()
     {
         if (_frame != null)
-        {
             _frame.Navigated += OnNavigated;
-        }
     }
 
     private void UnregisterFrameEvents()
     {
         if (_frame != null)
-        {
             _frame.Navigated -= OnNavigated;
-        }
     }
 
     public bool GoBack()
     {
-        if (CanGoBack)
-        {
-            var vmBeforeNavigation = _frame.GetPageViewModel();
-            _frame.GoBack();
-            if (vmBeforeNavigation is INavigationAware navigationAware)
-            {
-                navigationAware.OnNavigatedFrom();
-            }
+        if (!CanGoBack)
+            return false;
 
-            return true;
-        }
+        var vmBeforeNavigation = _frame.GetPageViewModel();
+        _frame.GoBack();
 
-        return false;
+        if (vmBeforeNavigation is INavigationAware navigationAware)
+            navigationAware.OnNavigatedFrom();
+
+        return true;
+
     }
 
     public bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false)
@@ -89,17 +81,14 @@ public class NavigationService : INavigationService
         {
             _frame.Tag = clearNavigation;
             var vmBeforeNavigation = _frame.GetPageViewModel();
-            var navigated = _frame.Navigate(pageType, parameter);
-            if (navigated)
-            {
-                _lastParameterUsed = parameter;
-                if (vmBeforeNavigation is INavigationAware navigationAware)
-                {
-                    navigationAware.OnNavigatedFrom();
-                }
-            }
 
-            return navigated;
+            var navigated = _frame.Navigate(pageType, parameter);
+            if (!navigated)
+                return navigated;
+
+            _lastParameterUsed = parameter;
+            if (vmBeforeNavigation is INavigationAware navigationAware)
+                navigationAware.OnNavigatedFrom();
         }
 
         return false;
@@ -111,14 +100,10 @@ public class NavigationService : INavigationService
         {
             var clearNavigation = (bool)frame.Tag;
             if (clearNavigation)
-            {
                 frame.BackStack.Clear();
-            }
 
             if (frame.GetPageViewModel() is INavigationAware navigationAware)
-            {
                 navigationAware.OnNavigatedTo(e.Parameter);
-            }
 
             Navigated?.Invoke(sender, e);
         }

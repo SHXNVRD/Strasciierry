@@ -4,7 +4,7 @@ using Strasciierry.UI.Contracts.Services;
 using Strasciierry.UI.Core.Contracts.Services;
 using Strasciierry.UI.Core.Helpers;
 using Strasciierry.UI.Helpers;
-using Strasciierry.UI.Models;
+using Strasciierry.UI.Options;
 
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -13,7 +13,7 @@ namespace Strasciierry.UI.Services;
 
 public class LocalSettingsService : ILocalSettingsService
 {
-    private const string _defaultApplicationDataFolder = "Strasciierry.UI/ApplicationData";
+    private const string _defaultApplicationDataFolder = "Strasciierry/ApplicationData";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
 
     private readonly IFileService _fileService;
@@ -53,18 +53,14 @@ public class LocalSettingsService : ILocalSettingsService
         if (RuntimeHelper.IsMSIX)
         {
             if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-            {
                 return await Json.ToObjectAsync<T>((string)obj);
-            }
         }
         else
         {
             await InitializeAsync();
 
             if (_settings != null && _settings.TryGetValue(key, out var obj))
-            {
                 return await Json.ToObjectAsync<T>((string)obj);
-            }
         }
 
         return default;
@@ -73,9 +69,7 @@ public class LocalSettingsService : ILocalSettingsService
     public async Task SaveSettingAsync<T>(string key, T value)
     {
         if (RuntimeHelper.IsMSIX)
-        {
             ApplicationData.Current.LocalSettings.Values[key] = await Json.StringifyAsync(value);
-        }
         else
         {
             await InitializeAsync();

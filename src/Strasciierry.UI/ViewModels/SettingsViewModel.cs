@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 
 using Strasciierry.UI.Contracts.Services;
+using Strasciierry.UI.Extensions;
 using Strasciierry.UI.Helpers;
 
 using Windows.ApplicationModel;

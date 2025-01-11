@@ -1,4 +1,4 @@
-﻿namespace Strasciierry.UI.Models;
+﻿namespace Strasciierry.UI.Options;
 
 public class LocalSettingsOptions
 {

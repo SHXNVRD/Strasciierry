@@ -1,6 +1,6 @@
 ﻿using Microsoft.Windows.ApplicationModel.Resources;
 
-namespace Strasciierry.UI.Helpers;
+namespace Strasciierry.UI.Extensions;
 
 public static class ResourceExtensions
 {
