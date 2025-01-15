@@ -1,8 +1,7 @@
 ﻿using System.Text;
 
 using Newtonsoft.Json;
-
-using Strasciierry.UI.Core.Contracts.Services;
+using Strasciierry.Core.Contracts.Services;
 
 namespace Strasciierry.UI.Core.Services;
 

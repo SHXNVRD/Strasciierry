@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
-
+using Strasciierry.Core.Contracts.Services;
 using Strasciierry.UI.Activation;
 using Strasciierry.UI.Contracts.Services;
-using Strasciierry.UI.Core.Contracts.Services;
 using Strasciierry.UI.Core.Services;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Options;
@@ -24,6 +23,7 @@ public partial class App : Application
     public IHost Host { get; }
 
     public static WindowEx MainWindow { get; } = new MainWindow();
+    public static FrameworkElement Root { get; private set; }
 
     public static UIElement? AppTitlebar
     {
@@ -48,39 +48,38 @@ public partial class App : Application
             UseContentRoot(AppContext.BaseDirectory).
             ConfigureServices((context, services) =>
             {
-                // Default Activation Handler
+                services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
+                services.Configure<ImageToCharOptions>(context.Configuration.GetSection(nameof(ImageToCharOptions)));
+
                 services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
-                // Other Activation Handlers
-
-                // Services
                 services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
                 services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
+                services.AddSingleton<IFilePickerService, FilePickerService>();
+                services.AddSingleton<IUserSymbolsService, UserSymbolsService>();
                 services.AddTransient<INavigationViewService, NavigationViewService>();
+                services.AddTransient<IImageToCharsService, ImageToCharsService>();
 
                 services.AddSingleton<IActivationService, ActivationService>();
                 services.AddSingleton<IPageService, PageService>();
                 services.AddSingleton<INavigationService, NavigationService>();
 
-                // Core Services
                 services.AddSingleton<IFileService, FileService>();
 
-                // Views and ViewModels
                 services.AddTransient<SettingsViewModel>();
                 services.AddTransient<SettingsPage>();
-                services.AddTransient<MainViewModel>();
-                services.AddTransient<MainPage>();
+                services.AddTransient<ImageConverterViewModel>();
+                services.AddTransient<ImageConverterPage>();
                 services.AddTransient<ShellPage>();
                 services.AddTransient<ShellViewModel>();
-
-                // Configuration
-                services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
+                services.AddTransient<ImageConverterViewModel>();
+                services.AddTransient<ImageConverterPage>();
             }).
             Build();
 
         UnhandledException += App_UnhandledException;
     }
-
+        
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         // TODO: Log and handle exceptions as appropriate.
@@ -92,5 +91,6 @@ public partial class App : Application
         base.OnLaunched(args);
 
         await App.GetService<IActivationService>().ActivateAsync(args);
+        Root = (FrameworkElement)MainWindow.Content;
     }
 }

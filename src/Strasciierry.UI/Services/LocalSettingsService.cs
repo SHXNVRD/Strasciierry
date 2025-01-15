@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-
+using Strasciierry.Core.Contracts.Services;
+using Strasciierry.Core.Helpers;
 using Strasciierry.UI.Contracts.Services;
-using Strasciierry.UI.Core.Contracts.Services;
-using Strasciierry.UI.Core.Helpers;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Options;
-
-using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace Strasciierry.UI.Services;
@@ -69,7 +66,9 @@ public class LocalSettingsService : ILocalSettingsService
     public async Task SaveSettingAsync<T>(string key, T value)
     {
         if (RuntimeHelper.IsMSIX)
+        {
             ApplicationData.Current.LocalSettings.Values[key] = await Json.StringifyAsync(value);
+        }
         else
         {
             await InitializeAsync();

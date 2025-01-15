@@ -1,0 +1,27 @@
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+
+namespace Strasciierry.UI.Helpers;
+public static class DialogHelper
+{
+    public static async Task<ContentDialogResult> ShowgAsync(
+        XamlRoot root, 
+        string title, 
+        string message, 
+        string primaryButtonText, 
+        string? cancelButtonText = null, 
+        string? secondaryButtonText = null)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = title,
+            Content = message,
+            PrimaryButtonText = primaryButtonText,
+            SecondaryButtonText = secondaryButtonText,
+            CloseButtonText = cancelButtonText,
+            XamlRoot = root,
+            DefaultButton = ContentDialogButton.Primary,
+        };
+        return await dialog.ShowAsync();
+    }
+}

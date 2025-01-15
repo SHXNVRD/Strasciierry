@@ -1,4 +1,4 @@
-﻿namespace Strasciierry.UI.Core.Contracts.Services;
+﻿namespace Strasciierry.Core.Contracts.Services;
 
 public interface IFileService
 {

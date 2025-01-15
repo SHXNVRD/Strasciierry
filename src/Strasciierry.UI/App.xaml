@@ -10,6 +10,11 @@
                 <ResourceDictionary Source="/Styles/Thickness.xaml" />
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="ScrollViewer" x:Key="ScrollViewerStyle">
+                <Setter Target="Background" Value="{ThemeResource LayerFillColorAltBrush}"/>
+                <Setter Target="Margin" Value="12"/>
+                <Setter Target="CornerRadius" Value="8"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

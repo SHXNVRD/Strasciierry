@@ -1,4 +1,4 @@
-﻿using Strasciierry.UI.Core.Helpers;
+﻿using Strasciierry.Core.Helpers;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
