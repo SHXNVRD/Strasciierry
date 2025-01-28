@@ -3,9 +3,9 @@
 public interface IUserSymbolsService
 {
     char[]? UserSymbols { get; } 
-    bool UseUserSymbols { get; }
+    bool IsUserSymbolsOn { get; }
 
     Task InitializeAsync();
-    Task SetUserSymbolsAsync(string symbols);
-    Task SetUseUserSymbolsAsync(bool useUserSymbols);
+    Task SetUserSymbolsAsync(char[] symbols);
+    Task SetIsUserSymbolsOnAsync(bool useUserSymbols);
 }

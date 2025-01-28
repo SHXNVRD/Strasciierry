@@ -12,16 +12,19 @@ public class ActivationService : IActivationService
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
     private readonly IThemeSelectorService _themeSelectorService;
+    private readonly IUserSymbolsService _userSymbolsService;
     private UIElement? _shell = null;
 
     public ActivationService(
         ActivationHandler<LaunchActivatedEventArgs> defaultHandler, 
         IEnumerable<IActivationHandler> activationHandlers, 
-        IThemeSelectorService themeSelectorService)
+        IThemeSelectorService themeSelectorService,
+        IUserSymbolsService userSymbolsService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
         _themeSelectorService = themeSelectorService;
+        _userSymbolsService = userSymbolsService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -57,6 +60,7 @@ public class ActivationService : IActivationService
     private async Task InitializeAsync()
     {
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
+        await _userSymbolsService.InitializeAsync().ConfigureAwait(false);
         await Task.CompletedTask;
     }
 

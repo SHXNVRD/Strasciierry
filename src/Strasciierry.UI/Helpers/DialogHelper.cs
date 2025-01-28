@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
+using Strasciierry.UI.CustomControls.ContentDialogs;
 
 namespace Strasciierry.UI.Helpers;
 public static class DialogHelper
@@ -22,6 +23,19 @@ public static class DialogHelper
             XamlRoot = root,
             DefaultButton = ContentDialogButton.Primary,
         };
+        return await dialog.ShowAsync();
+    }
+
+    public static async Task<ContentDialogResult> ShowErrorAsync(
+        XamlRoot root,
+        string message)
+    {
+        var dialog = new ErrorContentDialog()
+        {
+            XamlRoot = root,
+            ErrorMessage = message
+        };
+
         return await dialog.ShowAsync();
     }
 }

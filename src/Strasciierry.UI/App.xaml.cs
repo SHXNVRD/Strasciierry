@@ -72,7 +72,7 @@ public partial class App : Application
                 services.AddTransient<ImageConverterPage>();
                 services.AddTransient<ShellPage>();
                 services.AddTransient<ShellViewModel>();
-                services.AddTransient<ImageConverterViewModel>();
+                services.AddScoped<ImageConverterViewModel>();
                 services.AddTransient<ImageConverterPage>();
             }).
             Build();

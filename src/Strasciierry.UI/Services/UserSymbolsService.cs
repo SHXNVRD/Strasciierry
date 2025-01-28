@@ -12,13 +12,13 @@ internal class UserSymbolsService : IUserSymbolsService
     private bool _isInitialized;
 
     const string UserSymbolsSettingsKey = "UserSymbols";
-    const string UseUserSymbolsSettingsKey = "UseUserSymbols";
+    const string UseUserSymbolsSettingsKey = "IsUserSymbolsOn";
 
     public char[]? UserSymbols
     {
         get; private set;
     }
-    public bool UseUserSymbols
+    public bool IsUserSymbolsOn
     {
         get; private set;
     }
@@ -33,23 +33,23 @@ internal class UserSymbolsService : IUserSymbolsService
         if (!_isInitialized)
         {
             UserSymbols = await _settingsService.ReadSettingAsync<char[]>(UserSymbolsSettingsKey);
-            UseUserSymbols = await _settingsService.ReadSettingAsync<bool>(UseUserSymbolsSettingsKey);
+            IsUserSymbolsOn = await _settingsService.ReadSettingAsync<bool>(UseUserSymbolsSettingsKey);
             _isInitialized = true;
         }
     }
 
-    public async Task SetUserSymbolsAsync(string symbols)
+    public async Task SetUserSymbolsAsync(char[] symbols)
     {
-        UserSymbols = [..symbols];
+        UserSymbols = symbols;
 
         await SaveUserSymbolsAsync(UserSymbols);
     }
 
-    public async Task SetUseUserSymbolsAsync(bool useUserSymbols)
+    public async Task SetIsUserSymbolsOnAsync(bool useUserSymbols)
     {
-        UseUserSymbols = useUserSymbols;
+        IsUserSymbolsOn = useUserSymbols;
 
-        await SaveUseUserSymbolsAsync(UseUserSymbols);
+        await SaveUseUserSymbolsAsync(IsUserSymbolsOn);
     }
 
     private async Task SaveUserSymbolsAsync(char[] symbols)

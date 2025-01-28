@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="Strasciierry.UI.CustomControls.ContentDialogs.ErrorContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Strasciierry.UI.CustomControls.ContentDialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Произошла ошибка"
+    PrimaryButtonText="Ок">
+
+    <ContentDialog.Resources>
+        <Style TargetType="local:ErrorContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}">
+            <Setter Property="PrimaryButtonStyle" Value="{ThemeResource AccentButtonStyle}" />
+        </Style>
+    </ContentDialog.Resources>
+
+    <ScrollView VerticalScrollBarVisibility="Hidden"
+                HorizontalScrollMode="Disabled"
+                ZoomMode="Disabled"
+                ContentOrientation="Vertical"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left">
+        <TextBlock Text="{x:Bind ErrorMessage, Mode=OneWay}"
+           TextWrapping="Wrap"/>
+    </ScrollView>
+</ContentDialog>

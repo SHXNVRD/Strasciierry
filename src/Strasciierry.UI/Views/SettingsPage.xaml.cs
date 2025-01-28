@@ -16,4 +16,9 @@ public sealed partial class SettingsPage : Page
         ViewModel = App.GetService<SettingsViewModel>();
         InitializeComponent();
     }
+
+    private async void TextBox_LostFocus(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        await ViewModel.SetUserSymbolsAsync();
+    }
 }

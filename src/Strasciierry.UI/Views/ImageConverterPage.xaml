@@ -5,17 +5,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:helpers="using:Strasciierry.UI.Helpers"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ResourceDictionary Source="../Styles/Buttons.xaml"/>
+        <ResourceDictionary>
+            <helpers:PercentageDisplayConverter x:Key="PercentageDisplayConverter"/>
+            <helpers:FactorConverter x:Key="FactorConverter"/>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <!-- Панель  инмтрументов -->
@@ -25,7 +28,7 @@
                     FlowDirection="LeftToRight">
                 <AppBarButton
                     Icon="Add"
-                    Label="Add"
+                    x:Uid="CommandBar_Add_Button"
                     Command="{x:Bind ViewModel.AddCommand}"
                     KeyboardAcceleratorPlacementMode="Auto">
 
@@ -35,8 +38,8 @@
                 </AppBarButton>
 
                 <AppBarButton Icon="Save"
-                          Label="Save"
-                          Command="{x:Bind ViewModel.SaveCommand}">
+                              x:Uid="CommandBar_Save_Button"
+                              Command="{x:Bind ViewModel.SaveCommand}">
 
                     <AppBarButton.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="S"/>
@@ -48,64 +51,86 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.35*"/>
+                <ColumnDefinition Width="0.3*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Область вывода ASCII арта -->
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <!-- Область вывода арта -->
                 <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
-                          x:Name="ContentScrollViewer"
-                          ZoomMode="Enabled"
-                          HorizontalScrollMode="Auto"
-                          VerticalScrollMode="Auto"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Auto">
+                              x:Name="ContentScrollViewer"
+                              ZoomMode="Enabled"
+                              VerticalScrollBarVisibility="Hidden"
+                              HorizontalScrollBarVisibility="Hidden">
 
                     <TextBlock Text="{x:Bind ViewModel.SymbolicArt, Mode=OneWay}" TextWrapping="WrapWholeWords" FontFamily="Consolas" IsTextSelectionEnabled="True"/>
                 </ScrollViewer>
+                <!-- Панель статуса -->
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            Height="auto"
+                            Padding="5"
+                            Margin="12 0 12 0"
+                            CornerRadius="8 8 8 8"
+                            Background="{StaticResource LayerFillColorAltBrush}">
+
+                    <TextBlock x:Uid="Converting_StatusBar_FileName"/>
+                    <TextBlock Text="{x:Bind ViewModel.ImagePath, Mode=OneWay}"
+                        Margin="10 0 0 0"/>
+                </StackPanel>
             </Grid>
 
             <!-- Панель натсроек -->
             <StackPanel x:Name="SettingsPanel"
                     Grid.Column="1"
                     Orientation="Vertical"
-                    Margin="0 12 12 12"
+                    Margin="0 12 0 12"
                     Spacing="5">
 
-                <controls:SettingsCard x:Uid="AsciiConvertingSizeSetting"
-                               ContentAlignment="Right">
+                <controls:SettingsCard x:Uid="Converting_Settings_ArtSize"
+                                       HorizontalAlignment="Stretch"
+                                       HorizontalContentAlignment="Stretch">
 
                     <Slider x:Name="SizeSlider"
-                        Maximum="100"
-                        Minimum="10"
-                        StepFrequency="1"
-                        Value="{x:Bind ViewModel.ArtSizePercent, Mode=TwoWay}"
-                        Width="350">
+                            IsThumbToolTipEnabled="True"
+                            ThumbToolTipValueConverter="{StaticResource PercentageDisplayConverter}"
+                            Maximum="100"
+                            Minimum="10"
+                            StepFrequency="1"
+                            Value="{x:Bind ViewModel.SizePercent, Mode=TwoWay}"
+                            HorizontalAlignment="Stretch"
+                            Width="300">
+
+                    </Slider>   
+                </controls:SettingsCard>
+
+                <controls:SettingsCard x:Uid="Converting_Settings_HeightReductionFactor"
+                                       HorizontalContentAlignment="Stretch"
+                                       HorizontalAlignment="Stretch">
+
+                    <Slider x:Name="HeightReductionFactorSlider"
+                            HorizontalAlignment="Stretch"
+                            ThumbToolTipValueConverter="{StaticResource FactorConverter}"
+                            Maximum="10"
+                            Minimum="1"
+                            StepFrequency="0.1"
+                            Value="{x:Bind ViewModel.HeightReductionFactor, Mode=TwoWay}"
+                            Width="300">
                     </Slider>
                 </controls:SettingsCard>
 
-                <controls:SettingsCard x:Uid="AsciiConvertingOffsetSetting"
-                               HorizontalContentAlignment="Stretch">
-
-                    <Slider x:Name="WidthOffsetSlider"
-                        Maximum="10"
-                        Minimum="1"
-                        StepFrequency="0.1"
-                        Value="{x:Bind ViewModel.WidthOffset, Mode=TwoWay}"
-                        Width="350">
-
-                    </Slider>
-                </controls:SettingsCard>
-
-                <controls:SettingsCard x:Uid="AsciiConvertingInversionSetting">
+                <controls:SettingsCard x:Uid="Converting_Settings_Inversion">
                     <controls:SettingsCard.Resources>
                         <x:Double x:Key="SettingsCardWrapThreshold">450</x:Double>
                     </controls:SettingsCard.Resources>
 
                     <ToggleSwitch HorizontalAlignment="Right"
-                              IsOn="{x:Bind ViewModel.IsNegative, Mode=TwoWay}">
+                        IsOn="{x:Bind ViewModel.IsNegative, Mode=TwoWay}">
                         <ToolTipService.ToolTip>
-                            <ToolTip x:Uid="AsciiConvertingInversionSettingToolTip"/>
+                            <ToolTip x:Uid="Converting_Settings_Inversion_ToolTip" />
                         </ToolTipService.ToolTip>
                     </ToggleSwitch>
                 </controls:SettingsCard>
@@ -118,34 +143,18 @@
 
                     <Button Grid.Column="0" 
                         HorizontalAlignment="Stretch"
-                        x:Uid="AsciiConvertingGenerateButton"
-                        Command="{x:Bind ViewModel.GenerateASCIICommand}"
+                        x:Uid="Converting_Settings_Generate"
+                        Command="{x:Bind ViewModel.GenerateArtCommand}"
                         Margin="0 0 5 0"
                         Style="{StaticResource AccentButtonStyle}"/>
 
                     <Button Grid.Column="1" 
-                        Style="{StaticResource CloseButtonStyle}"
-                        x:Uid="AsciiConvertingResetButton"
+                        x:Uid="Converting_Settings_ResetSettings"
                         HorizontalAlignment="Stretch"
                         Content="Сбросить"
                         Command="{x:Bind ViewModel.ResetSettingsCommand}"/>
                 </Grid>
             </StackPanel>
         </Grid>
-
-        <!-- Панель статуса -->
-        <StackPanel Orientation="Horizontal"
-                Height="auto"
-                Grid.Row="2"
-                Padding="5"
-                Margin="12 0 0 0"
-                CornerRadius="8 0 0 8"
-                Background="{StaticResource LayerFillColorAltBrush}">
-
-            <TextBlock x:Uid="StatusBarFileName"/>
-            <TextBlock Text="{x:Bind ViewModel.ImagePath, Mode=OneWay}"
-                   Margin="10 0 0 0"/>
-        </StackPanel>
     </Grid>
-
 </Page>

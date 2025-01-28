@@ -16,6 +16,7 @@
               VerticalAlignment="Top">
             <Image Source="/Assets/WindowIcon.ico"
                    HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
                    Width="16"
                    Height="16" />
             <TextBlock x:Name="AppTitleBarText"
@@ -41,9 +42,9 @@
                 TODO: Update item icons by updating FontIcon.Glyph properties.
                 https://docs.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font#icon-list
                 -->
-                <NavigationViewItem x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="Strasciierry.UI.ViewModels.ImageConverterViewModel">
+                <NavigationViewItem x:Uid="Shell_Image_Convert" helpers:NavigationHelper.NavigateTo="Strasciierry.UI.ViewModels.ImageConverterViewModel">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDAB;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

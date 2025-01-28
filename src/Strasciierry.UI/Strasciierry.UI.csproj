@@ -18,6 +18,7 @@
 	<LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="CustomControls\ContentDialogs\ErrorContentDialog.xaml" />
     <None Remove="Styles\Buttons.xaml" />
   </ItemGroup>
 
@@ -41,6 +42,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="CustomControls\ContentDialogs\ErrorContentDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Styles\Buttons.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

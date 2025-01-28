@@ -17,34 +17,59 @@ namespace Strasciierry.UI.ViewModels;
 public partial class SettingsViewModel : ObservableRecipient
 {
     private readonly IThemeSelectorService _themeSelectorService;
+    private readonly IUserSymbolsService _userSymbolsService;
 
     [ObservableProperty]
-    private ElementTheme _elementTheme;
+    public partial ElementTheme ElementTheme { get; set; }
 
     [ObservableProperty]
-    private string _versionDescription;
+    public partial string VersionDescription { get; set; }
 
-    public ICommand SwitchThemeCommand
-    {
-        get;
-    }
+    [ObservableProperty]
+    public partial bool IsUserSymbolsOn { get; set; }
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService)
+    [ObservableProperty]
+    public partial string UserSymbols { get; set; }
+
+
+    public SettingsViewModel(IThemeSelectorService themeSelectorService, IUserSymbolsService userSymbolsService)
     {
         _themeSelectorService = themeSelectorService;
-        _elementTheme = _themeSelectorService.Theme;
-        _versionDescription = GetVersionDescription();
-
-        SwitchThemeCommand = new RelayCommand<ElementTheme>(
-            async (param) =>
-            {
-                if (ElementTheme != param)
-                {
-                    ElementTheme = param;
-                    await _themeSelectorService.SetThemeAsync(param);
-                }
-            });
+        _userSymbolsService = userSymbolsService;
+        ElementTheme = _themeSelectorService.Theme;
+        UserSymbols = new string(_userSymbolsService.UserSymbols);
+        IsUserSymbolsOn = _userSymbolsService.IsUserSymbolsOn;
+        VersionDescription = GetVersionDescription();
     }
+
+    [RelayCommand]
+    public async Task SwitchThemeAsync(ElementTheme theme)
+    {
+        if (ElementTheme != theme)
+        {
+            ElementTheme = theme;
+            await _themeSelectorService.SetThemeAsync(theme);
+        }
+    }
+
+    [RelayCommand]
+    public async Task SetUserSymbolsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(UserSymbols))
+            return;
+
+        var cleanSymbols = UserSymbols.Where(c => !char.IsWhiteSpace(c)).ToArray();
+
+        if (_userSymbolsService.UserSymbols != cleanSymbols)
+        {
+            await _userSymbolsService.SetUserSymbolsAsync(cleanSymbols);
+            UserSymbols = new string(_userSymbolsService.UserSymbols);
+        }
+    }
+
+    [RelayCommand]
+    public async Task SetIsUserSymbolsOnAsync() =>
+        await _userSymbolsService.SetIsUserSymbolsOnAsync(!IsUserSymbolsOn);
 
     private static string GetVersionDescription()
     {

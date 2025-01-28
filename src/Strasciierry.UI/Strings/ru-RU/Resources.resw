@@ -123,26 +123,23 @@
   <data name="AppDescription" xml:space="preserve">
     <value>Strasciierry</value>
   </data>
-  <data name="Shell_Image_Convert.Content" xml:space="preserve">
-    <value>Image to art</value>
-  </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>Personalization</value>
+    <value>Персонализация</value>
   </data>
   <data name="Settings_Theme.Header" xml:space="preserve">
-    <value>Theme</value>
+    <value>Тема</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Light</value>
+    <value>Светлая</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>Dark</value>
+    <value>Тёмная</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Default</value>
+    <value>По умолчанию</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>About this application</value>
+    <value>О программе</value>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>TODO: Replace with your app description.</value>
@@ -154,24 +151,42 @@
     <value>https://YourPrivacyUrlGoesHere/</value>
   </data>
   <data name="Converting_Settings_Inversion.Header" xml:space="preserve">
-    <value>Inversion</value>
+    <value>Инверсия</value>
   </data>
   <data name="Converting_Settings_ResetSettings.Content" xml:space="preserve">
-    <value>Reset</value>
+    <value>Сброс</value>
   </data>
   <data name="Converting_Settings_Generate.Content" xml:space="preserve">
-    <value>Generate</value>
+    <value>Сгенерировать</value>
   </data>
   <data name="Converting_Settings_ArtSize.Header" xml:space="preserve">
-    <value>Size</value>
+    <value>Размер</value>
   </data>
   <data name="Converting_Settings_HeightReductionFactor.Header" xml:space="preserve">
-    <value>Height reduction factor</value>
+    <value>Коэффициент уменьшения высоты</value>
   </data>
   <data name="Converting_Settings_HeightReductionFactor_Tooltip.Content" xml:space="preserve">
-    <value>Specifies the height reduction multiplier when the size is changed</value>
+    <value>Указывает множитель уменьшения высоты при изменении размера</value>
   </data>
   <data name="Converting_StatusBar_FileName.Text" xml:space="preserve">
     <value>File: </value>
+  </data>
+  <data name="CommandBar_Add_Button.Label" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="CommandBar_Save_Button.Label" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Converting_Settings_Inversion_ToolTip.Content" xml:space="preserve">
+    <value>Включите для отображения на светлом фоне</value>
+  </data>
+  <data name="Settings_UserSymbols.Header" xml:space="preserve">
+    <value>Пользовательские символы</value>
+  </data>
+  <data name="Settings_UserSymbols_SettingCard.Header" xml:space="preserve">
+    <value>Введите символы</value>
+  </data>
+  <data name="Shell_Image_Convert.Content" xml:space="preserve">
+    <value>Изображение в символы</value>
   </data>
 </root>
