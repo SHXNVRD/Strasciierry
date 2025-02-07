@@ -10,5 +10,5 @@ namespace Strasciierry.UI.Contracts.Services;
 public interface IFilePickerService
 {
     Task<StorageFile> PickImageAsync(Window window);
-    Task<StorageFile> PickSaveTxtAsync(Window window);
+    Task<StorageFile> PickSaveAsync(Window window);
 }

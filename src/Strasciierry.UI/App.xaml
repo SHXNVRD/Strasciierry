@@ -12,9 +12,9 @@
                 <ResourceDictionary Source="/Styles/ContentDialogs.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="ScrollViewer" x:Key="ScrollViewerStyle">
-                <Setter Target="Background" Value="{ThemeResource LayerFillColorAltBrush}"/>
-                <Setter Target="Margin" Value="12"/>
-                <Setter Target="CornerRadius" Value="8"/>
+                <Setter Property="ZoomMode" Value="Enabled"/>
+                <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
+                <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

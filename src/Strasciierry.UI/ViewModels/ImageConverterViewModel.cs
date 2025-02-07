@@ -1,18 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
 using Windows.Storage;
 using Strasciierry.UI.Contracts.Services;
 using Strasciierry.UI.Extensions;
-using Microsoft.Extensions.Options;
-using Strasciierry.UI.Options;
-using Strasciierry.UI.ImageConverters;
 using Strasciierry.Core.Extensions;
 using Strasciierry.UI.Helpers;
 using Microsoft.UI.Dispatching;
-using System.Diagnostics;
+using Windows.ApplicationModel.DataTransfer;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.Drawing.Imaging;
+
 
 namespace Strasciierry.UI.ViewModels;
 
@@ -29,6 +29,12 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
     [ObservableProperty]
     public partial string? SymbolicArt { get; set; }
+
+    [ObservableProperty]
+    public partial int Width { get; set; }
+
+    [ObservableProperty]
+    public partial int Heigh { get; set; }
 
     [ObservableProperty]
     public partial int SizePercent { get; set; } = 100;
@@ -65,6 +71,14 @@ public partial class ImageConverterViewModel : ObservableRecipient
     }
 
     [RelayCommand]
+    private void CopyArt()
+    {
+        var package = new DataPackage();
+        package.SetText(SymbolicArt);
+        Clipboard.SetContent(package);
+    }
+
+    [RelayCommand]
     private async Task OnAddAsync()
     {
         try
@@ -87,7 +101,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
     {
         try
         {
-            await Task.Run(() => GenerateArtProcessAsync());
+            await GenerateArtProcessAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -100,9 +114,9 @@ public partial class ImageConverterViewModel : ObservableRecipient
         if (_softwareBitmap == null)
             return;
 
-        var newWidth = _softwareBitmap.PixelWidth * SizePercent / 100;
-        var newHeight = _softwareBitmap.PixelHeight / HeightReductionFactor * newWidth / _softwareBitmap.PixelWidth;
-        using var resizedBitmap = _softwareBitmap.Resize(newWidth, (int)newHeight);
+        Width = _softwareBitmap.PixelWidth * SizePercent / 100;
+        Heigh = (int)(_softwareBitmap.PixelHeight / HeightReductionFactor * Width / _softwareBitmap.PixelWidth);
+        using var resizedBitmap = _softwareBitmap.Resize(Width, Heigh);
         using var grayScaleBitMap = resizedBitmap.ConvertToGrayscale();
         char[][] rows;
 
@@ -140,17 +154,64 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
         try
         {
-            var file = await _filePickerService.PickSaveTxtAsync(App.MainWindow);
+            var file = await _filePickerService.PickSaveAsync(App.MainWindow);
 
             if (file == null)
                 return;
 
-            await FileIO.WriteTextAsync(file, SymbolicArt);
+            switch (file.FileType)
+            {
+                case ".png":
+                    _ = Task.Run(() => SaveArtAsImage(file)).ConfigureAwait(false);
+                    break;
+                case ".txt":
+                    await FileIO.WriteTextAsync(file, SymbolicArt);
+                    break;
+                default:
+                    break;
+            }
         }
         catch (Exception ex)
         {
             await DialogHelper.ShowErrorAsync(App.Root.XamlRoot,  $"{ex.Message}\n{ex.StackTrace}");
         }
+    }
+
+    private void SaveArtAsImage(StorageFile file)
+    {
+        Image img = new Bitmap(1, 1);
+        var drawing = Graphics.FromImage(img);
+        var font = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Pixel);
+        var imageSize = new SizeF(Width * font.Size, Heigh * font.Height);
+        var textSize = drawing.MeasureString(SymbolicArt, font, imageSize);
+        var sf = new StringFormat
+        {
+            Trimming = StringTrimming.Word
+        };
+
+        img.Dispose();
+        drawing.Dispose();
+
+        img = new Bitmap((int)textSize.Width, (int)textSize.Height);
+
+        drawing = Graphics.FromImage(img);
+        drawing.CompositingQuality = CompositingQuality.HighQuality;
+        drawing.InterpolationMode = InterpolationMode.HighQualityBilinear;
+        drawing.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        drawing.SmoothingMode = SmoothingMode.HighQuality;
+        drawing.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+
+        drawing.Clear(Color.Transparent);
+
+        Brush textBrush = new SolidBrush(Color.Black);
+        drawing.DrawString(SymbolicArt, font, textBrush, new RectangleF(0, 0, textSize.Width, textSize.Height), sf);
+
+        drawing.Save();
+
+        textBrush.Dispose();
+        drawing.Dispose();
+        img.Save(file.Path, ImageFormat.Png);
+        img.Dispose();
     }
 
     [RelayCommand]

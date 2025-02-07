@@ -10,15 +10,19 @@ using Windows.Storage.Pickers;
 using Windows.Storage;
 using Strasciierry.UI.Contracts.Services;
 using Strasciierry.UI.Options;
+using Microsoft.UI.Xaml.Controls;
+using Windows.Security.Isolation;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Strasciierry.UI.Services;
+
 internal class FilePickerService : IFilePickerService
 {
     private FilePickerOptions _options;
     private bool _initialized;
 
     private IList<string> _openFileTypes = new List<string>();
-    private IDictionary<string, IList<string>> _saveFileTypes = new Dictionary<string, IList<string>>();
+    private List<KeyValuePair<string, IList<string>>> _saveFileTypes = [];
     private string _savingFileName;
 
     private readonly ReadOnlyCollection<string> _defaultOpenFileTypes = new(new[]
@@ -30,12 +34,13 @@ internal class FilePickerService : IFilePickerService
         ".tiff"
     });
 
-    private readonly Dictionary<string, IList<string>> _defaultSaveFileType = new(new[]
-    {
-        new KeyValuePair<string, IList<string>>("Plain text", new[] { ".txt" })
-    });
+    private readonly List<KeyValuePair<string, IList<string>>> _defaultSaveFileType = new(
+    [
+        new KeyValuePair<string, IList<string>>("Image", [".png"]),
+        new KeyValuePair<string, IList<string>>("Plain text", [".txt"])
+    ]);
 
-    private const string DefaultSavingFileName = "New ASCII art file";
+    private const string DefaultSavingFileName = "Strasciierry";
 
     public FilePickerService(IOptions<FilePickerOptions> options)
     {
@@ -46,9 +51,11 @@ internal class FilePickerService : IFilePickerService
     {
         await InitializeAsync();
 
-        var openPicker = new FileOpenPicker();
-        openPicker.ViewMode = PickerViewMode.Thumbnail;
-        openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+        var openPicker = new FileOpenPicker
+        {
+            ViewMode = PickerViewMode.Thumbnail,
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary
+        };
 
         foreach (var openFileType in _openFileTypes)
             openPicker.FileTypeFilter.Add(openFileType);
@@ -59,21 +66,23 @@ internal class FilePickerService : IFilePickerService
         return await openPicker.PickSingleFileAsync();
     }
 
-    public async Task<StorageFile> PickSaveTxtAsync(Window window)
+    public async Task<StorageFile> PickSaveAsync(Window window)
     {
         await InitializeAsync();
 
-        FileSavePicker savePicker = new FileSavePicker();
-        savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-        savePicker.SuggestedFileName = _savingFileName;
+        FileSavePicker picker = new()
+        {
+            SuggestedFileName = _savingFileName,
+            SuggestedStartLocation = PickerLocationId.PicturesLibrary
+        };
 
         foreach (var saveFileType in _saveFileTypes)
-            savePicker.FileTypeChoices.Add(saveFileType);
+            picker.FileTypeChoices.Add(saveFileType);
 
         var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-        WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, hWnd);
 
-        return await savePicker.PickSaveFileAsync();
+        return await picker.PickSaveFileAsync();
     }
 
     private async Task InitializeAsync()

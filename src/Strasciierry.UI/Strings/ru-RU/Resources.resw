@@ -189,4 +189,7 @@
   <data name="Shell_Image_Convert.Content" xml:space="preserve">
     <value>Изображение в символы</value>
   </data>
+  <data name="Converting_Copy_Button.Content" xml:space="preserve">
+    <value>Копировать</value>
+  </data>
 </root>

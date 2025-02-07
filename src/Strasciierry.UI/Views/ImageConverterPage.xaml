@@ -21,7 +21,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Панель  инмтрументов -->
+        <!-- Панель  инcтрументов -->
         <StackPanel Orientation="Horizontal">
             <CommandBar IsOpen="False"
                     DefaultLabelPosition="Right"
@@ -54,32 +54,46 @@
                 <ColumnDefinition Width="0.3*"/>
             </Grid.ColumnDefinitions>
 
-            <Grid>
+            <Grid Margin="12"
+                  Background="{StaticResource LayerFillColorAltBrush}"
+                  CornerRadius="8">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <!-- Область вывода арта -->
-                <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
-                              x:Name="ContentScrollViewer"
-                              ZoomMode="Enabled"
-                              VerticalScrollBarVisibility="Hidden"
-                              HorizontalScrollBarVisibility="Hidden">
 
-                    <TextBlock Text="{x:Bind ViewModel.SymbolicArt, Mode=OneWay}" TextWrapping="WrapWholeWords" FontFamily="Consolas" IsTextSelectionEnabled="True"/>
+                <Button x:Name="CopyButton"
+                        x:Uid="Converting_Copy_Button"
+                        Command="{x:Bind ViewModel.CopyArtCommand}"
+                        Grid.Row="0"
+                        HorizontalAlignment="Right"
+                        Margin="12"
+                        VerticalAlignment="Top">
+                </Button>
+
+                <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
+                      Grid.Row="1"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      x:Name="ContentScrollViewer">
+                    <TextBlock Text="{x:Bind ViewModel.SymbolicArt, Mode=OneWay}"
+                               TextWrapping="WrapWholeWords" 
+                               FontFamily="Consolas" 
+                               IsTextSelectionEnabled="True"
+                               FontSize="14"/>
                 </ScrollViewer>
+
                 <!-- Панель статуса -->
                 <StackPanel Orientation="Horizontal"
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Height="auto"
                             Padding="5"
-                            Margin="12 0 12 0"
-                            CornerRadius="8 8 8 8"
-                            Background="{StaticResource LayerFillColorAltBrush}">
-
+                            CornerRadius="8"
+                            Margin="12 0 12 12">
                     <TextBlock x:Uid="Converting_StatusBar_FileName"/>
                     <TextBlock Text="{x:Bind ViewModel.ImagePath, Mode=OneWay}"
-                        Margin="10 0 0 0"/>
+                       Margin="10 0 0 0"/>
                 </StackPanel>
             </Grid>
 
