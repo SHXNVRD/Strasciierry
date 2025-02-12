@@ -172,6 +172,6 @@
     <value>Specifies the height reduction multiplier when the size is changed</value>
   </data>
   <data name="Converting_StatusBar_FileName.Text" xml:space="preserve">
-    <value>File: </value>
+    <value>Path:</value>
   </data>
 </root>

@@ -6,26 +6,51 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:helpers="using:Strasciierry.UI.Helpers"
+    xmlns:vm="using:Strasciierry.UI.ViewModels"
     mc:Ignorable="d">
 
     <Page.Resources>
         <ResourceDictionary>
             <helpers:PercentageDisplayConverter x:Key="PercentageDisplayConverter"/>
             <helpers:FactorConverter x:Key="FactorConverter"/>
+            <helpers:WindowsUiColorToBrushConverter x:Key="WindowsUiColorToBrushConverter"/>
+            <helpers:WindowsUiColorToSystemDrawingColorConverter x:Key="WindowsUiColorToSystemDrawingColorConverter"/>
+            <Flyout x:Key="FlyoutBackgroundColorPicker">
+                <ColorPicker x:Name="BackgroundColorPicker"
+                             IsColorChannelTextInputVisible="False"
+                             IsColorPreviewVisible="False"
+                             IsAlphaEnabled="True"
+                             IsAlphaTextInputVisible="False"
+                             IsAlphaSliderVisible="True"
+                             IsHexInputVisible="True"
+                             Color="{x:Bind ViewModel.ArtBackground, Converter={StaticResource WindowsUiColorToSystemDrawingColorConverter}, Mode=TwoWay}"/>
+            </Flyout>
+            <Flyout x:Key="FlyoutForegroundColorPicker">
+                <ColorPicker x:Name="ForegroundColorPicker"
+                             IsColorChannelTextInputVisible="False"
+                             IsColorPreviewVisible="False"
+                             IsAlphaEnabled="True"
+                             IsAlphaTextInputVisible="False"
+                             IsAlphaSliderVisible="True"
+                             IsHexInputVisible="True"
+                             Color="{x:Bind ViewModel.ArtForeground, Converter={StaticResource WindowsUiColorToSystemDrawingColorConverter}, Mode=TwoWay}"/>
+            </Flyout>
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid x:Name="ContentArea">
+    <Grid x:Name="RootContainer">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Панель  инcтрументов -->
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal"
+                    Margin="12 0 0 0">
             <CommandBar IsOpen="False"
                     DefaultLabelPosition="Right"
-                    FlowDirection="LeftToRight">
+                    FlowDirection="LeftToRight"
+                    Padding="0">
                 <AppBarButton
                     Icon="Add"
                     x:Uid="CommandBar_Add_Button"
@@ -55,6 +80,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid Margin="12"
+                  Padding="8"
                   Background="{StaticResource LayerFillColorAltBrush}"
                   CornerRadius="8">
                 <Grid.RowDefinitions>
@@ -68,7 +94,6 @@
                         Command="{x:Bind ViewModel.CopyArtCommand}"
                         Grid.Row="0"
                         HorizontalAlignment="Right"
-                        Margin="12"
                         VerticalAlignment="Top">
                 </Button>
 
@@ -78,6 +103,8 @@
                       VerticalAlignment="Stretch"
                       x:Name="ContentScrollViewer">
                     <TextBlock Text="{x:Bind ViewModel.SymbolicArt, Mode=OneWay}"
+                               x:Name="ArtTextBlock"
+                               Foreground="{Binding ElementName=ForegroundColorPicker, Path=Color, Converter={StaticResource WindowsUiColorToSystemDrawingColorConverter}}"
                                TextWrapping="WrapWholeWords" 
                                FontFamily="Consolas" 
                                IsTextSelectionEnabled="True"
@@ -85,16 +112,35 @@
                 </ScrollViewer>
 
                 <!-- Панель статуса -->
-                <StackPanel Orientation="Horizontal"
-                            Grid.Row="2"
-                            Height="auto"
-                            Padding="5"
-                            CornerRadius="8"
-                            Margin="12 0 12 12">
-                    <TextBlock x:Uid="Converting_StatusBar_FileName"/>
-                    <TextBlock Text="{x:Bind ViewModel.ImagePath, Mode=OneWay}"
-                       Margin="10 0 0 0"/>
-                </StackPanel>
+                <Grid HorizontalAlignment="Stretch"
+                      Grid.Row="2"
+                      Height="auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal">
+                        <TextBlock x:Uid="Converting_StatusBar_FileName"/>
+                        <TextBlock Text="{x:Bind ViewModel.ImagePath, Mode=OneWay}"
+                                   Margin="5 0 0 0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal">
+                        <TextBlock x:Uid="Converting_StatusBar_ArtRows"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock Text="{x:Bind ViewModel.Heigh, Mode=OneWay}"
+                                   Margin="5 0 0 0"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock x:Uid="Converting_StatusBar_ArtColumns"
+                                   Margin="5 0 0 0"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock Text="{x:Bind ViewModel.Width, Mode=OneWay}"
+                                   Margin="5 0 0 0"
+                                   HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
 
             <!-- Панель натсроек -->
@@ -148,6 +194,39 @@
                         </ToolTipService.ToolTip>
                     </ToggleSwitch>
                 </controls:SettingsCard>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Uid="Converting_Settings_Background"
+                               Margin="0 0 5 0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"/>
+                    <Button Background="{Binding ElementName=BackgroundColorPicker, Path=Color, Converter={StaticResource WindowsUiColorToBrushConverter}}"
+                            Style="{StaticResource ColorSelectorButtonStyle}" 
+                            Height="40"
+                            Width="40"
+                            Grid.Column="1"
+                            Flyout="{StaticResource FlyoutBackgroundColorPicker}">
+                    </Button>
+                    
+                    <TextBlock x:Uid="Converting_Settings_Foreground"
+                               Margin="0 0 5 0"
+                               Grid.Column="2"
+                               VerticalAlignment="Center"/>
+                    <Button Background="{Binding ElementName=ForegroundColorPicker, Path=Color, Converter={StaticResource WindowsUiColorToBrushConverter}}"
+                            Style="{StaticResource ColorSelectorButtonStyle}" 
+                            Height="40"
+                            Width="40"
+                            Grid.Column="3"
+                            Flyout="{StaticResource FlyoutForegroundColorPicker}">
+                    </Button>
+                </Grid>
 
                 <Grid>
                     <Grid.ColumnDefinitions>

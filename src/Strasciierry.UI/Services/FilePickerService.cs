@@ -13,34 +13,33 @@ using Strasciierry.UI.Options;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Security.Isolation;
 using System.Security.Cryptography.X509Certificates;
+using Windows.Storage.Provider;
 
 namespace Strasciierry.UI.Services;
 
 internal class FilePickerService : IFilePickerService
 {
     private FilePickerOptions _options;
+
     private bool _initialized;
 
-    private IList<string> _openFileTypes = new List<string>();
-    private List<KeyValuePair<string, IList<string>>> _saveFileTypes = [];
     private string _savingFileName;
-
-    private readonly ReadOnlyCollection<string> _defaultOpenFileTypes = new(new[]
-    {
+    private readonly ReadOnlyCollection<string> _openFileTypes = new(
+    [
         ".jpg",
         ".png",
         ".gif",
         ".exif",
         ".tiff"
-    });
-
-    private readonly List<KeyValuePair<string, IList<string>>> _defaultSaveFileType = new(
+    ]);
+    private readonly List<KeyValuePair<string, IList<string>>> _saveFileTypes = new(
     [
         new KeyValuePair<string, IList<string>>("Image", [".png"]),
+        new KeyValuePair<string, IList<string>>("Image", [".jpeg"]),
         new KeyValuePair<string, IList<string>>("Plain text", [".txt"])
     ]);
 
-    private const string DefaultSavingFileName = "Strasciierry";
+    private const string DefaultSaveFileName = "SymbolicArt";
 
     public FilePickerService(IOptions<FilePickerOptions> options)
     {
@@ -92,23 +91,7 @@ internal class FilePickerService : IFilePickerService
             if (_initialized)
                 return;
 
-            if (_options.OpenFileTypes != null && _options.OpenFileTypes.Count > 0)
-            {
-                foreach (var openFileType in _options.OpenFileTypes)
-                    _openFileTypes.Add(openFileType);
-            }
-            else
-                _openFileTypes = _defaultOpenFileTypes;
-
-            if (_options.SaveFileTypes != null && _options.SaveFileTypes.Count > 0)
-            {
-                foreach (var saveFileType in _options.SaveFileTypes)
-                    _saveFileTypes.Add(saveFileType);
-            }
-            else
-                _saveFileTypes = _defaultSaveFileType;
-
-            _savingFileName = _options.SavingFileName ?? DefaultSavingFileName;
+            _savingFileName = string.IsNullOrWhiteSpace(_options.SaveFileName) ? DefaultSaveFileName : _options.SaveFileName;
 
             _initialized = true;
         });

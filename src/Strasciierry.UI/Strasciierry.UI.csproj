@@ -18,9 +18,6 @@
 	<LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Remove="Assets\copy-2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="CustomControls\ContentDialogs\ErrorContentDialog.xaml" />
     <None Remove="Styles\Buttons.xaml" />
   </ItemGroup>

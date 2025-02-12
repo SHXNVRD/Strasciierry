@@ -13,7 +13,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
 
-
 namespace Strasciierry.UI.ViewModels;
 
 public partial class ImageConverterViewModel : ObservableRecipient
@@ -26,6 +25,12 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
     private const int DefaultHeightReductionFactor = 1;
     private const int DefaultSizePercent = 100;
+
+    [ObservableProperty]
+    public partial Color ArtBackground { get; set; } = Color.Black;
+
+    [ObservableProperty]
+    public partial Color ArtForeground { get; set; } = Color.White;
 
     [ObservableProperty]
     public partial string? SymbolicArt { get; set; }
@@ -101,7 +106,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
     {
         try
         {
-            await GenerateArtProcessAsync().ConfigureAwait(false);
+            await GenerateArtProcessAsync();
         }
         catch (Exception ex)
         {
@@ -154,15 +159,21 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
         try
         {
+            Image img;
             var file = await _filePickerService.PickSaveAsync(App.MainWindow);
 
-            if (file == null)
+            if (file == null || string.IsNullOrEmpty(file.Path))
                 return;
 
             switch (file.FileType)
             {
                 case ".png":
-                    _ = Task.Run(() => SaveArtAsImage(file)).ConfigureAwait(false);
+                    img = await Task.Run(() => DrawArt(file));
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Png));
+                    break;
+                case ".jpeg":
+                    img = await Task.Run(() => DrawArt(file));
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Jpeg));
                     break;
                 case ".txt":
                     await FileIO.WriteTextAsync(file, SymbolicArt);
@@ -177,13 +188,15 @@ public partial class ImageConverterViewModel : ObservableRecipient
         }
     }
 
-    private void SaveArtAsImage(StorageFile file)
+    private Image DrawArt(StorageFile file)
     {
         Image img = new Bitmap(1, 1);
+
         var drawing = Graphics.FromImage(img);
         var font = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Pixel);
         var imageSize = new SizeF(Width * font.Size, Heigh * font.Height);
         var textSize = drawing.MeasureString(SymbolicArt, font, imageSize);
+
         var sf = new StringFormat
         {
             Trimming = StringTrimming.Word
@@ -193,25 +206,21 @@ public partial class ImageConverterViewModel : ObservableRecipient
         drawing.Dispose();
 
         img = new Bitmap((int)textSize.Width, (int)textSize.Height);
-
+        
         drawing = Graphics.FromImage(img);
-        drawing.CompositingQuality = CompositingQuality.HighQuality;
-        drawing.InterpolationMode = InterpolationMode.HighQualityBilinear;
-        drawing.PixelOffsetMode = PixelOffsetMode.HighQuality;
-        drawing.SmoothingMode = SmoothingMode.HighQuality;
-        drawing.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+        drawing.Clear(ArtBackground);
+        drawing.CompositingQuality = CompositingQuality.Default;
+        drawing.InterpolationMode = InterpolationMode.Default;
+        drawing.PixelOffsetMode = PixelOffsetMode.Default;
+        drawing.SmoothingMode = SmoothingMode.Default;
+        drawing.TextRenderingHint = TextRenderingHint.SystemDefault;
 
-        drawing.Clear(Color.Transparent);
-
-        Brush textBrush = new SolidBrush(Color.Black);
+        using var textBrush = new SolidBrush(ArtForeground);
         drawing.DrawString(SymbolicArt, font, textBrush, new RectangleF(0, 0, textSize.Width, textSize.Height), sf);
-
         drawing.Save();
-
-        textBrush.Dispose();
         drawing.Dispose();
-        img.Save(file.Path, ImageFormat.Png);
-        img.Dispose();
+
+        return img;
     }
 
     [RelayCommand]
@@ -222,6 +231,10 @@ public partial class ImageConverterViewModel : ObservableRecipient
         IsNegative = false;
         SymbolicArt = string.Empty;
         ImageFile = null;
+        Heigh = 0;
+        Width = 0;
+        ArtForeground = Color.White;
+        ArtBackground = Color.Black;
     }
 
     public async Task<SoftwareBitmap> GetSoftwareBitmapAsync(StorageFile image)

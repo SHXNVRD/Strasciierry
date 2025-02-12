@@ -50,6 +50,7 @@ public partial class App : Application
             {
                 services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
                 services.Configure<ImageToCharOptions>(context.Configuration.GetSection(nameof(ImageToCharOptions)));
+                services.Configure<FilePickerOptions>(context.Configuration.GetSection(nameof(FilePickerOptions)));
 
                 services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
@@ -80,10 +81,9 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
         
-    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        // TODO: Log and handle exceptions as appropriate.
-        // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
+        await DialogHelper.ShowErrorAsync(App.Root.XamlRoot, $"{e.Message}\n{e.Exception}");
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)

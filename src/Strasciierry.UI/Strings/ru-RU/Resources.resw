@@ -169,7 +169,7 @@
     <value>Указывает множитель уменьшения высоты при изменении размера</value>
   </data>
   <data name="Converting_StatusBar_FileName.Text" xml:space="preserve">
-    <value>File: </value>
+    <value>Путь:</value>
   </data>
   <data name="CommandBar_Add_Button.Label" xml:space="preserve">
     <value>Добавить</value>
@@ -191,5 +191,17 @@
   </data>
   <data name="Converting_Copy_Button.Content" xml:space="preserve">
     <value>Копировать</value>
+  </data>
+  <data name="Converting_StatusBar_ArtRows.Text" xml:space="preserve">
+    <value>Строки:</value>
+  </data>
+  <data name="Converting_StatusBar_ArtColumns.Text" xml:space="preserve">
+    <value>Столбцы:</value>
+  </data>
+  <data name="Converting_Settings_Background.Text" xml:space="preserve">
+    <value>Цвет фона</value>
+  </data>
+  <data name="Converting_Settings_Foreground.Text" xml:space="preserve">
+    <value>Цвет текста</value>
   </data>
 </root>

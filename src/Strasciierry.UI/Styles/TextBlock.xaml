@@ -17,4 +17,7 @@
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
+    <Style x:Key="StatusInfoStyle" TargetType="TextBlock">
+    </Style>
+
 </ResourceDictionary>
