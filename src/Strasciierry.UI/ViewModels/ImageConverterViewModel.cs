@@ -26,11 +26,14 @@ public partial class ImageConverterViewModel : ObservableRecipient
     private const int DefaultHeightReductionFactor = 1;
     private const int DefaultSizePercent = 100;
 
-    [ObservableProperty]
-    public partial Color ArtBackground { get; set; } = Color.Black;
+    public static Color DefaultArtBackground => Color.FromArgb(255, 50, 50, 50);
+    public static Color DefaultArtForeground => Color.White;
 
     [ObservableProperty]
-    public partial Color ArtForeground { get; set; } = Color.White;
+    public partial Color ArtBackground { get; set; } = DefaultArtBackground;
+
+    [ObservableProperty]
+    public partial Color ArtForeground { get; set; } = DefaultArtForeground;
 
     [ObservableProperty]
     public partial string? SymbolicArt { get; set; }
@@ -159,21 +162,44 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
         try
         {
-            Image img;
             var file = await _filePickerService.PickSaveAsync(App.MainWindow);
 
             if (file == null || string.IsNullOrEmpty(file.Path))
                 return;
 
+            var img = await Task.Run(() => DrawArt());
+
             switch (file.FileType)
             {
                 case ".png":
-                    img = await Task.Run(() => DrawArt(file));
                     await Task.Run(() => img.Save(file.Path, ImageFormat.Png));
                     break;
                 case ".jpeg":
-                    img = await Task.Run(() => DrawArt(file));
                     await Task.Run(() => img.Save(file.Path, ImageFormat.Jpeg));
+                    break;
+                case ".bmp":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Bmp));
+                    break;
+                case ".gif":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Gif));
+                    break;
+                case ".tiff":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Tiff));
+                    break;
+                case ".webp":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Webp));
+                    break;
+                case ".heif":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Heif));
+                    break;
+                case ".ico":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Icon));
+                    break;
+                case ".wmf":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Wmf));
+                    break;
+                case ".emf":
+                    await Task.Run(() => img.Save(file.Path, ImageFormat.Emf));
                     break;
                 case ".txt":
                     await FileIO.WriteTextAsync(file, SymbolicArt);
@@ -188,7 +214,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
         }
     }
 
-    private Image DrawArt(StorageFile file)
+    private Image DrawArt()
     {
         Image img = new Bitmap(1, 1);
 
@@ -233,8 +259,8 @@ public partial class ImageConverterViewModel : ObservableRecipient
         ImageFile = null;
         Heigh = 0;
         Width = 0;
-        ArtForeground = Color.White;
-        ArtBackground = Color.Black;
+        ArtBackground = DefaultArtBackground;
+        ArtForeground = DefaultArtForeground;
     }
 
     public async Task<SoftwareBitmap> GetSoftwareBitmapAsync(StorageFile image)

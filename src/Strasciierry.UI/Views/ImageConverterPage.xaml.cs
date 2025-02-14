@@ -16,9 +16,4 @@ public sealed partial class ImageConverterPage : Page
         ViewModel = App.GetService<ImageConverterViewModel>();
         InitializeComponent();
     }
-
-    private void ForegroundColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-    {
-        ArtTextBlock.Foreground = new SolidColorBrush(sender.Color);
-    }
 }

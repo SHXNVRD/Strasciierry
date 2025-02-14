@@ -34,9 +34,17 @@ internal class FilePickerService : IFilePickerService
     ]);
     private readonly List<KeyValuePair<string, IList<string>>> _saveFileTypes = new(
     [
-        new KeyValuePair<string, IList<string>>("Image", [".png"]),
-        new KeyValuePair<string, IList<string>>("Image", [".jpeg"]),
-        new KeyValuePair<string, IList<string>>("Plain text", [".txt"])
+        new KeyValuePair<string, IList<string>>("PNG", [".png"]),
+        new KeyValuePair<string, IList<string>>("JPEG", [".jpeg"]),
+        new KeyValuePair<string, IList<string>>("BMP", [".bmp"]),
+        new KeyValuePair<string, IList<string>>("GIF", [".gif"]),
+        new KeyValuePair<string, IList<string>>("TIFF", [".tiff"]),
+        new KeyValuePair<string, IList<string>>("WEBP", [".webp"]),
+        new KeyValuePair<string, IList<string>>("HEIF", [".heif"]),
+        new KeyValuePair<string, IList<string>>("Windows icon", [".ico"]),
+        new KeyValuePair<string, IList<string>>("Windows Metafile", [".wmf"]),
+        new KeyValuePair<string, IList<string>>("Enhanced Metafile", [".emf"]),
+        new KeyValuePair<string, IList<string>>("Text", [".txt"])
     ]);
 
     private const string DefaultSaveFileName = "SymbolicArt";
