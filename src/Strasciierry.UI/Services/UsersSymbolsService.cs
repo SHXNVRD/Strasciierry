@@ -6,24 +6,24 @@ using System.Threading.Tasks;
 using Strasciierry.UI.Contracts.Services;
 
 namespace Strasciierry.UI.Services;
-internal class UserSymbolsService : IUserSymbolsService
+internal class UsersSymbolsService : IUsersSymbolsService
 {
     private readonly ILocalSettingsService _settingsService;
     private bool _isInitialized;
 
-    const string UserSymbolsSettingsKey = "UserSymbols";
-    const string UseUserSymbolsSettingsKey = "IsUserSymbolsOn";
+    const string UserSymbolsSettingsKey = "UsersSymbols";
+    const string UseUserSymbolsSettingsKey = "UsersSymbolsOn";
 
-    public char[]? UserSymbols
+    public char[]? UsersSymbols
     {
         get; private set;
     }
-    public bool IsUserSymbolsOn
+    public bool UsersSymbolsOn
     {
         get; private set;
     }
 
-    public UserSymbolsService(ILocalSettingsService settingsService)
+    public UsersSymbolsService(ILocalSettingsService settingsService)
     {
         _settingsService = settingsService;
     }
@@ -32,24 +32,24 @@ internal class UserSymbolsService : IUserSymbolsService
     {
         if (!_isInitialized)
         {
-            UserSymbols = await _settingsService.ReadSettingAsync<char[]>(UserSymbolsSettingsKey);
-            IsUserSymbolsOn = await _settingsService.ReadSettingAsync<bool>(UseUserSymbolsSettingsKey);
+            UsersSymbols = await _settingsService.ReadSettingAsync<char[]>(UserSymbolsSettingsKey);
+            UsersSymbolsOn = await _settingsService.ReadSettingAsync<bool>(UseUserSymbolsSettingsKey);
             _isInitialized = true;
         }
     }
 
-    public async Task SetUserSymbolsAsync(char[] symbols)
+    public async Task SetUsersSymbolsAsync(char[] symbols)
     {
-        UserSymbols = symbols;
+        UsersSymbols = symbols;
 
-        await SaveUserSymbolsAsync(UserSymbols);
+        await SaveUserSymbolsAsync(UsersSymbols);
     }
 
-    public async Task SetIsUserSymbolsOnAsync(bool useUserSymbols)
+    public async Task SetUsersSymbolsOnAsync(bool useUserSymbols)
     {
-        IsUserSymbolsOn = useUserSymbols;
+        UsersSymbolsOn = useUserSymbols;
 
-        await SaveUseUserSymbolsAsync(IsUserSymbolsOn);
+        await SaveUseUserSymbolsAsync(UsersSymbolsOn);
     }
 
     private async Task SaveUserSymbolsAsync(char[] symbols)

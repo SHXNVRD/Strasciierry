@@ -12,28 +12,43 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
+using System.Collections.ObjectModel;
+using Strasciierry.UI.Services.Fonts;
+using Windows.ApplicationModel.UserDataAccounts.Provider;
 
 namespace Strasciierry.UI.ViewModels;
 
 public partial class ImageConverterViewModel : ObservableRecipient
 {
     private readonly IFilePickerService _filePickerService;
-    private readonly IUserSymbolsService _userSymbolsService;
+    private readonly IUsersSymbolsService _userSymbolsService;
     private readonly IImageToCharsService _imageToCharsService;
+    private readonly IFontsService _fontsService;
     private readonly DispatcherQueue dispatcherQueue = DispatcherQueue.GetForCurrentThread();
     private SoftwareBitmap? _softwareBitmap;
 
     private const int DefaultHeightReductionFactor = 1;
     private const int DefaultSizePercent = 100;
+    private const int DefaultFontSize = 14;
+    private const string DefaultFontName = "Consolas";
 
-    public static Color DefaultArtBackground => Color.FromArgb(255, 50, 50, 50);
-    public static Color DefaultArtForeground => Color.White;
+    private static Color _defaultArtBackground => Color.FromArgb(255, 50, 50, 50);
+    private static Color _defaultArtForeground => Color.White;
+
+    public readonly ReadOnlyCollection<int> FontSizes = new([8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72]);
+
+    public ObservableCollection<string> FilteredFonts =>
+        new(
+            _fontsService.ShowMonospacedFonstOnly
+            ? _fontsService.Fonts.Where(f => f.IsMonospaced).Select(f => f.FontFamily.Name)
+            : _fontsService.Fonts.Select(f => f.FontFamily.Name)
+        );
 
     [ObservableProperty]
-    public partial Color ArtBackground { get; set; } = DefaultArtBackground;
+    public partial Color ArtBackground { get; set; } = _defaultArtBackground;
 
     [ObservableProperty]
-    public partial Color ArtForeground { get; set; } = DefaultArtForeground;
+    public partial Color ArtForeground { get; set; } = _defaultArtForeground;
 
     [ObservableProperty]
     public partial string? SymbolicArt { get; set; }
@@ -49,6 +64,21 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
     [ObservableProperty]
     public partial double HeightReductionFactor { get; set; } = 1;
+
+    [ObservableProperty]
+    public partial int FontSize { get; set; } = DefaultFontSize;
+
+    [ObservableProperty]
+    public partial string FontName { get; set; } = DefaultFontName;
+
+    [ObservableProperty]
+    public partial FontStyle FontStyle { get; set; } = FontStyle.Regular;
+
+    [ObservableProperty]
+    public partial FontStyle FontWeight { get; set; } = FontStyle.Regular;
+
+    [ObservableProperty]
+    public partial FontStyle TextDecorations { get; set; } = FontStyle.Regular;
 
     [ObservableProperty]
     public partial bool IsNegative { get; set; }
@@ -70,12 +100,15 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
     public ImageConverterViewModel(
         IFilePickerService pickerService,
-        IUserSymbolsService userSymbolsService,
-        IImageToCharsService imageToCharsService)
+        IUsersSymbolsService userSymbolsService,
+        IImageToCharsService imageToCharsService,
+        ILocalSettingsService localSettingsService,
+        IFontsService fontsService)
     {
         _filePickerService = pickerService;
         _userSymbolsService = userSymbolsService;
         _imageToCharsService = imageToCharsService;
+        _fontsService = fontsService;
     }
 
     [RelayCommand]
@@ -128,12 +161,12 @@ public partial class ImageConverterViewModel : ObservableRecipient
         using var grayScaleBitMap = resizedBitmap.ConvertToGrayscale();
         char[][] rows;
 
-        if (_userSymbolsService.IsUserSymbolsOn)
+        if (_userSymbolsService.UsersSymbolsOn)
         {
             if (IsNegative)
-                rows = await _imageToCharsService.ConvertNegativeAsync(grayScaleBitMap, _userSymbolsService.UserSymbols);
+                rows = await _imageToCharsService.ConvertNegativeAsync(grayScaleBitMap, _userSymbolsService.UsersSymbols);
             else
-                rows = await _imageToCharsService.ConvertAsync(grayScaleBitMap, _userSymbolsService.UserSymbols);
+                rows = await _imageToCharsService.ConvertAsync(grayScaleBitMap, _userSymbolsService.UsersSymbols);
 
             dispatcherQueue.TryEnqueue(() =>
             {
@@ -219,7 +252,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
         Image img = new Bitmap(1, 1);
 
         var drawing = Graphics.FromImage(img);
-        var font = new Font("Consolas", 14, FontStyle.Regular, GraphicsUnit.Pixel);
+        var font = new Font(FontName, FontSize, FontStyle | FontWeight | TextDecorations, GraphicsUnit.Pixel);
         var imageSize = new SizeF(Width * font.Size, Heigh * font.Height);
         var textSize = drawing.MeasureString(SymbolicArt, font, imageSize);
 
@@ -259,8 +292,8 @@ public partial class ImageConverterViewModel : ObservableRecipient
         ImageFile = null;
         Heigh = 0;
         Width = 0;
-        ArtBackground = DefaultArtBackground;
-        ArtForeground = DefaultArtForeground;
+        ArtBackground = _defaultArtBackground;
+        ArtForeground = _defaultArtForeground;
     }
 
     public async Task<SoftwareBitmap> GetSoftwareBitmapAsync(StorageFile image)

@@ -204,4 +204,10 @@
   <data name="Converting_Settings_Foreground.Text" xml:space="preserve">
     <value>Цвет текста</value>
   </data>
+  <data name="Settings_Use_Monospaced_Fonts_Only.Header" xml:space="preserve">
+    <value>Использовать только моноширинные шрифты</value>
+  </data>
+  <data name="Settings_Use_Monospaced_Fonts_Only.Description" xml:space="preserve">
+    <value>Для корректного отображения артов рекомендуется использовать моноширинные шрифты</value>
+  </data>
 </root>

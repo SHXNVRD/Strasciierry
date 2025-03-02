@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Data;
 
-namespace Strasciierry.UI.Helpers;
+namespace Strasciierry.UI.Converters;
 
 public class WindowsUiColorToSystemDrawingColorConverter : IValueConverter
 {

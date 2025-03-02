@@ -5,11 +5,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Microsoft.UI.Xaml;
-
+using Microsoft.VisualBasic;
 using Strasciierry.UI.Contracts.Services;
 using Strasciierry.UI.Extensions;
 using Strasciierry.UI.Helpers;
-
+using Strasciierry.UI.Services;
+using Strasciierry.UI.Services.Fonts;
 using Windows.ApplicationModel;
 
 namespace Strasciierry.UI.ViewModels;
@@ -17,7 +18,9 @@ namespace Strasciierry.UI.ViewModels;
 public partial class SettingsViewModel : ObservableRecipient
 {
     private readonly IThemeSelectorService _themeSelectorService;
-    private readonly IUserSymbolsService _userSymbolsService;
+    private readonly IUsersSymbolsService _userSymbolsService;
+    private readonly IFontsService _fontsService;
+    private readonly ILocalSettingsService _localSettingsService;
 
     [ObservableProperty]
     public partial ElementTheme ElementTheme { get; set; }
@@ -26,19 +29,29 @@ public partial class SettingsViewModel : ObservableRecipient
     public partial string VersionDescription { get; set; }
 
     [ObservableProperty]
-    public partial bool IsUserSymbolsOn { get; set; }
+    public partial bool UsersSymbolsOn { get; set; }
 
     [ObservableProperty]
-    public partial string UserSymbols { get; set; }
+    public partial string UsersSymbols { get; set; }
 
+    [ObservableProperty]
+    public partial bool ShowMonospacedFontsOnly { get; set; }
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService, IUserSymbolsService userSymbolsService)
+    public SettingsViewModel(
+        IThemeSelectorService themeSelectorService, 
+        IUsersSymbolsService userSymbolsService,
+        IFontsService fontsService,
+        ILocalSettingsService localSettingsService)
     {
         _themeSelectorService = themeSelectorService;
         _userSymbolsService = userSymbolsService;
+        _fontsService = fontsService;
+        _localSettingsService = localSettingsService;
+
         ElementTheme = _themeSelectorService.Theme;
-        UserSymbols = new string(_userSymbolsService.UserSymbols);
-        IsUserSymbolsOn = _userSymbolsService.IsUserSymbolsOn;
+        UsersSymbols = new string(_userSymbolsService.UsersSymbols);
+        UsersSymbolsOn = _userSymbolsService.UsersSymbolsOn;
+        ShowMonospacedFontsOnly = _fontsService.ShowMonospacedFonstOnly;
         VersionDescription = GetVersionDescription();
     }
 
@@ -55,21 +68,28 @@ public partial class SettingsViewModel : ObservableRecipient
     [RelayCommand]
     public async Task SetUserSymbolsAsync()
     {
-        if (string.IsNullOrWhiteSpace(UserSymbols))
+        if (string.IsNullOrWhiteSpace(UsersSymbols))
             return;
 
-        var cleanSymbols = UserSymbols.Where(c => !char.IsWhiteSpace(c)).ToArray();
+        var cleanSymbols = UsersSymbols.Where(c => !char.IsWhiteSpace(c)).ToArray();
 
-        if (_userSymbolsService.UserSymbols != cleanSymbols)
+        if (_userSymbolsService.UsersSymbols != cleanSymbols)
         {
-            await _userSymbolsService.SetUserSymbolsAsync(cleanSymbols);
-            UserSymbols = new string(_userSymbolsService.UserSymbols);
+            await _userSymbolsService.SetUsersSymbolsAsync(cleanSymbols);
+            UsersSymbols = new string(_userSymbolsService.UsersSymbols);
         }
     }
 
     [RelayCommand]
-    public async Task SetIsUserSymbolsOnAsync() =>
-        await _userSymbolsService.SetIsUserSymbolsOnAsync(!IsUserSymbolsOn);
+    public async Task SetUserSymbolsOnAsync()
+        // Между заданием значения свойства ToggleSwitch.IsOn и передачи его IsUserSymbolsOn
+        // есть задержка, во время которой значение IsUserSymbolsOn все ещё равно старому значению.
+        // Это баг элемента управления.
+        => await _userSymbolsService.SetUsersSymbolsOnAsync(!UsersSymbolsOn);
+
+    [RelayCommand]
+    public async Task SetShowMonospacedFontsOnly()
+        => await _fontsService.SetShowMonospacedFontsOnly(!ShowMonospacedFontsOnly);
 
     private static string GetVersionDescription()
     {

@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
                 <ResourceDictionary Source="/Styles/Buttons.xaml" />
                 <ResourceDictionary Source="/Styles/ContentDialogs.xaml" />
+                <ResourceDictionary Source="/Styles/SettingsCards.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="ScrollViewer" x:Key="ScrollViewerStyle">
                 <Setter Property="ZoomMode" Value="Enabled"/>

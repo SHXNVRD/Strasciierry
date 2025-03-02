@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
-namespace Strasciierry.UI.Helpers;
+namespace Strasciierry.UI.Converters;
 
 public class EnumToBooleanConverter : IValueConverter
 {

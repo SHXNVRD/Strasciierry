@@ -20,6 +20,7 @@
   <ItemGroup>
     <None Remove="CustomControls\ContentDialogs\ErrorContentDialog.xaml" />
     <None Remove="Styles\Buttons.xaml" />
+    <None Remove="Styles\SettingsCards.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Styles\SettingsCards.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="CustomControls\ContentDialogs\ErrorContentDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 using Strasciierry.UI.Activation;
 using Strasciierry.UI.Contracts.Services;
+using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Views;
 
 namespace Strasciierry.UI.Services;
@@ -12,19 +13,22 @@ public class ActivationService : IActivationService
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
     private readonly IThemeSelectorService _themeSelectorService;
-    private readonly IUserSymbolsService _userSymbolsService;
+    private readonly IUsersSymbolsService _userSymbolsService;
+    private readonly IFontsService _fontsService;
     private UIElement? _shell = null;
 
     public ActivationService(
         ActivationHandler<LaunchActivatedEventArgs> defaultHandler, 
         IEnumerable<IActivationHandler> activationHandlers, 
         IThemeSelectorService themeSelectorService,
-        IUserSymbolsService userSymbolsService)
+        IUsersSymbolsService userSymbolsService,
+        IFontsService fontsService)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
         _themeSelectorService = themeSelectorService;
         _userSymbolsService = userSymbolsService;
+        _fontsService = fontsService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -61,12 +65,13 @@ public class ActivationService : IActivationService
     {
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
         await _userSymbolsService.InitializeAsync().ConfigureAwait(false);
+        await _fontsService.InitializeAsync().ConfigureAwait(false);
         await Task.CompletedTask;
     }
 
     private async Task StartupAsync()
     {
-        await _themeSelectorService.SetRequestedThemeAsync();
+        await _themeSelectorService.SetRequestedThemeAsync().ConfigureAwait(false);
         await Task.CompletedTask;
     }
 }

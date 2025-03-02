@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 
-namespace Strasciierry.UI.Helpers;
+namespace Strasciierry.UI.Converters;
 
 class WindowsUiColorToBrushConverter : IValueConverter
 {

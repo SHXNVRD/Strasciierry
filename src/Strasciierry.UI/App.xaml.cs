@@ -8,6 +8,7 @@ using Strasciierry.UI.Core.Services;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Options;
 using Strasciierry.UI.Services;
+using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.ViewModels;
 using Strasciierry.UI.Views;
 
@@ -57,7 +58,8 @@ public partial class App : Application
                 services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
                 services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
                 services.AddSingleton<IFilePickerService, FilePickerService>();
-                services.AddSingleton<IUserSymbolsService, UserSymbolsService>();
+                services.AddSingleton<IUsersSymbolsService, UsersSymbolsService>();
+                services.AddSingleton<IFontsService, FontsService>();
                 services.AddTransient<INavigationViewService, NavigationViewService>();
                 services.AddTransient<IImageToCharsService, ImageToCharsService>();
 
@@ -73,7 +75,7 @@ public partial class App : Application
                 services.AddTransient<ImageConverterPage>();
                 services.AddTransient<ShellPage>();
                 services.AddTransient<ShellViewModel>();
-                services.AddScoped<ImageConverterViewModel>();
+                services.AddTransient<ImageConverterViewModel>();
                 services.AddTransient<ImageConverterPage>();
             }).
             Build();

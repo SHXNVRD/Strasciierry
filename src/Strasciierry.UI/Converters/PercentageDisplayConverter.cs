@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Data;
 
-namespace Strasciierry.UI.Helpers;
+namespace Strasciierry.UI.Converters;
 internal class PercentageDisplayConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) => $"{value} %";
