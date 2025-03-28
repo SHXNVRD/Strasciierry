@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
+﻿using System.Drawing;
 
 namespace Strasciierry.UI.Helpers;
 internal static class FontHelper

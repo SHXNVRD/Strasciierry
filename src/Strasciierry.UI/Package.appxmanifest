@@ -12,14 +12,15 @@
 
   <Identity
     Name="3aedab85-311a-452a-a0df-465a7564850a"
-    Publisher="CN=Rodion"
-    Version="1.0.0.0" />
+    Publisher="CN=SHXNVRD"
+    Version="1.0.0.0" 
+	ProcessorArchitecture="neutral" />
     
   <mp:PhoneIdentity PhoneProductId="3aedab85-311a-452a-a0df-465a7564850a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
-    <DisplayName>Strasciierry.UI</DisplayName>
-    <PublisherDisplayName>Rodion</PublisherDisplayName>
+    <DisplayName>Strasciierry</DisplayName>
+    <PublisherDisplayName>SHXNVRD</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -29,20 +30,21 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="x-generate"/>
+	  <Resource Language="en-US"/>
+	  <Resource Language="ru-RU"/>
   </Resources>
 
   <Applications>
-    <Application Id="App"
+    <Application Id="Strasciierry"
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="ms-resource:AppDisplayName"
+        DisplayName="Strasciierry"
         Description="ms-resource:AppDescription"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+		  <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"  Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" />
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
@@ -52,7 +54,7 @@
 
           <com:Extension Category="windows.comServer">
               <com:ComServer>
-                  <com:ExeServer Executable="Strasciierry.UI.exe" Arguments="----AppNotificationActivated:" DisplayName="Toast activator">
+                  <com:ExeServer Executable="Strasciierry.exe" Arguments="----AppNotificationActivated:" DisplayName="Toast activator">
                       <com:Class Id="92ed1819-f6cf-485d-b1b8-c9a8387eae4a" DisplayName="Toast activator"/>
                   </com:ExeServer>
               </com:ComServer>

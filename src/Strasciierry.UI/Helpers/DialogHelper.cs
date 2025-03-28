@@ -5,7 +5,7 @@ using Strasciierry.UI.CustomControls.ContentDialogs;
 namespace Strasciierry.UI.Helpers;
 public static class DialogHelper
 {
-    public static async Task<ContentDialogResult> ShowgAsync(
+    public static async Task<ContentDialogResult> ShowAsync(
         XamlRoot root, 
         string title, 
         string message, 

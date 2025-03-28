@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Drawing.Text;
-using Strasciierry.UI.Contracts.Services;
 using Strasciierry.UI.Helpers;
+using Strasciierry.UI.Services.Settings;
 
 namespace Strasciierry.UI.Services.Fonts;
 public class FontsService : IFontsService

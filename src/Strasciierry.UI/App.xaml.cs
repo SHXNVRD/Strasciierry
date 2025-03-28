@@ -1,14 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
-using Strasciierry.Core.Contracts.Services;
-using Strasciierry.UI.Activation;
-using Strasciierry.UI.Contracts.Services;
-using Strasciierry.UI.Core.Services;
+using Serilog;
+using Strasciierry.Core.Services.Files;
 using Strasciierry.UI.Helpers;
-using Strasciierry.UI.Options;
-using Strasciierry.UI.Services;
+using Strasciierry.UI.Services.Activation;
+using Strasciierry.UI.Services.Activation.Handlers;
+using Strasciierry.UI.Services.FilePicker;
 using Strasciierry.UI.Services.Fonts;
+using Strasciierry.UI.Services.ImageToChars;
+using Strasciierry.UI.Services.Navigation;
+using Strasciierry.UI.Services.Pages;
+using Strasciierry.UI.Services.Settings;
+using Strasciierry.UI.Services.Theme;
+using Strasciierry.UI.Services.UsersSymbols;
 using Strasciierry.UI.ViewModels;
 using Strasciierry.UI.Views;
 
@@ -16,13 +22,7 @@ namespace Strasciierry.UI;
 
 public partial class App : Application
 {
-    // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
-    // https://docs.microsoft.com/dotnet/core/extensions/generic-host
-    // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
-    // https://docs.microsoft.com/dotnet/core/extensions/configuration
-    // https://docs.microsoft.com/dotnet/core/extensions/logging
     public IHost Host { get; }
-
     public static WindowEx MainWindow { get; } = new MainWindow();
     public static FrameworkElement Root { get; private set; }
 
@@ -48,7 +48,7 @@ public partial class App : Application
             CreateDefaultBuilder().
             UseContentRoot(AppContext.BaseDirectory).
             ConfigureServices((context, services) =>
-            {
+            { 
                 services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
                 services.Configure<ImageToCharOptions>(context.Configuration.GetSection(nameof(ImageToCharOptions)));
                 services.Configure<FilePickerOptions>(context.Configuration.GetSection(nameof(FilePickerOptions)));
@@ -80,11 +80,36 @@ public partial class App : Application
             }).
             Build();
 
+        var config = Host.Services.GetRequiredService<IConfiguration>();
+        var appDataFolder = config["ApplicationLogsFolder"] ?? "Strasciierry/Logs";
+        var localAppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console()
+            .WriteTo.File(Path.Combine(localAppDataFolder, appDataFolder, "log-.txt"), rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+            .CreateLogger();
+
         UnhandledException += App_UnhandledException;
+        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
     }
-        
+
+    private async void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        var ex = e.Exception;
+        Log.Fatal("[EXCEPTION] type: {type}, message: {description}, exception: {@exception}, inner exception: {@innerException}",
+            ex.GetType().Name, ex.Message, ex, ex.InnerException);
+
+        await DialogHelper.ShowErrorAsync(App.Root.XamlRoot, $"{ex.Message}\n{ex}");
+    }
+
     private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
+        e.Handled = true;
+        var ex = e.Exception;
+        Log.Fatal("[EXCEPTION] type: {type}, message: {description}, exception: {@exception}, inner exception: {@innerException}",
+                ex.GetType().Name, ex.Message, ex, ex.InnerException);
+
         await DialogHelper.ShowErrorAsync(App.Root.XamlRoot, $"{e.Message}\n{e.Exception}");
     }
 

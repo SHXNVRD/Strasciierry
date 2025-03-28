@@ -16,7 +16,7 @@
             <Style TargetType="ScrollViewer" x:Key="ScrollViewerStyle">
                 <Setter Property="ZoomMode" Value="Enabled"/>
                 <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
-                <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
+                <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

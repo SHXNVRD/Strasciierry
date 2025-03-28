@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Strasciierry.UI.Extensions;
+﻿using Strasciierry.UI.Extensions;
 using Windows.Graphics.Imaging;
 using WinRT;
 

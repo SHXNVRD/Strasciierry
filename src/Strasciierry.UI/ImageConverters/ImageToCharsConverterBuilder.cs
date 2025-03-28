@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Notifications;
-
-namespace Strasciierry.UI.ImageConverters;
+﻿namespace Strasciierry.UI.ImageConverters;
 public class ImageToCharsConverterBuilder : IImageToCharsConverterBuilder
 {
     private readonly ImageToCharsConverterSettings _settings = new();

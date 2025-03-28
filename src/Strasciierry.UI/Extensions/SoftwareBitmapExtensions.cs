@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 using Windows.Graphics.Imaging;
 using WinRT;
 
@@ -23,10 +18,8 @@ public static class SoftwareBitmapExtensions
         if (inputBitmap == null)
             throw new ArgumentNullException(nameof(inputBitmap), "Input SoftwareBitmap cannot be null.");
 
-        // Создаем новый объект SoftwareBitmap с форматом Gray8 (оттенки серого)
         var outputBitmap = new SoftwareBitmap(BitmapPixelFormat.Gray8, inputBitmap.PixelWidth, inputBitmap.PixelHeight);
 
-        // Преобразуем входной и выходной объекты SoftwareBitmap в буферы
         using var inputBuffer = inputBitmap.LockBuffer(BitmapBufferAccessMode.Read);
         using var outputBuffer = outputBitmap.LockBuffer(BitmapBufferAccessMode.Write);
 
@@ -39,7 +32,6 @@ public static class SoftwareBitmapExtensions
             inputReference.As<IMemoryBufferByteAccess>().GetBuffer(out byte* inputDataInBytes, out uint inputCopacity);
             outputReference.As<IMemoryBufferByteAccess>().GetBuffer(out byte* outputDataInBytes, out uint outputCopacity);
 
-            // Проходим по каждому пикселю в изображении и преобразуем его в оттенок серого
             for (var y = 0; y < inputBitmap.PixelHeight; y++)
             {
                 for (var x = 0; x < inputBitmap.PixelWidth; x++)
@@ -51,7 +43,6 @@ public static class SoftwareBitmapExtensions
                     // Вычисляем значение оттенка серого для текущего пикселя
                     var grayValue = (byte)((inputDataInBytes[inputIndex] + inputDataInBytes[inputIndex + 1] + inputDataInBytes[inputIndex + 2]) / 3);
 
-                    // Записываем значение оттенка серого в выходной массив данных
                     outputDataInBytes[outputIndex] = grayValue;
                 }
             }
@@ -67,7 +58,6 @@ public static class SoftwareBitmapExtensions
 
         var resizedBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, newWidth, newHeight, BitmapAlphaMode.Premultiplied);
 
-        // Преобразуем входной и выходной объекты SoftwareBitmap в буферы
         using var sourceBitmapBuffer = sourceBitmap.LockBuffer(BitmapBufferAccessMode.Read);
         using var resizedBitmapBuffer = resizedBitmap.LockBuffer(BitmapBufferAccessMode.Write);
 
@@ -75,13 +65,11 @@ public static class SoftwareBitmapExtensions
         var sourceStride = sourceBitmapBuffer.GetPlaneDescription(0).Stride;
         var resizedStride = resizedBitmapBuffer.GetPlaneDescription(0).Stride;
 
-        // Получаем указатели на начало каждого изображения
         unsafe
         {
             using var sourceReference = sourceBitmapBuffer.CreateReference();
             using var resizedReference = resizedBitmapBuffer.CreateReference();
 
-            // Получаем указатели на пиксели изображений
             sourceReference.As<IMemoryBufferByteAccess>().GetBuffer(out byte* sourceBytes, out uint sourceCopacity);
             resizedReference.As<IMemoryBufferByteAccess>().GetBuffer(out byte* resizedBytes, out uint resizedCopacity);
 
