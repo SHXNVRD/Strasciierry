@@ -1,6 +1,6 @@
 # ![logo](src/Strasciierry.UI/Assets/StoreLogo.scale-400.png) Strasciierry
 
-Программа для Windows, преобразующая растровую графику в ASCII-арт
+Программа для Windows, преобразующая растровую графику в ASCII-арт.
 
 ## Установка
 
@@ -13,7 +13,7 @@
 | x86 | [Скачать](https://github.com/SHXNVRD/Strasciierry/releases/download/v1.0.0.0/strasciierry-1.0.0.0-x86.7z) | [Скачать](https://github.com/SHXNVRD/Strasciierry/releases/download/v1.0.0.0/strasciierry-1.0.0.0-x86.7z) |
 | arm64 | [Скачать](https://github.com/SHXNVRD/Strasciierry/releases/download/v1.0.0.0/strasciierry-1.0.0.0-portable-arm647z.7z) | [Скачать](https://github.com/SHXNVRD/Strasciierry/releases/download/v1.0.0.0/strasciierry-1.0.0.0-arm64.7z) |
 
-При выборе портативной версии запустите исполняемый файл `.exe` программы из распакованной директории.
+При выборе портативной версии запустите исполняемый файл `.exe` программы из распакованного архива.
 
 Для выполнения инсталяции при помощи установщика пройдите следующие шаги:
 
