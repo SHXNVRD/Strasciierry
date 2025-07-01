@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using Microsoft.UI.Xaml.Controls;
-using Strasciierry.UI.ViewModels;
-using Strasciierry.UI.Views;
+using ImageConverterPage = Strasciierry.UI.Pages.ImageConverter.ImageConverterPage;
+using ImageConverterViewModel = Strasciierry.UI.Pages.ImageConverter.ImageConverterViewModel;
+using SettingsPage = Strasciierry.UI.Pages.Settings.SettingsPage;
+using SettingsViewModel = Strasciierry.UI.Pages.Settings.SettingsViewModel;
 
 namespace Strasciierry.UI.Services.Pages;
 

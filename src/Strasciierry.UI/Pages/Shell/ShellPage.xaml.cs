@@ -1,14 +1,12 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Windows.System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Strasciierry.UI.Extensions;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Services.Navigation;
-using Strasciierry.UI.ViewModels;
 
-using Windows.System;
-
-namespace Strasciierry.UI.Views;
+namespace Strasciierry.UI.Pages.Shell;
 
 public sealed partial class ShellPage : Page
 {

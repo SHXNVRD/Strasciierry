@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Strasciierry.UI.Views.ShellPage"
+    x:Class="Strasciierry.UI.Pages.Shell.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -42,7 +42,7 @@
                 TODO: Update item icons by updating FontIcon.Glyph properties.
                 https://docs.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font#icon-list
                 -->
-                <NavigationViewItem x:Uid="Shell_Image_Convert" helpers:NavigationHelper.NavigateTo="Strasciierry.UI.ViewModels.ImageConverterViewModel">
+                <NavigationViewItem x:Uid="Shell_Image_Convert" helpers:NavigationHelper.NavigateTo="Strasciierry.UI.Pages.ImageConverter.ImageConverterViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDAB;"/>
                     </NavigationViewItem.Icon>

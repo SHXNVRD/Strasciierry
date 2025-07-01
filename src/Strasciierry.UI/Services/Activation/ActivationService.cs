@@ -4,7 +4,7 @@ using Strasciierry.UI.Services.Activation.Handlers;
 using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.Theme;
 using Strasciierry.UI.Services.UsersSymbols;
-using Strasciierry.UI.Views;
+using ShellPage = Strasciierry.UI.Pages.Shell.ShellPage;
 
 namespace Strasciierry.UI.Services.Activation;
 

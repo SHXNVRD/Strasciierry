@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Strasciierry.UI.Services.Navigation;
-using Strasciierry.UI.ViewModels;
+using ImageConverterViewModel = Strasciierry.UI.Pages.ImageConverter.ImageConverterViewModel;
 
 namespace Strasciierry.UI.Services.Activation.Handlers;
 

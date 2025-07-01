@@ -3,7 +3,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Services.Pages;
-using Strasciierry.UI.ViewModels;
+using SettingsViewModel = Strasciierry.UI.Pages.Settings.SettingsViewModel;
 
 namespace Strasciierry.UI.Services.Navigation;
 

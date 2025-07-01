@@ -1,9 +1,8 @@
-﻿using Microsoft.UI.Text;
+﻿using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Controls;
-using Strasciierry.UI.ViewModels;
-using Windows.UI.Text;
 
-namespace Strasciierry.UI.Views;
+namespace Strasciierry.UI.Pages.ImageConverter;
 
 public sealed partial class ImageConverterPage : Page
 {

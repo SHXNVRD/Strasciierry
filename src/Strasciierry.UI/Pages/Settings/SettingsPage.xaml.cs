@@ -1,8 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 
-using Strasciierry.UI.ViewModels;
-
-namespace Strasciierry.UI.Views;
+namespace Strasciierry.UI.Pages.Settings;
 
 public sealed partial class SettingsPage : Page
 {

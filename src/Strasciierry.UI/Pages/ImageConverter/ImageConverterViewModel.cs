@@ -1,24 +1,24 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
-using Strasciierry.UI.Extensions;
-using Strasciierry.Core.Extensions;
-using Strasciierry.UI.Helpers;
-using Microsoft.UI.Dispatching;
-using Windows.ApplicationModel.DataTransfer;
+﻿using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 using System.Drawing.Imaging;
-using System.Collections.ObjectModel;
-using Strasciierry.UI.Services.Fonts;
-using Strasciierry.UI.Services.Settings;
-using Strasciierry.UI.Services.ImageToChars;
+using System.Drawing.Text;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Dispatching;
+using Strasciierry.Core.Extensions;
+using Strasciierry.UI.Extensions;
+using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Services.FilePicker;
+using Strasciierry.UI.Services.Fonts;
+using Strasciierry.UI.Services.ImageToChars;
+using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.UsersSymbols;
 
-namespace Strasciierry.UI.ViewModels;
+namespace Strasciierry.UI.Pages.ImageConverter;
 
 public partial class ImageConverterViewModel : ObservableRecipient
 {

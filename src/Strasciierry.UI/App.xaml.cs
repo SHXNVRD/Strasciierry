@@ -15,8 +15,12 @@ using Strasciierry.UI.Services.Pages;
 using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.Theme;
 using Strasciierry.UI.Services.UsersSymbols;
-using Strasciierry.UI.ViewModels;
-using Strasciierry.UI.Views;
+using ImageConverterPage = Strasciierry.UI.Pages.ImageConverter.ImageConverterPage;
+using ImageConverterViewModel = Strasciierry.UI.Pages.ImageConverter.ImageConverterViewModel;
+using SettingsPage = Strasciierry.UI.Pages.Settings.SettingsPage;
+using SettingsViewModel = Strasciierry.UI.Pages.Settings.SettingsViewModel;
+using ShellPage = Strasciierry.UI.Pages.Shell.ShellPage;
+using ShellViewModel = Strasciierry.UI.Pages.Shell.ShellViewModel;
 
 namespace Strasciierry.UI;
 

@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
-
+using Windows.ApplicationModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using Microsoft.UI.Xaml;
 using Strasciierry.UI.Extensions;
 using Strasciierry.UI.Helpers;
@@ -10,9 +9,8 @@ using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.Theme;
 using Strasciierry.UI.Services.UsersSymbols;
-using Windows.ApplicationModel;
 
-namespace Strasciierry.UI.ViewModels;
+namespace Strasciierry.UI.Pages.Settings;
 
 public partial class SettingsViewModel : ObservableRecipient
 {
