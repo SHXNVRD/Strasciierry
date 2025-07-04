@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="Strasciierry.UI.Controls.AsciiCanvas"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Strasciierry.UI.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <ScrollView ZoomMode="Enabled"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+        <Grid BorderBrush="AliceBlue"
+              BorderThickness="1"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+            <ItemsRepeater x:Name="CanvasRepeater"
+                           ItemsSource="{x:Bind Cells, Mode=OneWay}"
+                           VirtualizingStackPanel.VirtualizationMode="Recycling"
+                           SizeChanged="OnCanvasSizeChanged">
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout ItemsStretch="Uniform"
+                                       MaximumRowsOrColumns="{x:Bind Rows, Mode=OneWay}"
+                                       MinItemWidth="10"
+                                       MinItemHeight="10" />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="local:CharCell">
+                        <Border BorderBrush="BlueViolet"
+                                Background="Transparent"
+                                DataContext="{x:Bind}"
+                                BorderThickness="1"
+                                PointerPressed="OnCellPointerPressed"
+                                PointerEntered="OnCellPointerEntered">
+                            <TextBlock Text="{x:Bind Character, Mode=OneWay}"
+                                       FontFamily="Consolas"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+
+            <Canvas x:Name="SelectionLayer"
+                    IsHitTestVisible="False" />
+        </Grid>
+    </ScrollView>
+</UserControl>

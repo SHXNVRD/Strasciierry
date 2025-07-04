@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
-using Strasciierry.UI.CustomControls.ContentDialogs;
+using Strasciierry.UI.Controls;
 
 namespace Strasciierry.UI.Helpers;
 public static class DialogHelper

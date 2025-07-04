@@ -19,22 +19,27 @@ public sealed partial class ImageConverterPage : Page
 
     private void BoldAppBarToggleButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        /*
         ArtTextBlock.FontWeight = 
             ArtTextBlock.FontWeight == FontWeights.Bold
             ? FontWeights.Normal
             : FontWeights.Bold;
+        */
     }
 
     private void ItalicAppBarToggleButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        /*
         ArtTextBlock.FontStyle =
             ArtTextBlock.FontStyle == FontStyle.Italic
             ? FontStyle.Normal
             : FontStyle.Italic;
+        */
     }
 
     private void UnderlineAppBarToggleButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        /*
         ArtTextBlock.TextDecorations = ArtTextBlock.TextDecorations switch
         {
             TextDecorations.None => TextDecorations.Underline,
@@ -42,10 +47,12 @@ public sealed partial class ImageConverterPage : Page
             TextDecorations.Underline | TextDecorations.Strikethrough => TextDecorations.Strikethrough,
             _ => TextDecorations.None
         };
+        */
     }
 
     private void StrikeThroughAppBarToggleButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        /*
         ArtTextBlock.TextDecorations = ArtTextBlock.TextDecorations switch
         {
             TextDecorations.None => TextDecorations.Strikethrough,
@@ -53,5 +60,6 @@ public sealed partial class ImageConverterPage : Page
             TextDecorations.Underline | TextDecorations.Strikethrough => TextDecorations.Underline,
             _ => TextDecorations.None
         };
+        */
     }
 }

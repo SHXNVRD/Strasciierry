@@ -4,6 +4,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+      xmlns:custom="using:Strasciierry.UI.Controls"
       xmlns:converters="using:Strasciierry.UI.Converters"
       mc:Ignorable="d">
 
@@ -136,6 +137,7 @@
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
+                <!--
                 <Border CornerRadius="5"
                         Background="{Binding ElementName=BackgroundColorPicker, Path=Color, Converter={StaticResource WindowsUiColorToBrushConverter}}">
                     <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
@@ -155,6 +157,13 @@
                         </TextBlock>
                     </ScrollViewer>
                 </Border>
+                -->
+
+                <custom:AsciiCanvas Rows="50"
+                                    Columns="50"
+                                    ActiveTool="Pencil"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
 
                 <!-- Панель статуса -->
                 <Grid HorizontalAlignment="Stretch"

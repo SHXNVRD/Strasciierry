@@ -1,7 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 
-
-namespace Strasciierry.UI.CustomControls.ContentDialogs;
+namespace Strasciierry.UI.Controls;
 
 public sealed partial class ErrorContentDialog : ContentDialog
 {
@@ -9,6 +8,6 @@ public sealed partial class ErrorContentDialog : ContentDialog
 
     public ErrorContentDialog()
     {
-        InitializeComponent();
+        this.InitializeComponent();
     }
 }
