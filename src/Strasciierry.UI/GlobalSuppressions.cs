@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~M:Strasciierry.UI.ViewModels.ImageConverterViewModel.SaveArtAsImage(Windows.Storage.StorageFile)")]
 [assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~F:Strasciierry.UI.Controls.AsciiCanvas._lastCellPosition")]
-[assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~F:Strasciierry.UI.Controls.AsciiCanvas.ActiveToolProperty")]
+[assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~F:Strasciierry.UI.Controls.AsciiCanvas.ToolProperty")]
 [assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~F:Strasciierry.UI.Controls.AsciiCanvas.ColumnsProperty")]
 [assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~F:Strasciierry.UI.Controls.AsciiCanvas.DrawingCharProperty")]
 [assembly: SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>", Scope = "member", Target = "~F:Strasciierry.UI.Controls.AsciiCanvas.FontFamilyProperty")]

@@ -1,21 +1,17 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
+﻿using Microsoft.UI.Xaml.Data;
 
 namespace Strasciierry.UI.Converters;
 
-public class EnumToBooleanConverter : IValueConverter
+public abstract class EnumToBooleanConverter<T> : IValueConverter
 {
-    public EnumToBooleanConverter()
-    { }
-
-    public object Convert(object value, Type targetType, object parameter, string language)
+    public virtual object Convert(object value, Type targetType, object parameter, string language)
     {
         if (parameter is string enumString)
         {
-            if (!Enum.IsDefined(typeof(ElementTheme), value))
+            if (!Enum.IsDefined(typeof(T), value))
                 throw new ArgumentException("ExceptionEnumToBooleanConverterValueMustBeAnEnum");
 
-            var enumValue = Enum.Parse(typeof(ElementTheme), enumString);
+            var enumValue = Enum.Parse(typeof(T), enumString);
 
             return enumValue.Equals(value);
         }
@@ -23,10 +19,10 @@ public class EnumToBooleanConverter : IValueConverter
         throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName");
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    public virtual object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         if (parameter is string enumString)
-            return Enum.Parse(typeof(ElementTheme), enumString);
+            return Enum.Parse(typeof(T), enumString);
 
         throw new ArgumentException("ExceptionEnumToBooleanConverterParameterMustBeAnEnumName");
     }

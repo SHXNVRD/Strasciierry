@@ -1,38 +1,31 @@
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
+using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
+using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers.Base;
 using Windows.Foundation;
 using Windows.System;
 
-namespace Strasciierry.UI.Controls;
+namespace Strasciierry.UI.Controls.AsciiCanvas;
 
 public sealed partial class AsciiCanvas : UserControl
 {
-    public enum DrawingTool 
+    public DrawingTool DrawingTool
     {
-        None,
-        Pencil,
-        Eraser,
-        Selection
+        get => (DrawingTool)GetValue(DrawingToolProperty);
+        set => SetValue(DrawingToolProperty, value);
     }
 
-    public DrawingTool ActiveTool
-    {
-        get => (DrawingTool)GetValue(ActiveToolProperty);
-        set => SetValue(ActiveToolProperty, value);
-    }
-
-    public static readonly DependencyProperty ActiveToolProperty =
+    public static readonly DependencyProperty DrawingToolProperty =
         DependencyProperty.Register(
-            nameof(ActiveTool),
+            nameof(DrawingTool),
             typeof(DrawingTool),
             typeof(AsciiCanvas), 
-            new PropertyMetadata(DrawingTool.None));
+            new PropertyMetadata(null));
 
     public char DrawingChar
     {
@@ -92,10 +85,27 @@ public sealed partial class AsciiCanvas : UserControl
     private Rectangle? _selectionRect;
     private Point _selectionStartPoint;
     private Point _lastCellPosition = new(-1, -1);
+    private readonly ReadOnlyDictionary<DrawingTool, ToolHandler> _toolHandlers;
+    private ToolHandler _currentToolHandler;
 
     public AsciiCanvas()
     {
         this.InitializeComponent();
+
+        _toolHandlers = new ReadOnlyDictionary<DrawingTool, ToolHandler>(
+            new Dictionary<DrawingTool, ToolHandler>
+            {
+                [DrawingTool.Pencil] = new PencilToolHandler(this),
+                [DrawingTool.Eraser] = new EraserToolHandler(),
+                [DrawingTool.Selection] = new SelectionToolHandler(this),
+                [DrawingTool.Pipette] = new PipetteToolHandler(this)
+            });
+
+        RegisterPropertyChangedCallback(DrawingToolProperty, (d, dp) =>
+        {
+            var canvas = (AsciiCanvas)d;
+            canvas._currentToolHandler = canvas._toolHandlers[canvas.DrawingTool];
+        });
     }
 
     private void InitializeCanvas()
@@ -176,20 +186,7 @@ public sealed partial class AsciiCanvas : UserControl
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
 
-        if (ActiveTool == DrawingTool.Selection)
-        {
-            if ((e.KeyModifiers & VirtualKeyModifiers.Shift) != 0)
-                UpdateSelection(cell.Column, cell.Row);
-            else
-            {
-                ClearSelection();
-                UpdateSelection(cell.Column, cell.Row);
-            }
-        }
-        else
-        {
-            ProcessCellAction(cell);
-        }
+        _currentToolHandler.HandlePointerPressed(cell, e);
     }
 
     private void OnCellPointerEntered(object sender, PointerRoutedEventArgs e)
@@ -206,30 +203,10 @@ public sealed partial class AsciiCanvas : UserControl
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
 
-        if (ActiveTool == DrawingTool.Selection)
-        {
-            UpdateSelection(cell.Column, cell.Row);
-        }
-        else if (ActiveTool != DrawingTool.Selection)
-        {
-            ProcessCellAction(cell);
-        }
+        _currentToolHandler.HandlePointerEntered(cell, e);
     }
 
-    private void ProcessCellAction(CharCell cell)
-    {
-        switch (ActiveTool)
-        {
-            case DrawingTool.Pencil:
-                cell.Character = DrawingChar;
-                break;
-            case DrawingTool.Eraser:
-                cell.Character = ' ';
-                break;
-        }
-    }
-
-    private void UpdateSelection(int col, int row)
+    public void UpdateSelection(int col, int row)
     {
         if (_selectionRect == null)
         {
@@ -269,7 +246,7 @@ public sealed partial class AsciiCanvas : UserControl
         _selectionRect.Height = height;
     }
 
-    private void ClearSelection()
+    public void ClearSelection()
     {
         SelectionLayer.Children.Clear();
         _selectionRect = null;
@@ -289,20 +266,5 @@ public sealed partial class AsciiCanvas : UserControl
         }
 
         return null;
-    }
-}
-
-public partial class CharCell : ObservableObject
-{
-    public int Column { get; }
-    public int Row { get; }
-
-    [ObservableProperty]
-    public partial char Character { get; set; } = ' ';
-
-    public CharCell(int column, int row)
-    {
-        Column = column;
-        Row = row;
     }
 }

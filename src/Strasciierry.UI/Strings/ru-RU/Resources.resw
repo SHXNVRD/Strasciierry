@@ -169,10 +169,10 @@
     <value>Путь:</value>
   </data>
   <data name="CommandBar_Add_Button.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Открыть файл</value>
+    <value>Открыть файл (Ctrl+O)</value>
   </data>
   <data name="CommandBar_Save_Button.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Сохранить файл</value>
+    <value>Сохранить файл (Ctrl+S)</value>
   </data>
   <data name="Converting_Settings_Inversion_ToolTip.Content" xml:space="preserve">
     <value>Включите для корректного отображения на светлом фоне</value>
@@ -206,5 +206,17 @@
   </data>
   <data name="Settings_Use_Monospaced_Fonts_Only.Description" xml:space="preserve">
     <value>Для корректного отображения артов рекомендуется использовать моноширинные шрифты</value>
+  </data>
+  <data name="Pencil_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Карандаш (B)</value>
+  </data>
+  <data name="Eraser_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ластик (E)</value>
+  </data>
+  <data name="Pipette_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Пипетка (I)</value>
+  </data>
+  <data name="Selection_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Выделение (W)</value>
   </data>
 </root>

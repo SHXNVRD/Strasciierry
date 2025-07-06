@@ -31,10 +31,10 @@
     <None Remove="Assets\StoreLogo.scale-150.png" />
     <None Remove="Assets\StoreLogo.scale-200.png" />
     <None Remove="Assets\StoreLogo.scale-400.png" />
-    <None Remove="Controls\AsciiCanvas.xaml" />
     <None Remove="Controls\ContentDialogs\ErrorContentDialog.xaml" />
     <None Remove="Controls\ErrorContentDialog.xaml" />
     <None Remove="Styles\Buttons.xaml" />
+    <None Remove="Styles\RadioButtons.xaml" />
     <None Remove="Styles\SettingsCards.xaml" />
   </ItemGroup>
 
@@ -62,6 +62,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Styles\RadioButtons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\AsciiCanvas.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

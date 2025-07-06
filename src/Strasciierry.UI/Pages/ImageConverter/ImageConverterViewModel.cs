@@ -17,6 +17,7 @@ using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.ImageToChars;
 using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.UsersSymbols;
+using Strasciierry.UI.Controls.AsciiCanvas;
 
 namespace Strasciierry.UI.Pages.ImageConverter;
 
@@ -100,6 +101,9 @@ public partial class ImageConverterViewModel : ObservableRecipient
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ImagePath))]
     public partial StorageFile? ImageFile { get; set; }
+
+    [ObservableProperty]
+    public partial DrawingTool DrawingTool { get; set; }
 
     public string? ImagePath
     {

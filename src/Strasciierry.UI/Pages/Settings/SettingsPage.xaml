@@ -11,7 +11,7 @@
     xmlns:xaml="using:Microsoft.UI.Xaml"
     mc:Ignorable="d">
     <Page.Resources>
-        <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <converters:ThemeToBooleanConverter x:Key="ThemeToBooleanConverter" />
     </Page.Resources>
 
     <ScrollView HorizontalScrollMode="Disabled"
@@ -29,7 +29,7 @@
                             <RadioButton
                                 x:Uid="Settings_Theme_Light"
                                 Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
+                                         IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource ThemeToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
                                 <RadioButton.CommandParameter>
                                     <xaml:ElementTheme>Light</xaml:ElementTheme>
                                 </RadioButton.CommandParameter>
@@ -37,7 +37,7 @@
                             <RadioButton
                                 x:Uid="Settings_Theme_Dark"
                                 Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
+                                         IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource ThemeToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
                                 <RadioButton.CommandParameter>
                                     <xaml:ElementTheme>Dark</xaml:ElementTheme>
                                 </RadioButton.CommandParameter>
@@ -45,7 +45,7 @@
                             <RadioButton
                                 x:Uid="Settings_Theme_Default"
                                 Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
+                                         IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource ThemeToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
                                 <RadioButton.CommandParameter>
                                     <xaml:ElementTheme>Default</xaml:ElementTheme>
                                 </RadioButton.CommandParameter>
