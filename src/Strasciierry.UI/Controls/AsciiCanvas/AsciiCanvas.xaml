@@ -12,29 +12,36 @@
                 VerticalAlignment="Stretch">
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center">
+
             <ItemsRepeater x:Name="CanvasRepeater"
                            ItemsSource="{x:Bind Cells, Mode=OneWay}"
                            VirtualizingStackPanel.VirtualizationMode="Recycling"
-                           SizeChanged="OnCanvasSizeChanged">
+                           CacheMode="BitmapCache">
+                
                 <ItemsRepeater.Layout>
-                    <UniformGridLayout ItemsStretch="Uniform"
+                    <UniformGridLayout ItemsStretch="None"
                                        MaximumRowsOrColumns="{x:Bind Rows, Mode=OneWay}"
-                                       MinItemWidth="10"
-                                       MinItemHeight="10" />
+                                       MinItemHeight="17"
+                                       MinItemWidth="8"
+                                       MinColumnSpacing="0"
+                                       MinRowSpacing="0" />
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="local:CharCell">
-                        <Border BorderBrush="BlueViolet"
-                                Background="Transparent"
-                                DataContext="{x:Bind}"
-                                BorderThickness="1"
-                                PointerPressed="OnCellPointerPressed"
-                                PointerEntered="OnCellPointerEntered">
+                        <ContentControl Style="{StaticResource CellContentStyle}"
+                                        Width="8"
+                                        Height="17"
+                                        DataContext="{x:Bind}"
+                                        PointerPressed="OnCellPointerPressed"
+                                        PointerEntered="OnCellPointerEntered"
+                                        PointerExited="OnCellPointerExited">
+
                             <TextBlock Text="{x:Bind Character, Mode=OneWay}"
                                        FontFamily="Consolas"
+                                       FontSize="14"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
-                        </Border>
+                        </ContentControl>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>

@@ -19,5 +19,5 @@
 
     <Style x:Key="StatusInfoStyle" TargetType="TextBlock">
     </Style>
-
+    
 </ResourceDictionary>

@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml.Shapes;
 using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
 using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers.Base;
 using Windows.Foundation;
-using Windows.System;
 
 namespace Strasciierry.UI.Controls.AsciiCanvas;
 
@@ -30,7 +29,13 @@ public sealed partial class AsciiCanvas : UserControl
     public char DrawingChar
     {
         get => (char)GetValue(DrawingCharProperty);
-        set => SetValue(DrawingCharProperty, value);
+        set
+        {
+            if (DrawingChar != value)
+                return;
+            
+            SetValue(DrawingCharProperty, value);
+        }
     }
 
     public static readonly DependencyProperty DrawingCharProperty =
@@ -96,7 +101,7 @@ public sealed partial class AsciiCanvas : UserControl
             new Dictionary<DrawingTool, ToolHandler>
             {
                 [DrawingTool.Pencil] = new PencilToolHandler(this),
-                [DrawingTool.Eraser] = new EraserToolHandler(),
+                [DrawingTool.Eraser] = new EraserToolHandler(this),
                 [DrawingTool.Selection] = new SelectionToolHandler(this),
                 [DrawingTool.Pipette] = new PipetteToolHandler(this)
             });
@@ -129,50 +134,6 @@ public sealed partial class AsciiCanvas : UserControl
         (d as AsciiCanvas)?.InitializeCanvas();
     }
 
-    private void OnCanvasSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        //if (_isUpdatingLayout)
-        //    return;
-
-        //// ѕровер€ем существенное изменение размера
-        //if (Math.Abs(e.NewSize.Width - _lastProcessedSize.Width) < 1 &&
-        //    Math.Abs(e.NewSize.Height - _lastProcessedSize.Height) < 1)
-        //{
-        //    return;
-        //}
-
-        //if (CanvasRepeater?.Layout is UniformGridLayout layout)
-        //{
-        //    double totalWidth = CanvasRepeater.ActualWidth;
-        //    double totalHeight = CanvasRepeater.ActualHeight;
-
-        //    // »спользуем защитные проверки
-        //    if (Columns < 1 || Rows < 1 || totalWidth <= 0 || totalHeight <= 0)
-        //    {
-        //        _isUpdatingLayout = false;
-        //        return;
-        //    }
-
-        //    double cellWidth = totalWidth / Columns;
-        //    double cellHeight = totalHeight / Rows;
-
-        //    // ќграничение минимального размера
-        //    cellWidth = Math.Max(1, cellWidth);
-        //    cellHeight = Math.Max(1, cellHeight);
-
-        //    // ѕримен€ем только при существенном изменении
-        //    if (Math.Abs(layout.MinItemWidth - cellWidth) > 0.1 ||
-        //        Math.Abs(layout.MinItemHeight - cellHeight) > 0.1)
-        //    {
-        //        layout.MinItemWidth = cellWidth;
-        //        layout.MinItemHeight = cellHeight;
-        //    }
-
-        //    _lastProcessedSize = e.NewSize;
-        //    _isUpdatingLayout = true;
-        //}
-    }
-
     private void OnFontFamilyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
 
@@ -180,8 +141,12 @@ public sealed partial class AsciiCanvas : UserControl
 
     private void OnCellPointerPressed(object sender, PointerRoutedEventArgs e)
     {
-        var border = sender as Border;
-        if (border?.DataContext is not CharCell cell)
+        var pointProps = e.GetCurrentPoint(this).Properties;
+        if (!pointProps.IsLeftButtonPressed)
+            return;
+
+        var control = sender as ContentControl;
+        if (control?.DataContext is not CharCell cell)
             return;
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
@@ -191,19 +156,31 @@ public sealed partial class AsciiCanvas : UserControl
 
     private void OnCellPointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (!e.Pointer.IsInContact)
-            return;
+        var control = sender as ContentControl;
 
-        var border = sender as Border;
-        if (border?.DataContext is not CharCell cell)
-            return;
+        VisualStateManager.GoToState(control, "PointerOver", true);
 
-        if (_lastCellPosition.X == cell.Column && _lastCellPosition.Y == cell.Row)
+        var pointerProps = e.GetCurrentPoint(this).Properties;
+
+        if (!e.Pointer.IsInContact
+            || !pointerProps.IsLeftButtonPressed
+            || control?.DataContext is not CharCell cell
+            || _lastCellPosition.X == cell.Column && _lastCellPosition.Y == cell.Row)
+        {
             return;
+        }
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
 
         _currentToolHandler.HandlePointerEntered(cell, e);
+    }
+
+    private void OnCellPointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        if (sender is ContentControl control)
+        {
+            VisualStateManager.GoToState(control, "Normal", true);
+        }
     }
 
     public void UpdateSelection(int col, int row)

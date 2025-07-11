@@ -226,8 +226,8 @@
                 <ascii:AsciiCanvas Rows="50"
                                    Columns="50"
                                    DrawingTool="{x:Bind ViewModel.DrawingTool, Mode=TwoWay}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch" />
 
                 <!-- Панель статуса -->
                 <Grid HorizontalAlignment="Stretch"
