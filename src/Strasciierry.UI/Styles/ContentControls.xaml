@@ -25,7 +25,7 @@
                             <ContentPresenter />
 
                             <Border x:Name="HoverBorder"
-                                    Background="{ThemeResource ControlFillColorSecondary}"
+                                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
                                     Opacity="0" />
                         </Grid>
                     </Border>

@@ -13,10 +13,49 @@
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center">
 
+            <Grid.Resources>
+                <MenuFlyout x:Name="CanvasActionMenu">
+                    <MenuFlyoutItem Text="Копировать"
+                                    Click="OnCopyClick">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE8C8;" />
+                        </MenuFlyoutItem.Icon>
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control"
+                                                 Key="C"/>
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Вставить"
+                                    Click="OnPasteClick">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE77F;" />
+                        </MenuFlyoutItem.Icon>
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control"
+                                                 Key="V" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Вырезать"
+                                    Click="OnCutClick">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE8C6;" />
+                        </MenuFlyoutItem.Icon>
+                        <MenuFlyoutItem.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control"
+                                                 Key="X" />
+                        </MenuFlyoutItem.KeyboardAccelerators>
+                    </MenuFlyoutItem>
+
+                </MenuFlyout>
+            </Grid.Resources>
+
             <ItemsRepeater x:Name="CanvasRepeater"
                            ItemsSource="{x:Bind Cells, Mode=OneWay}"
                            VirtualizingStackPanel.VirtualizationMode="Recycling"
-                           CacheMode="BitmapCache">
+                           CacheMode="BitmapCache"
+                           FlyoutBase.AttachedFlyout="{x:Bind CanvasActionMenu}"
+                           FlowDirection="LeftToRight"
+                           RightTapped="CanvasRepeater_RightTapped">
                 
                 <ItemsRepeater.Layout>
                     <UniformGridLayout ItemsStretch="None"
