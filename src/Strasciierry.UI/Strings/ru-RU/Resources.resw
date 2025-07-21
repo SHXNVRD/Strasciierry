@@ -168,12 +168,6 @@
   <data name="Converting_StatusBar_FileName.Text" xml:space="preserve">
     <value>Путь:</value>
   </data>
-  <data name="CommandBar_Add_Button.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Открыть файл (Ctrl+O)</value>
-  </data>
-  <data name="CommandBar_Save_Button.ToolTipService.ToolTip" xml:space="preserve">
-    <value>Сохранить файл (Ctrl+S)</value>
-  </data>
   <data name="Converting_Settings_Inversion_ToolTip.Content" xml:space="preserve">
     <value>Включите для корректного отображения на светлом фоне</value>
   </data>
@@ -218,5 +212,20 @@
   </data>
   <data name="Selection_Tool.ToolTipService.ToolTip" xml:space="preserve">
     <value>Выделение (W)</value>
+  </data>
+  <data name="Menu_File.Title" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Menu_File_Open.Text" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="Menu_File_New.Text" xml:space="preserve">
+    <value>Новый</value>
+  </data>
+  <data name="Menu_File_Save.Text" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Menu_File_Save_As.Text" xml:space="preserve">
+    <value>Сохранить как</value>
   </data>
 </root>

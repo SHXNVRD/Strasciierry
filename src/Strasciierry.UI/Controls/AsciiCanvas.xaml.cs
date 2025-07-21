@@ -6,15 +6,15 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
-using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
-using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers.Base;
+using Strasciierry.UI.Controls.ToolHandlers;
+using Strasciierry.UI.Controls.ToolHandlers.Base;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace Strasciierry.UI.Controls.AsciiCanvas;
+namespace Strasciierry.UI.Controls;
 
-public sealed partial class AsciiCanvas : UserControl
+public sealed partial class AsciiCanvas : UserControlBase
 {
     public DrawingTool DrawingTool
     {
@@ -26,7 +26,7 @@ public sealed partial class AsciiCanvas : UserControl
         DependencyProperty.Register(
             nameof(DrawingTool),
             typeof(DrawingTool),
-            typeof(AsciiCanvas), 
+            typeof(AsciiCanvas),
             new PropertyMetadata(null));
 
     public char DrawingChar
@@ -36,7 +36,7 @@ public sealed partial class AsciiCanvas : UserControl
         {
             if (DrawingChar == value)
                 return;
-            
+
             SetValue(DrawingCharProperty, value);
         }
     }
@@ -45,21 +45,8 @@ public sealed partial class AsciiCanvas : UserControl
         DependencyProperty.Register(
             nameof(DrawingChar),
             typeof(char),
-            typeof(AsciiCanvas), 
+            typeof(AsciiCanvas),
             new PropertyMetadata('*'));
-
-    public new FontFamily FontFamily
-    {
-        get => (FontFamily)GetValue(FontFamilyProperty);
-        set => SetValue(FontFamilyProperty, value);
-    }
-
-    public static readonly new DependencyProperty FontFamilyProperty =
-        DependencyProperty.Register(
-        nameof(FontFamily),
-        typeof(FontFamily),
-        typeof(AsciiCanvas),
-        new PropertyMetadata(new FontFamily("Consolas")));
 
     public int Rows
     {
@@ -140,11 +127,6 @@ public sealed partial class AsciiCanvas : UserControl
         (d as AsciiCanvas)?.InitializeCanvas();
     }
 
-    private void OnFontFamilyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-
-    }
-
     private void OnCellPointerPressed(object sender, PointerRoutedEventArgs e)
     {
         var pointProps = e.GetCurrentPoint(this).Properties;
@@ -187,66 +169,6 @@ public sealed partial class AsciiCanvas : UserControl
         {
             VisualStateManager.GoToState(control, "Normal", true);
         }
-    }
-
-    public void UpdateSelection(int column, int row)
-    {
-        if (!IsValidPoint(column, row))
-            throw new ArgumentOutOfRangeException($"Columns and rows must be greater than or equal to zero and less than total columns: {Columns} and rows: {Rows}");
-
-        if (_selection is null)
-        {
-            _selection = new Selection
-            {
-                Area = new Rectangle
-                {
-                    Fill = new SolidColorBrush
-                    { 
-                        Color = Color.FromArgb(50, 0, 0, 0),
-                        Opacity = 0.3
-                    },
-                    IsHitTestVisible = false
-                },
-                InitialColumn = column,
-                InitialRow = row,
-                StartRow = column,
-                StartColumn = row
-            };
-
-            SelectionLayer.Children.Add(_selection.Area);
-        }
-
-        int minColumn = Math.Min(_selection.InitialColumn, column);
-        int maxColumn = Math.Max(_selection.InitialColumn, column);
-        int minRow = Math.Min(_selection.InitialRow, row);
-        int maxRow = Math.Max(_selection.InitialRow, row);
-
-        double left = minColumn * CellWidth;
-        double top = minRow * CellHeight;
-        double width = (maxColumn - minColumn + 1) * CellWidth;
-        double height = (maxRow - minRow + 1) * CellHeight;
-
-        _selection.StartColumn = minColumn;
-        _selection.StartRow = minRow;
-
-        Canvas.SetLeft(_selection.Area, left);
-        Canvas.SetTop(_selection.Area, top);
-        _selection.Area.Width = width;
-        _selection.Area.Height = height;
-    }
-
-    public void ClearSelection()
-    {
-        SelectionLayer.Children.Clear();
-        _selection = null;
-    }
-
-    private CharCell GetCell(int column, int row)
-    {
-        if (!IsValidPoint(column, row))
-            throw new ArgumentOutOfRangeException($"Columns and rows must be greater than or equal to zero and less than total columns: {Columns} and rows: {Rows}");
-
-        return Cells[row * Columns + column];
     }
 
     private void CanvasRepeater_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -299,7 +221,7 @@ public sealed partial class AsciiCanvas : UserControl
         var selectedColumnsCount = (int)(_selection.Area.Width / CellWidth);
         var selectedRowsCount = (int)(_selection.Area.Height / CellHeight);
 
-        PasteCharacters(_selection.StartColumn, _selection.StartRow, selectedColumnsCount, selectedRowsCount, pastingText);       
+        PasteCharacters(_selection.StartColumn, _selection.StartRow, selectedColumnsCount, selectedRowsCount, pastingText);
     }
 
     private void OnCutClick(object sender, RoutedEventArgs e)
@@ -320,8 +242,72 @@ public sealed partial class AsciiCanvas : UserControl
         Clipboard.SetContent(package);
     }
 
+    public void UpdateSelection(int column, int row)
+    {
+        ValidateCell(column, row);
+
+        if (_selection is null)
+        {
+            _selection = new Selection
+            {
+                Area = new Rectangle
+                {
+                    Fill = new SolidColorBrush
+                    {
+                        Color = Color.FromArgb(50, 0, 0, 0),
+                        Opacity = 0.3
+                    },
+                    IsHitTestVisible = false
+                },
+                InitialColumn = column,
+                InitialRow = row,
+                StartRow = column,
+                StartColumn = row
+            };
+
+            SelectionLayer.Children.Add(_selection.Area);
+        }
+
+        int minColumn = Math.Min(_selection.InitialColumn, column);
+        int maxColumn = Math.Max(_selection.InitialColumn, column);
+        int minRow = Math.Min(_selection.InitialRow, row);
+        int maxRow = Math.Max(_selection.InitialRow, row);
+
+        double left = minColumn * CellWidth;
+        double top = minRow * CellHeight;
+        double width = (maxColumn - minColumn + 1) * CellWidth;
+        double height = (maxRow - minRow + 1) * CellHeight;
+
+        _selection.StartColumn = minColumn;
+        _selection.StartRow = minRow;
+
+        Canvas.SetLeft(_selection.Area, left);
+        Canvas.SetTop(_selection.Area, top);
+        _selection.Area.Width = width;
+        _selection.Area.Height = height;
+    }
+
+    public void ClearSelection()
+    {
+        SelectionLayer.Children.Clear();
+        _selection = null;
+    }
+
+    private CharCell GetCell(int column, int row)
+    {
+        ValidateCell(column, row);
+
+        return Cells[row * Columns + column];
+    }
+
     private void PasteCharacters(int startColumn, int startRow, int columnsCount, int rowsCount, string text)
     {
+        ValidateCell(startColumn, startRow);
+
+        if (columnsCount < 0)
+            throw new ArgumentException($"Columns count must be greater than zero", nameof(columnsCount));
+        if (rowsCount < 0)
+            throw new ArgumentException($"Rows count must be greater than zero", nameof(rowsCount));
         if (text is null)
             return;
 
@@ -350,11 +336,7 @@ public sealed partial class AsciiCanvas : UserControl
 
     private string GetCharacters(int startColumn, int startRow, int endColumn, int endRow)
     {
-        if (!(IsValidPoint(startColumn, startRow)
-            && IsValidPoint(endColumn, endRow)))
-        {
-            throw new ArgumentOutOfRangeException($"Columns and rows must be greater than or equal to zero and less than total columns: {Columns} and rows: {Rows}");
-        }
+        ValidateCellRange(startColumn, startRow, endColumn, endRow);
 
         var sb = new StringBuilder();
 
@@ -373,11 +355,7 @@ public sealed partial class AsciiCanvas : UserControl
 
     private string CutCharacters(int startColumn, int startRow, int endColumn, int endRow)
     {
-        if (!(IsValidPoint(startColumn, startRow)
-            && IsValidPoint(endColumn, endRow)))
-        {
-            throw new ArgumentOutOfRangeException($"Columns and rows must be greater than or equal to zero and less than total columns: {Columns} and rows: {Rows}");
-        }
+        ValidateCellRange(startColumn, startRow, endColumn, endRow);
 
         var sb = new StringBuilder();
 
@@ -395,8 +373,22 @@ public sealed partial class AsciiCanvas : UserControl
         return sb.ToString();
     }
 
-    private bool IsValidPoint(int column, int row)
-        => column >= 0 && column < Columns
-           && row >= 0 && row < Rows;
+    private void ValidateCell(int column, int row)
+    {
+        if (column < 0 || column > Columns)
+            throw new ArgumentOutOfRangeException(nameof(column), column, $"Column must be in range [0, {Columns - 1}]");
+        if (row < 0 || row > Columns)
+            throw new ArgumentOutOfRangeException(nameof(row), row, $"Row must be in range [0, {Rows - 1}]");
+    }
 
+    private void ValidateCellRange(int startColumn, int startRow, int endColumn, int endRow)
+    {
+        ValidateCell(startColumn, startRow);
+        ValidateCell(endColumn, endRow);
+
+        if (startColumn > endColumn)
+            throw new ArgumentException($"Start column ({startColumn}) cannot be greater than end column ({endColumn})", nameof(startColumn));
+        if (startRow > endRow)
+            throw new ArgumentException($"Start row ({startRow}) cannot be greater than end row ({endRow})", nameof(startRow));
+    }
 }

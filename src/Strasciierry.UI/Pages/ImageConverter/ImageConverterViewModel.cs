@@ -17,7 +17,9 @@ using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.ImageToChars;
 using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.UsersSymbols;
-using Strasciierry.UI.Controls.AsciiCanvas;
+using Strasciierry.UI.Controls;
+using CommunityToolkit.WinUI.Controls;
+
 
 namespace Strasciierry.UI.Pages.ImageConverter;
 
@@ -135,6 +137,30 @@ public partial class ImageConverterViewModel : ObservableRecipient
         var package = new DataPackage();
         package.SetText(SymbolicArt);
         Clipboard.SetContent(package);
+    }
+
+    [RelayCommand]
+    private async Task OnOpenFileAsync()
+    {
+
+    }
+
+    [RelayCommand]
+    private async Task OnCreateFileAsync()
+    {
+        
+    }
+
+    [RelayCommand]
+    private async Task OnSaveFileAsync()
+    {
+
+    }
+
+    [RelayCommand]
+    private async Task OnSaveFileAsAsync()
+    {
+
     }
 
     [RelayCommand]

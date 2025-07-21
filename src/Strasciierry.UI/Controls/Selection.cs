@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Shapes;
 
-namespace Strasciierry.UI.Controls.AsciiCanvas;
+namespace Strasciierry.UI.Controls;
 
 class Selection
 {

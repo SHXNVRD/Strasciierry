@@ -56,21 +56,6 @@ public class NavigationService : INavigationService
             _frame.Navigated -= OnNavigated;
     }
 
-    public bool GoBack()
-    {
-        if (!CanGoBack)
-            return false;
-
-        var vmBeforeNavigation = _frame.GetPageViewModel();
-        _frame.GoBack();
-
-        if (vmBeforeNavigation is INavigationAware navigationAware)
-            navigationAware.OnNavigatedFrom();
-
-        return true;
-
-    }
-
     public bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false)
     {
         var pageType = _pageService.GetPageType(pageKey);

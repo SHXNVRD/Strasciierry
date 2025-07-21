@@ -17,7 +17,7 @@
                 Value="Transparent" />
         <Setter Property="MinWidth"
                 Value="34" />
-        <Setter Property="MaxWidth"
+        <Setter Property="MinHeight"
                 Value="34" />
     </Style>
 </ResourceDictionary>

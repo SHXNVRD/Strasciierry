@@ -38,7 +38,7 @@ public partial class App : Application
     public static T GetService<T>()
         where T : class
     {
-        if ((App.Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
+        if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
             throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
 
         return service;
@@ -64,7 +64,6 @@ public partial class App : Application
                 services.AddSingleton<IFilePickerService, FilePickerService>();
                 services.AddSingleton<IUsersSymbolsService, UsersSymbolsService>();
                 services.AddSingleton<IFontsService, FontsService>();
-                services.AddTransient<INavigationViewService, NavigationViewService>();
                 services.AddTransient<IImageToCharsService, ImageToCharsService>();
 
                 services.AddSingleton<IActivationService, ActivationService>();
@@ -121,7 +120,7 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
-        await App.GetService<IActivationService>().ActivateAsync(args);
+        await GetService<IActivationService>().ActivateAsync(args);
         Root = (FrameworkElement)MainWindow.Content;
     }
 }

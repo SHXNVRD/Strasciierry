@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Input;
-using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers.Base;
+using Strasciierry.UI.Controls.ToolHandlers.Base;
 
-namespace Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
+namespace Strasciierry.UI.Controls.ToolHandlers;
 
 class PipetteToolHandler(AsciiCanvas canvas) : ToolHandler
 {

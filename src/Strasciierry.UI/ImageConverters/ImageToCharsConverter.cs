@@ -11,7 +11,8 @@ public class ImageToCharsConverter
         get => _charTable;
         private set
         {
-            _charTableNegative = value.Reverse().ToArray();
+            value.CopyTo(_charTableNegative, 0);
+            _charTableNegative.Reverse();
             _charTable = value;
         }
     }

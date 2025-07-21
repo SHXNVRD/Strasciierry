@@ -1,9 +1,10 @@
-﻿using Microsoft.UI.Xaml.Input;
-using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers.Base;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Strasciierry.UI.Controls.ToolHandlers.Base;
 
-namespace Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
+namespace Strasciierry.UI.Controls.ToolHandlers;
 
-public class PencilToolHandler(AsciiCanvas canvas) : ToolHandler
+public class EraserToolHandler(AsciiCanvas canvas) : ToolHandler
 {
     public override void HandlePointerPressed(CharCell cell, PointerRoutedEventArgs e)
     {
@@ -12,7 +13,7 @@ public class PencilToolHandler(AsciiCanvas canvas) : ToolHandler
         if (!pointProps.IsLeftButtonPressed)
             return;
         
-        cell.Character = canvas.DrawingChar;
+        cell.Character = ' ';
     }
 
     public override void HandlePointerEntered(CharCell cell, PointerRoutedEventArgs e)
@@ -22,6 +23,6 @@ public class PencilToolHandler(AsciiCanvas canvas) : ToolHandler
         if (!e.Pointer.IsInContact || !pointProps.IsLeftButtonPressed)
             return;
 
-        cell.Character = canvas.DrawingChar;
+        cell.Character = ' ';
     }
 }

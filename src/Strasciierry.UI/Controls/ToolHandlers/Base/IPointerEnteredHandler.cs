@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Input;
 
-namespace Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers.Base;
+namespace Strasciierry.UI.Controls.ToolHandlers.Base;
 
 public interface IPointerEnteredHandler
 {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml.Input;
-using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers.Base;
+using Strasciierry.UI.Controls.ToolHandlers.Base;
 using Windows.System;
 
-namespace Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
+namespace Strasciierry.UI.Controls.ToolHandlers;
 
 public class SelectionToolHandler(AsciiCanvas canvas) : ToolHandler
 {

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Strasciierry.UI.Controls.AsciiCanvas;
+namespace Strasciierry.UI.Controls;
 
 public partial class CharCell : ObservableObject
 {
