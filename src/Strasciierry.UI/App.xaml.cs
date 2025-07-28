@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Strasciierry.Core.Services.Files;
+using Strasciierry.UI.Controls;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Services.Activation;
 using Strasciierry.UI.Services.Activation.Handlers;

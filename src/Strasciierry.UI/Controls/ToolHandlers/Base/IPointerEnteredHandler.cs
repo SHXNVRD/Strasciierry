@@ -4,6 +4,6 @@ namespace Strasciierry.UI.Controls.ToolHandlers.Base;
 
 public interface IPointerEnteredHandler
 {
-    void HandlePointerEntered(CharCell cell, PointerRoutedEventArgs e);
-    void HandlePointerPressed(CharCell cell, PointerRoutedEventArgs e);
+    void HandlePointerEntered(AsciiCanvasCell cell, PointerRoutedEventArgs e);
+    void HandlePointerPressed(AsciiCanvasCell cell, PointerRoutedEventArgs e);
 }

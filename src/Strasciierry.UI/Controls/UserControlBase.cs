@@ -5,7 +5,7 @@ namespace Strasciierry.UI.Controls;
 
 public class UserControlBase : UserControl
 {
-    public void ChangeCursor(InputCursor cursor)
+    public void SetCursor(InputCursor cursor)
     {
         ProtectedCursor = cursor;
     }

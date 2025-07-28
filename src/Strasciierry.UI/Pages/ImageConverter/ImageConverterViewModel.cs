@@ -107,6 +107,9 @@ public partial class ImageConverterViewModel : ObservableRecipient
     [ObservableProperty]
     public partial DrawingTool DrawingTool { get; set; }
 
+    [ObservableProperty]
+    public partial CharacterPaletteItem SelectedItem { get; set; }
+
     public string? ImagePath
     {
         get
@@ -146,19 +149,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private async Task OnCreateFileAsync()
-    {
-        
-    }
-
-    [RelayCommand]
     private async Task OnSaveFileAsync()
-    {
-
-    }
-
-    [RelayCommand]
-    private async Task OnSaveFileAsAsync()
     {
 
     }

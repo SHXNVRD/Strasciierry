@@ -219,13 +219,7 @@
   <data name="Menu_File_Open.Text" xml:space="preserve">
     <value>Открыть</value>
   </data>
-  <data name="Menu_File_New.Text" xml:space="preserve">
-    <value>Новый</value>
-  </data>
   <data name="Menu_File_Save.Text" xml:space="preserve">
     <value>Сохранить</value>
-  </data>
-  <data name="Menu_File_Save_As.Text" xml:space="preserve">
-    <value>Сохранить как</value>
   </data>
 </root>

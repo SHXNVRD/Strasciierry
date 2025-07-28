@@ -4,5 +4,5 @@ namespace Strasciierry.UI.Controls.ToolHandlers.Base;
 
 public interface IPointerPressedHandler
 {
-    void HandlePointerPressed(CharCell cell, PointerRoutedEventArgs e);
+    void HandlePointerPressed(AsciiCanvasCell cell, PointerRoutedEventArgs e);
 }

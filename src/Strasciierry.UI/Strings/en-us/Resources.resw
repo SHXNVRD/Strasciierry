@@ -123,9 +123,6 @@
   <data name="AppDescription" xml:space="preserve">
     <value>Strasciierry</value>
   </data>
-  <data name="Shell_Image_Convert.Content" xml:space="preserve">
-    <value>Image to art</value>
-  </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
   </data>
@@ -170,5 +167,8 @@
   </data>
   <data name="Converting_StatusBar_FileName.Text" xml:space="preserve">
     <value>Path:</value>
+  </data>
+  <data name="Shell_Image_Convert.Content" xml:space="preserve">
+    <value>Image to art</value>
   </data>
 </root>

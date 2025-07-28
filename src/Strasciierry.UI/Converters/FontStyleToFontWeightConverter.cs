@@ -1,19 +1,20 @@
 ﻿using Microsoft.UI.Text;
 using Microsoft.UI.Xaml.Data;
+using Strasciierry.Core.Helpers;
 using Windows.UI.Text;
 using FontStyle = System.Drawing.FontStyle;
 
 namespace Strasciierry.UI.Converters;
-internal class FontWeightToDrawingFontStyleConverter : IValueConverter
+internal class FontStyleToFontWeightConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (!Enum.IsDefined(typeof(FontStyle), value))
+        if (value is not FontStyle fontStyle)
             throw new ArgumentException($"Parameter value must be a {typeof(FontStyle)}");
+        if (!EnumHelper.IsValidFlag(fontStyle))
+            throw new ArgumentException($"Invalid flags", nameof(value));
 
-        var enumValue = (FontStyle)value;
-
-        return enumValue switch
+        return fontStyle switch
         {
             FontStyle.Regular => FontWeights.Normal,
             FontStyle.Bold => FontWeights.Bold,
@@ -23,16 +24,14 @@ internal class FontWeightToDrawingFontStyleConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        if (value is FontWeight fontWeight)
-        {
-            return fontWeight.Weight switch
-            {
-                400 => FontStyle.Regular,
-                700 => FontStyle.Bold,
-                _ => throw new ArgumentException($"Cannot convert value into FontStyle")
-            };
-        }
+        if (value is not FontWeight fontWeight)
+            throw new ArgumentException($"Parameter value must be a {typeof(FontWeight)}");
 
-        throw new ArgumentException($"Prameter value must be a {typeof(FontWeight)}");
+        return fontWeight.Weight switch
+        {
+            400 => FontStyle.Regular,
+            700 => FontStyle.Bold,
+            _ => throw new ArgumentException($"Cannot convert value into FontStyle")
+        };
     }
 }

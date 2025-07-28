@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Windows.Foundation;
 
@@ -8,20 +9,18 @@ namespace Strasciierry.UI.Controls;
 
 public sealed partial class CharacterPalette : UserControlBase
 {
-    public Character SelectedCharacter
+    public CharacterPaletteItem SelectedItem
     {
-        get => (Character)GetValue(SelectedCharacterDependencyProperty);
-        set => SetValue(SelectedCharacterDependencyProperty, value);
+        get => (CharacterPaletteItem)GetValue(SelectedItemProperty);
+        set => SetValue(SelectedItemProperty, value);
     }
 
-    public static readonly DependencyProperty SelectedCharacterDependencyProperty =
+    public static readonly DependencyProperty SelectedItemProperty =
         DependencyProperty.Register(
-            nameof(SelectedCharacter),
-            typeof(Character),
+            nameof(SelectedItem),
+            typeof(CharacterPaletteItem),
             typeof(CharacterPalette),
             new PropertyMetadata(null));
-
-    private const string DefaultCharacterPalette = "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 
     private readonly double _itemSize = 30;
     private readonly double _itemSpacing = 2;
@@ -29,22 +28,39 @@ public sealed partial class CharacterPalette : UserControlBase
     private readonly double _itemsContainerMinWidth;
     private readonly double _totalItemSize;
 
-    private readonly ObservableCollection<Character> _characters = [.. DefaultCharacterPalette.Select(c => new Character(c))];
-
     private readonly int _columns = 6;
     private readonly double _thumbXOffset;
     private readonly double _thumbYOffset;
+    private ScrollView _scrollView;
+
+    private const string DefaultCharacterPalette = "`.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
+
+    private readonly ObservableCollection<CharacterPaletteItem> _characters = [.. DefaultCharacterPalette.Select(c => new CharacterPaletteItem(c))];
 
     public CharacterPalette()
     {
         InitializeComponent();
-        Loaded += (s, e) => UpdateThumbPosition();
-        SizeChanged += (s, e) => UpdateThumbPosition();
+        Loaded += OnLoaded;
 
         _totalItemSize = _itemSize + _itemSpacing;
         _thumbXOffset = (_itemSize - Thumb.Width) / 2;
         _thumbYOffset = (_itemSize - Thumb.Height) / 2;
         _itemsContainerMinWidth = _itemSize * _columns + (_columns - 1) * _itemSpacing;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        RegisterPropertyChangedCallback(SelectedItemProperty, SelectedItemPropertyChanged);
+        _scrollView = ItemsContainer.ScrollView;
+        _scrollView.ViewChanged += OnScrollViewChanged;
+
+        SelectedItem = _characters[0];
+        UpdateThumbPosition();
+    }
+
+    private void OnScrollViewChanged(ScrollView sender, object args)
+    {
+        UpdateThumbPosition();
     }
 
     private void UpdateThumbPosition()
@@ -58,27 +74,16 @@ public sealed partial class CharacterPalette : UserControlBase
             row = _characters.Count / _columns;
         }
 
-        ThumbTransform.X = column * _totalItemSize + _thumbXOffset;
-        ThumbTransform.Y = row * _totalItemSize + _thumbYOffset;
-    }
+        var thumbNewXPosition = column * _totalItemSize + _thumbXOffset;
+        var thumbNewYPosition = row * _totalItemSize + _thumbYOffset;
+        
+        var scrollOffset = _scrollView.ScrollableHeight - _scrollView.VerticalOffset;
+        var maxVisiblePosition = ItemsContainer.ActualHeight - _totalItemSize + _thumbYOffset;
 
-    private void ChangeItemsCount(int delta)
-    {
-        if (delta > 0)
-        {
-            for (var i = 0; i < delta; i++)
-            {
-                _characters.Add(new Character());
-            }
-        }
-        else if (delta < 0)
-        {
-            var removeCount = Math.Min(-delta, _characters.Count);
-            for (var i = 0; i < removeCount; i++)
-            {
-                _characters.RemoveAt(_characters.Count - 1);
-            }
-        }
+        thumbNewYPosition = Math.Clamp(thumbNewYPosition, 0, maxVisiblePosition) + scrollOffset;
+
+        ThumbTransform.X = thumbNewXPosition;
+        ThumbTransform.Y = thumbNewYPosition;
     }
 
     /// <summary>
@@ -89,29 +94,17 @@ public sealed partial class CharacterPalette : UserControlBase
     /// <returns>The maximum number of items that can be placed in ItemsContainer</returns>
     private int CalculateTargetItemCount(double thumbX, double thumbY)
     {
-        var thumbCell = GetItemCell(thumbX, thumbY);
+        var thumbCell = CoordinatesToCell(thumbX, thumbY);
         var column = (int)thumbCell.X;
         var row = (int)thumbCell.Y;
 
         return row * _columns + column;
     }
 
-    /// <summary>
-    /// Returns the cell within which the x and y coordinates are located
-    /// </summary>
-    /// <param name="x">X coordinate</param>
-    /// <param name="y">Y coordinate</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when <paramref name="x"/> less than 0 or greater than the ItemsContainer width
-    /// or <paramref name="y"/> less than 0 or greater than the ItemsContainer height
-    /// </exception>
-    private Point GetItemCell(double x, double y)
+    private Point CoordinatesToCell(double x, double y)
     {
-        if (x < 0 || x > ItemsContainer.Width)
-            throw new ArgumentOutOfRangeException(nameof(x), x, $"Parameter {nameof(x)} must be greater than zero and less than the ItemsContainer width");
-        if (y < 0 || y > ItemsContainer.Height)
-            throw new ArgumentOutOfRangeException(nameof(y), y, $"Parameter {nameof(y)} must be greater than zero and less than the ItemsContainer height");
+        x = Math.Max(0, x);
+        y = Math.Max(0, y);
 
         var column = (int)Math.Floor(x / _totalItemSize);
         var row = (int)Math.Floor(y / _totalItemSize);
@@ -124,37 +117,60 @@ public sealed partial class CharacterPalette : UserControlBase
         Thumb.CapturePointer(e.Pointer);
     }
 
-    private void ControlThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
+    private void ControlThumb_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
-        if (!e.Pointer.IsInContact)
-            return;
-
         var point = e.GetCurrentPoint(LayoutRoot);
         var thumbX = point.Position.X;
-        var thumbY = point.Position.Y;
+        var thumbY = point.Position.Y + ItemsContainer.ScrollView.VerticalOffset;
 
-        // Boundaries of movement
+        // Boundaries of horizontal movement
         thumbX = Math.Clamp(thumbX, 0, LayoutRoot.ActualWidth);
-        thumbY = Math.Clamp(thumbY, 0, LayoutRoot.ActualHeight);
 
         var newCount = CalculateTargetItemCount(thumbX, thumbY);
 
         var delta = newCount - _characters.Count;
 
-        if (delta != 0)
-            ChangeItemsCount(delta);
+        if (delta > 0)
+            AddCharacters(delta);
+        if (delta < 0)
+            RemoveCharacters(-delta);
+
+        UpdateThumbPosition();
+        SetCursor(InputSystemCursor.Create(InputSystemCursorShape.Arrow));
+        Thumb.ReleasePointerCapture(e.Pointer);
     }
 
-    private void ControlThumb_PointerReleased(object sender, PointerRoutedEventArgs e)
+    public void AddCharacters(int count)
     {
-        UpdateThumbPosition();
-        ChangeCursor(InputSystemCursor.Create(InputSystemCursorShape.Arrow));
-        Thumb.ReleasePointerCapture(e.Pointer);
+        if (count <= 0)
+            return;
+
+        for (var i = 0; i < count; i++)
+        {
+            _characters.Add(new CharacterPaletteItem());
+        }
+    }
+
+    public void RemoveCharacters(int count)
+    {
+        if (count <= 0)
+            return;
+
+        var removeCount = Math.Min(count, _characters.Count - 1);
+        var lastSafeIndex = _characters.Count - removeCount - 1;
+
+        if (_characters.IndexOf(SelectedItem) >= _characters.Count - removeCount)
+            SelectedItem = _characters[lastSafeIndex];
+
+        for (var i = 0; i < removeCount; i++)
+        {
+            _characters.RemoveAt(_characters.Count - 1);
+        }
     }
 
     private void ControlThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        ChangeCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast));
+        SetCursor(InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast));
     }
 
     private void ControlThumb_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -162,6 +178,25 @@ public sealed partial class CharacterPalette : UserControlBase
         if (e.Pointer.IsInContact)
             return;
 
-        ChangeCursor(InputSystemCursor.Create(InputSystemCursorShape.Arrow));
+        SetCursor(InputSystemCursor.Create(InputSystemCursorShape.Arrow));
+    }
+
+    private void ItemsContainer_SelectionChanged(ItemsView sender, ItemsViewSelectionChangedEventArgs args)
+    {
+        SelectedItem = sender.SelectedItem as CharacterPaletteItem;
+    }
+
+    private void SelectedItemPropertyChanged(DependencyObject sender, DependencyProperty dp)
+    {
+        if (dp != SelectedItemProperty)
+            return;
+
+        var index = _characters.IndexOf(SelectedItem);
+        ItemsContainer.Select(index);
+
+        if (index == _characters.Count - 1)
+            ItemsContainer.StartBringItemIntoView(index, new BringIntoViewOptions { VerticalAlignmentRatio = 1f });
+        else
+            ItemsContainer.StartBringItemIntoView(index, new BringIntoViewOptions());
     }
 }

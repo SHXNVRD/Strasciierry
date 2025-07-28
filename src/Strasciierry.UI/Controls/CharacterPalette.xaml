@@ -9,24 +9,32 @@
                        mc:Ignorable="d">
 
     <local:UserControlBase.Resources>
-        <converters:WindowsUiColorToBrushConverter x:Key="ColorToBrushConverter" />
         <converters:DoubleToThicknessConverter x:Key="DoubleToThicknessConverter" />
+        <converters:ColorToContrastSolidColorBrushConverter x:Key="ColorToContrastConverter" />
+        <converters:FontStyleToTextDecorationsConverter x:Key="FontStyleToTextDecorationsConverter" />
+        <converters:FontStyleToFontWeightConverter x:Key="FontStyleToFontWeightConverter" />
+        <converters:SystemDrawingFontStyleToWindowsUiFontStyleConverter x:Key="FontStyleToFontStyleConverter" />
+        <converters:SystemDrawingColorToBrushConverter x:Key="SystemDrawingColorToBrushConverter" />
+        <converters:SystemDrawingColorToHexConverter x:Key="ColorToHexConverter" />
+        <converters:FontStyleToVisibilityConverter x:Key="FontStyleToVisibilityConverter" />
 
         <DataTemplate x:Key="CharacterItemTemplate"
-                      x:DataType="local:Character">
+                      x:DataType="local:CharacterPaletteItem">
             <ItemContainer>
-                <Border Background="{x:Bind Background, Converter={StaticResource ColorToBrushConverter}}"
+                <Border Background="{x:Bind Background, Converter={StaticResource SystemDrawingColorToBrushConverter}, Mode=OneWay}"
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch">
-                    <TextBlock Text="{x:Bind Symbol}"
-                               DataContext="{x:Bind}"
-                               FontFamily="{x:Bind FontFamily}"
+                    <TextBlock DataContext="{x:Bind}"
+                               Text="{x:Bind Character, Mode=OneWay}"
+                               FontFamily="{x:Bind FontFamily.Name, Mode=OneWay}"
+                               TextDecorations="{x:Bind FontStyle, Converter={StaticResource FontStyleToTextDecorationsConverter}, Mode=OneWay}"
+                               FontStyle="{x:Bind FontStyle, Converter={StaticResource FontStyleToFontStyleConverter}, Mode=OneWay}"
+                               FontWeight="{x:Bind FontStyle, Converter={StaticResource FontStyleToFontWeightConverter}, Mode=OneWay}"
+                               Foreground="{x:Bind Foreground, Converter={StaticResource SystemDrawingColorToBrushConverter}, Mode=OneWay}"
                                FontSize="14"
-                               TextDecorations="{x:Bind TextDecorations}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               TextAlignment="Center"
-                               Foreground="{x:Bind Foreground, Converter={StaticResource ColorToBrushConverter}}" />
+                               TextAlignment="Center" />
                 </Border>
             </ItemContainer>
         </DataTemplate>
@@ -45,7 +53,8 @@
         <ItemsView x:Name="ItemsContainer"
                    Grid.Row="0"
                    SelectionMode="Single"
-                   ItemsSource="{x:Bind _characters}"
+                   ItemsSource="{x:Bind _characters, Mode=OneWay}"
+                   SelectionChanged="ItemsContainer_SelectionChanged"
                    ItemTemplate="{StaticResource CharacterItemTemplate}"
                    MinWidth="{x:Bind _itemsContainerMinWidth, Mode=OneTime}">
 
@@ -67,7 +76,6 @@
                     Background="Transparent"
                     Canvas.ZIndex="1"
                     PointerPressed="ControlThumb_PointerPressed"
-                    PointerMoved="ControlThumb_PointerMoved"
                     PointerReleased="ControlThumb_PointerReleased"
                     PointerCanceled="ControlThumb_PointerReleased"
                     PointerEntered="ControlThumb_PointerEntered"
@@ -92,5 +100,81 @@
                     CornerRadius="3"
                     Background="{ThemeResource TextOnAccentFillColorSecondaryBrush}" />
         </StackPanel>
+
+        <Grid Grid.Row="1"
+              Canvas.ZIndex="1">
+            <StackPanel Spacing="4">
+                <Grid>
+                    <Rectangle Stroke="{ThemeResource ControlElevationBorderBrush}"
+                               StrokeThickness="2"
+                               RadiusX="3"
+                               RadiusY="3" />
+
+                    <Grid Margin="2">
+                        <Rectangle Fill="{StaticResource CheckeredBackgroundImageBrush}"
+                                   RadiusX="2"
+                                   RadiusY="2" />
+                        <Rectangle Fill="{x:Bind SelectedItem.Foreground, Converter={StaticResource SystemDrawingColorToBrushConverter}, Mode=OneWay}"
+                                   RadiusX="2"
+                                   RadiusY="2" />
+                        <TextBlock Foreground="{x:Bind SelectedItem.Foreground, Converter={StaticResource ColorToContrastConverter}, Mode=OneWay}"
+                                   TextAlignment="Center"
+                                   FontWeight="Bold"
+                                   Text="{x:Bind SelectedItem.Foreground, Converter={StaticResource ColorToHexConverter}, Mode=OneWay}" />
+                    </Grid>
+                </Grid>
+
+                <Grid>
+                    <Rectangle Stroke="{ThemeResource ControlElevationBorderBrush}"
+                               StrokeThickness="2"
+                               RadiusX="3"
+                               RadiusY="3" />
+
+                    <Grid Margin="2">
+                        <Rectangle Fill="{StaticResource CheckeredBackgroundImageBrush}"
+                                   RadiusX="2"
+                                   RadiusY="2" />
+                        <Rectangle Fill="{x:Bind SelectedItem.Background, Converter={StaticResource SystemDrawingColorToBrushConverter}, Mode=OneWay}"
+                                   RadiusX="2"
+                                   RadiusY="2" />
+                        <TextBlock Foreground="{x:Bind SelectedItem.Background, Converter={StaticResource ColorToContrastConverter}, Mode=OneWay}"
+                                   TextAlignment="Center"
+                                   FontWeight="Bold"
+                                   Text="{x:Bind SelectedItem.Background, Converter={StaticResource ColorToHexConverter}, Mode=OneWay}" />
+                    </Grid>
+                </Grid>
+
+                <Grid>
+                    <Border BorderThickness="2"
+                            BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                            CornerRadius="3">
+                        <TextBlock TextAlignment="Center"
+                                   Text="{x:Bind SelectedItem.FontFamily.Name, Mode=OneWay}" />
+                    </Border>
+                </Grid>
+
+                <Grid>
+                    <Border BorderThickness="2" 
+                            BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                            CornerRadius="3"
+                            Padding="5 3">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="4"
+                                    HorizontalAlignment="Center"
+                                    MinHeight="{Binding ElementName=BoldIcon, Path=ActualHeight, Mode=OneTime}">
+                            <FontIcon x:Name="BoldIcon"
+                                      Glyph="&#xE8DD;"
+                                      Visibility="{x:Bind SelectedItem.FontStyle, Converter={StaticResource FontStyleToVisibilityConverter}, ConverterParameter=Bold, Mode=OneWay}"/>
+                            <FontIcon Glyph="&#xE8DB;"
+                                      Visibility="{x:Bind SelectedItem.FontStyle, Converter={StaticResource FontStyleToVisibilityConverter}, ConverterParameter=Italic, Mode=OneWay}" />
+                            <FontIcon Glyph="&#xEDE0;"
+                                      Visibility="{x:Bind SelectedItem.FontStyle, Converter={StaticResource FontStyleToVisibilityConverter}, ConverterParameter=Strikeout, Mode=OneWay}" />
+                            <FontIcon Glyph="&#xE8DC;"
+                                      Visibility="{x:Bind SelectedItem.FontStyle, Converter={StaticResource FontStyleToVisibilityConverter}, ConverterParameter=Underline, Mode=OneWay}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </Grid>
     </Grid>
 </local:UserControlBase>

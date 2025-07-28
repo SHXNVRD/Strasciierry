@@ -5,23 +5,32 @@ namespace Strasciierry.UI.Controls.ToolHandlers;
 
 public class PencilToolHandler(AsciiCanvas canvas) : ToolHandler
 {
-    public override void HandlePointerPressed(CharCell cell, PointerRoutedEventArgs e)
+    public override void HandlePointerPressed(AsciiCanvasCell cell, PointerRoutedEventArgs e)
     {
         var pointProps = e.GetCurrentPoint(canvas).Properties;
 
         if (!pointProps.IsLeftButtonPressed)
             return;
-        
-        cell.Character = canvas.DrawingChar;
+
+        UpdateCell(cell);
     }
 
-    public override void HandlePointerEntered(CharCell cell, PointerRoutedEventArgs e)
+    public override void HandlePointerEntered(AsciiCanvasCell cell, PointerRoutedEventArgs e)
     {
         var pointProps = e.GetCurrentPoint(canvas).Properties;
 
         if (!e.Pointer.IsInContact || !pointProps.IsLeftButtonPressed)
             return;
 
+        UpdateCell(cell);
+    }
+
+    private void UpdateCell(AsciiCanvasCell cell)
+    {
         cell.Character = canvas.DrawingChar;
+        cell.Foreground = canvas.DrawingForeground;
+        cell.Background = canvas.DrawingBackground;
+        cell.FontFamily = canvas.DrawingFontFamily;
+        cell.FontStyle = canvas.DrawingFontStyle;
     }
 }

@@ -26,6 +26,7 @@
 	<AppxPackageDir>D:\source\Strasciierry\src\Strasciierry.UI\bin\AppPackage</AppxPackageDir>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Assets\CheckeredBackground.png" />
     <None Remove="Assets\StoreLogo.scale-100.png" />
     <None Remove="Assets\StoreLogo.scale-125.png" />
     <None Remove="Assets\StoreLogo.scale-150.png" />
@@ -33,6 +34,7 @@
     <None Remove="Assets\StoreLogo.scale-400.png" />
     <None Remove="Controls\ContentDialogs\ErrorContentDialog.xaml" />
     <None Remove="Controls\ErrorContentDialog.xaml" />
+    <None Remove="Styles\Brushes.xaml" />
     <None Remove="Styles\Buttons.xaml" />
     <None Remove="Styles\RadioButtons.xaml" />
     <None Remove="Styles\SettingsCards.xaml" />
@@ -62,6 +64,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Styles\Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Controls\CharacterPalette.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

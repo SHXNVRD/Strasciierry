@@ -5,12 +5,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Shapes;
 using Strasciierry.UI.Controls.ToolHandlers;
 using Strasciierry.UI.Controls.ToolHandlers.Base;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.UI;
+using Color = System.Drawing.Color;
+using FontFamily = System.Drawing.FontFamily;
+using FontStyle = System.Drawing.FontStyle;
+using Point = Windows.Foundation.Point;
+using Rectangle = Microsoft.UI.Xaml.Shapes.Rectangle;
 
 namespace Strasciierry.UI.Controls;
 
@@ -32,13 +34,7 @@ public sealed partial class AsciiCanvas : UserControlBase
     public char DrawingChar
     {
         get => (char)GetValue(DrawingCharProperty);
-        set
-        {
-            if (DrawingChar == value)
-                return;
-
-            SetValue(DrawingCharProperty, value);
-        }
+        set => SetValue(DrawingCharProperty, value);
     }
 
     public static readonly DependencyProperty DrawingCharProperty =
@@ -47,6 +43,58 @@ public sealed partial class AsciiCanvas : UserControlBase
             typeof(char),
             typeof(AsciiCanvas),
             new PropertyMetadata('*'));
+
+    public Color DrawingForeground
+    {
+        get => (Color)GetValue(DrawingForegroundProperty);
+        set => SetValue(DrawingForegroundProperty, value);
+    }
+
+    public static readonly DependencyProperty DrawingForegroundProperty =
+        DependencyProperty.Register(
+            nameof(DrawingForeground),
+            typeof(Color),
+            typeof(AsciiCanvas),
+            new PropertyMetadata(DefaultDrawingForeground));
+
+    public Color DrawingBackground
+    {
+        get => (Color)GetValue(DrawingBackgroundProperty);
+        set => SetValue(DrawingBackgroundProperty, value);
+    }
+
+    public static readonly DependencyProperty DrawingBackgroundProperty =
+        DependencyProperty.Register(
+            nameof(DrawingBackground),
+            typeof(Color),
+            typeof(AsciiCanvas),
+            new PropertyMetadata(DefaultDrawingBackground));
+
+    public FontStyle DrawingFontStyle
+    {
+        get => (FontStyle)GetValue(DrawingFontStyleProperty);
+        set => SetValue(DrawingFontStyleProperty, value);
+    }
+
+    public static readonly DependencyProperty DrawingFontStyleProperty =
+        DependencyProperty.Register(
+            nameof(DrawingFontStyle),
+            typeof(FontStyle),
+            typeof(AsciiCanvas),
+            new PropertyMetadata(DefaultDrawingFontStyle));
+
+    public FontFamily DrawingFontFamily
+    {
+        get => (FontFamily)GetValue(DrawingFontFamilyProperty);
+        set => SetValue(DrawingFontFamilyProperty, value);
+    }
+
+    public static readonly DependencyProperty DrawingFontFamilyProperty =
+        DependencyProperty.Register(
+            nameof(DrawingFontFamily),
+            typeof(FontFamily),
+            typeof(AsciiCanvas),
+            new PropertyMetadata(DefaultDrawingFontFamily));
 
     public int Rows
     {
@@ -74,21 +122,27 @@ public sealed partial class AsciiCanvas : UserControlBase
             typeof(AsciiCanvas),
             new PropertyMetadata(0, OnCanvasSizeChanged));
 
-    public ObservableCollection<CharCell> Cells { get; }
-           = new ObservableCollection<CharCell>();
+    public ObservableCollection<AsciiCanvasCell> Cells { get; }
+           = new ObservableCollection<AsciiCanvasCell>();
 
     public double CellWidth => CanvasRepeater.ActualWidth / Columns;
     public double CellHeight => CanvasRepeater.ActualHeight / Rows;
+
+    public static Color DefaultDrawingForeground { get; } = Color.White;
+    public static Color DefaultDrawingBackground { get; } = Color.Transparent;
+    public static FontFamily DefaultDrawingFontFamily { get; } = new FontFamily("Consolas");
+    public static FontStyle DefaultDrawingFontStyle { get; } = System.Drawing.FontStyle.Regular;
+
+    public const char DefaultCellCharacter = ' ';
 
     private Selection? _selection;
     private Point _lastCellPosition = new(-1, -1);
     private readonly ReadOnlyDictionary<DrawingTool, ToolHandler> _toolHandlers;
     private ToolHandler _currentToolHandler;
-    private const char DefaultCharacter = ' ';
 
     public AsciiCanvas()
     {
-        this.InitializeComponent();
+        InitializeComponent();
 
         _toolHandlers = new ReadOnlyDictionary<DrawingTool, ToolHandler>(
             new Dictionary<DrawingTool, ToolHandler>
@@ -117,7 +171,7 @@ public sealed partial class AsciiCanvas : UserControlBase
         {
             for (var col = 0; col < Columns; col++)
             {
-                Cells.Add(new CharCell(col, row));
+                Cells.Add(new AsciiCanvasCell(col, row));
             }
         }
     }
@@ -134,7 +188,7 @@ public sealed partial class AsciiCanvas : UserControlBase
             return;
 
         var control = sender as ContentControl;
-        if (control?.DataContext is not CharCell cell)
+        if (control?.DataContext is not AsciiCanvasCell cell)
             return;
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
@@ -152,7 +206,7 @@ public sealed partial class AsciiCanvas : UserControlBase
 
         if (!e.Pointer.IsInContact
             || !pointerProps.IsLeftButtonPressed
-            || control?.DataContext is not CharCell cell
+            || control?.DataContext is not AsciiCanvasCell cell
             || _lastCellPosition.X == cell.Column && _lastCellPosition.Y == cell.Row)
         {
             return;
@@ -254,7 +308,7 @@ public sealed partial class AsciiCanvas : UserControlBase
                 {
                     Fill = new SolidColorBrush
                     {
-                        Color = Color.FromArgb(50, 0, 0, 0),
+                        Color = Windows.UI.Color.FromArgb(50, 0, 0, 0),
                         Opacity = 0.3
                     },
                     IsHitTestVisible = false
@@ -293,7 +347,7 @@ public sealed partial class AsciiCanvas : UserControlBase
         _selection = null;
     }
 
-    private CharCell GetCell(int column, int row)
+    private AsciiCanvasCell GetCell(int column, int row)
     {
         ValidateCell(column, row);
 
@@ -365,7 +419,7 @@ public sealed partial class AsciiCanvas : UserControlBase
             {
                 var cell = GetCell(column, row);
                 sb.Append(cell.Character);
-                cell.Character = DefaultCharacter;
+                cell.Character = DefaultCellCharacter;
             }
             sb.AppendLine();
         }

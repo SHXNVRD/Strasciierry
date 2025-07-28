@@ -13,11 +13,11 @@
             <converters:PercentageDisplayConverter x:Key="PercentageDisplayConverter" />
             <converters:FactorConverter x:Key="FactorConverter" />
             <converters:WindowsUiColorToBrushConverter x:Key="WindowsUiColorToBrushConverter" />
-            <converters:WindowsUiColorToSystemDrawingColorConverter x:Key="WindowsUiColorToSystemDrawingColorConverter" />
+            <converters:SystemDrawingColorToWindowsUiColorConverter x:Key="SystemDrawingColorToWindowsUiColorConverter" />
             <converters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
-            <converters:WindowsStyleToDrawingFontStyleConverter x:Key="WindowsStyleToDrawingFontStyleConverter" />
-            <converters:FontWeightToDrawingFontStyleConverter x:Key="FontWeightToDrawingFontStyleConverter" />
-            <converters:TextDecorationsToFontStyleConverter x:Key="TextDecorationsToFontStyleConverter" />
+            <converters:FontStyleToFontWeightConverter x:Key="FontStyleToFontWeightConverter" />
+            <converters:SystemDrawingFontStyleToWindowsUiFontStyleConverter x:Key="SystemDrawingFontStyleToWindowsUiFontStyleConverter" />
+            <converters:FontStyleToTextDecorationsConverter x:Key="FontStyleToTextDecorationsConverter" />
             <converters:DrawingToolToBooleanConverter x:Key="DrawingToolToBooleanConverter" />
 
             <Flyout x:Key="FlyoutBackgroundColorPicker">
@@ -28,7 +28,7 @@
                              IsAlphaTextInputVisible="False"
                              IsAlphaSliderVisible="True"
                              IsHexInputVisible="True"
-                             Color="{x:Bind ViewModel.ArtBackground, Converter={StaticResource WindowsUiColorToSystemDrawingColorConverter}, Mode=TwoWay}" />
+                             Color="{x:Bind ViewModel.ArtBackground, Converter={StaticResource SystemDrawingColorToWindowsUiColorConverter}, Mode=TwoWay}" />
             </Flyout>
             <Flyout x:Key="FlyoutForegroundColorPicker">
                 <ColorPicker x:Name="ForegroundColorPicker"
@@ -38,7 +38,7 @@
                              IsAlphaTextInputVisible="False"
                              IsAlphaSliderVisible="True"
                              IsHexInputVisible="True"
-                             Color="{x:Bind ViewModel.ArtForeground, Converter={StaticResource WindowsUiColorToSystemDrawingColorConverter}, Mode=TwoWay}" />
+                             Color="{x:Bind ViewModel.ArtForeground, Converter={StaticResource SystemDrawingColorToWindowsUiColorConverter}, Mode=TwoWay}" />
             </Flyout>
         </ResourceDictionary>
     </Page.Resources>
@@ -62,72 +62,26 @@
               Grid.Column="0"
               Grid.ColumnSpan="4">
 
-            <MenuBar Margin="5 0 0 0">
-                <MenuBarItem x:Uid="Menu_File">
-                    <MenuFlyoutItem x:Uid="Menu_File_New"
-                                    Command="{x:Bind ViewModel.CreateFileCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <KeyboardAccelerator Modifiers="Control"
-                                                 Key="N" />
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem x:Uid="Menu_File_Open"
-                                    Command="{x:Bind ViewModel.OpenFileCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <KeyboardAccelerator Modifiers="Control"
-                                                 Key="O" />
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem x:Uid="Menu_File_Save"
-                                    Command="{x:Bind ViewModel.SaveFileCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <KeyboardAccelerator Modifiers="Control"
-                                                 Key="S" />
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem x:Uid="Menu_File_Save_As"
-                                    Command="{x:Bind ViewModel.SaveFileAsCommand}">
-                        <MenuFlyoutItem.KeyboardAccelerators>
-                            <KeyboardAccelerator Modifiers="Control,Shift"
-                                                 Key="S" />
-                        </MenuFlyoutItem.KeyboardAccelerators>
-                    </MenuFlyoutItem>
-                </MenuBarItem>
-            </MenuBar>
-
-            <StackPanel Orientation="Horizontal">
-
-                <ToggleButton Click="BoldAppBarToggleButton_Click"
-                              Background="Transparent"
-                              BorderBrush="Transparent"
-                              Margin="5 0 5 0"
-                              IsChecked="{x:Bind ViewModel.IsBoldChecked, Mode=TwoWay}">
-                    <FontIcon Glyph="&#xE8DD;" />
-                </ToggleButton>
-
-                <ToggleButton Click="ItalicAppBarToggleButton_Click"
-                              Background="Transparent"
-                              BorderBrush="Transparent"
-                              Margin="0 0 5 0"
-                              IsChecked="{x:Bind ViewModel.IsItalicChecked, Mode=TwoWay}">
-                    <FontIcon Glyph="&#xE8DB;" />
-                </ToggleButton>
-
-                <ToggleButton Click="UnderlineAppBarToggleButton_Click"
-                              Background="Transparent"
-                              BorderBrush="Transparent"
-                              Margin="0 0 5 0"
-                              IsChecked="{x:Bind ViewModel.IsUnderlineChecked, Mode=TwoWay}">
-                    <FontIcon Glyph="&#xE8DC;" />
-                </ToggleButton>
-
-                <ToggleButton Click="StrikeThroughAppBarToggleButton_Click"
-                              Background="Transparent"
-                              BorderBrush="Transparent"
-                              Margin="0 0 5 0"
-                              IsChecked="{x:Bind ViewModel.IsStrikeThroughChecked, Mode=TwoWay}">
-                    <FontIcon Glyph="&#xEDE0;" />
-                </ToggleButton>
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <MenuBar Margin="5 0 0 0">
+                    <MenuBarItem x:Uid="Menu_File">
+                        <MenuFlyoutItem x:Uid="Menu_File_Open"
+                                        Command="{x:Bind ViewModel.OpenFileCommand}">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Control"
+                                                     Key="O" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="Menu_File_Save"
+                                        Command="{x:Bind ViewModel.SaveFileCommand}">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Control"
+                                                     Key="S" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                    </MenuBarItem>
+                </MenuBar>
 
                 <ComboBox ItemsSource="{x:Bind ViewModel.FilteredFonts}"
                           SelectedItem="{x:Bind ViewModel.FontName, Mode=TwoWay}"
@@ -149,8 +103,10 @@
               HorizontalAlignment="Center"
               Margin="{StaticResource XSmallLeftTopRightBottomMargin}">
 
-            <controls:CharacterPalette HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" />
+            <controls:CharacterPalette x:Name="CharacterPalette"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}" />
         </Grid>
 
         <Border   Grid.Row="1"
@@ -176,9 +132,9 @@
                                    FontFamily="{x:Bind ViewModel.FontName, Converter={StaticResource StringToFontFamilyConverter}, Mode=TwoWay}"
                                    IsTextSelectionEnabled="True"
                                    FontSize="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
-                                   TextDecorations="{x:Bind ViewModel.TextDecorations, Converter={StaticResource TextDecorationsToFontStyleConverter}, Mode=TwoWay}"
-                                   FontWeight="{x:Bind ViewModel.FontWeight, Converter={StaticResource FontWeightToDrawingFontStyleConverter}, Mode=TwoWay}"
-                                   FontStyle="{x:Bind ViewModel.FontStyle, Converter={StaticResource WindowsStyleToDrawingFontStyleConverter}, Mode=TwoWay}">
+                                   TextDecorations="{x:Bind ViewModel.TextDecorations, Converter={StaticResource FontStyleToTextDecorationsConverter}, Mode=TwoWay}"
+                                   FontWeight="{x:Bind ViewModel.FontWeight, Converter={StaticResource FontStyleToFontWeightConverter}, Mode=TwoWay}"
+                                   FontStyle="{x:Bind ViewModel.FontStyle, Converter={StaticResource SystemDrawingFontStyleToWindowsUiFontStyleConverter}, Mode=TwoWay}">
                         </TextBlock>
                     </ScrollViewer>
                 </Border>
@@ -187,9 +143,14 @@
             <controls:AsciiCanvas x:Name="DrawingCanvas"
                                   Rows="50"
                                   Columns="50"
-                                  DrawingTool="{x:Bind ViewModel.DrawingTool, Mode=TwoWay}"
+                                  DrawingTool="{x:Bind ViewModel.DrawingTool, Mode=OneWay}"
                                   HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch" />
+                                  VerticalAlignment="Stretch"
+                                  DrawingChar="{x:Bind ViewModel.SelectedItem.Character, Mode=OneWay}"
+                                  DrawingForeground="{Binding ElementName=CharacterPalette, Path=SelectedItem.Foreground, Mode=OneWay}"
+                                  DrawingBackground="{Binding ElementName=CharacterPalette, Path=SelectedItem.Background, Mode=OneWay}"
+                                  DrawingFontFamily="{Binding ElementName=CharacterPalette, Path=SelectedItem.FontFamily, Mode=OneWay}"
+                                  DrawingFontStyle="{Binding ElementName=CharacterPalette, Path=SelectedItem.FontStyle, Mode=OneWay}" />
         </Border>
 
         <StackPanel Grid.Column="2"

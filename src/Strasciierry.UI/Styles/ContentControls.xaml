@@ -22,7 +22,7 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid>
-                            <ContentPresenter />
+                            <ContentPresenter x:Name="Presenter"/>
 
                             <Border x:Name="HoverBorder"
                                     Background="{ThemeResource ControlFillColorSecondaryBrush}"

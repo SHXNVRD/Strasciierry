@@ -2,7 +2,7 @@
 
 namespace Strasciierry.UI.Converters;
 
-public class WindowsUiColorToSystemDrawingColorConverter : IValueConverter
+public class SystemDrawingColorToWindowsUiColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {

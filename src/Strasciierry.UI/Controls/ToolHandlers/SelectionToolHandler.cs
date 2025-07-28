@@ -6,7 +6,7 @@ namespace Strasciierry.UI.Controls.ToolHandlers;
 
 public class SelectionToolHandler(AsciiCanvas canvas) : ToolHandler
 {
-    public override void HandlePointerPressed(CharCell cell, PointerRoutedEventArgs e)
+    public override void HandlePointerPressed(AsciiCanvasCell cell, PointerRoutedEventArgs e)
     {
         var properties = e.GetCurrentPoint(canvas).Properties;
 
@@ -22,7 +22,7 @@ public class SelectionToolHandler(AsciiCanvas canvas) : ToolHandler
         }
     }
 
-    public override void HandlePointerEntered(CharCell cell, PointerRoutedEventArgs e)
+    public override void HandlePointerEntered(AsciiCanvasCell cell, PointerRoutedEventArgs e)
     {
         canvas.UpdateSelection(cell.Column, cell.Row);
     }
