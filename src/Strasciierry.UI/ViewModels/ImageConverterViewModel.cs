@@ -21,9 +21,9 @@ using Strasciierry.UI.Controls;
 using CommunityToolkit.WinUI.Controls;
 
 
-namespace Strasciierry.UI.Pages.ImageConverter;
+namespace Strasciierry.UI.ViewModels;
 
-public partial class ImageConverterViewModel : ObservableRecipient
+public partial class ImageConverterViewModel : ViewModelBase
 {
     private readonly IFilePickerService _filePickerService;
     private readonly IUsersSymbolsService _userSymbolsService;
@@ -42,12 +42,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
 
     public readonly ReadOnlyCollection<int> FontSizes = new([8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72]);
 
-    public ObservableCollection<string> FilteredFonts =>
-        new(
-            _fontsService.ShowMonospacedFonstOnly
-            ? _fontsService.Fonts.Where(f => f.IsMonospaced).Select(f => f.FontFamily.Name)
-            : _fontsService.Fonts.Select(f => f.FontFamily.Name)
-        );
+    public ObservableCollection<string> FilteredFonts => new (_fontsService.GetFonts().Select(f => f.FontFamily.Name));
 
     [ObservableProperty]
     public partial Color ArtBackground { get; set; } = _defaultArtBackground;
@@ -168,7 +163,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
         }
         catch (Exception ex)
         {
-            await DialogHelper.ShowErrorAsync(App.Root.XamlRoot, $"{ex.Message}\n{ex.StackTrace}");
+            await DialogHelper.ShowErrorAsync(App.XamlRoot, $"{ex.Message}\n{ex.StackTrace}");
         }
     }
 
@@ -181,7 +176,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
         }
         catch (Exception ex)
         {
-            await DialogHelper.ShowErrorAsync(App.Root.XamlRoot, $"{ex.Message}\n{ex.StackTrace}");
+            await DialogHelper.ShowErrorAsync(App.XamlRoot, $"{ex.Message}\n{ex.StackTrace}");
         }
     }
 
@@ -278,7 +273,7 @@ public partial class ImageConverterViewModel : ObservableRecipient
         }
         catch (Exception ex)
         {
-            await DialogHelper.ShowErrorAsync(App.Root.XamlRoot,  $"{ex.Message}\n{ex.StackTrace}");
+            await DialogHelper.ShowErrorAsync(App.XamlRoot,  $"{ex.Message}\n{ex.StackTrace}");
         }
     }
 

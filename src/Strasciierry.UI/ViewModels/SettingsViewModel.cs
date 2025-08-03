@@ -10,13 +10,12 @@ using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.Theme;
 using Strasciierry.UI.Services.UsersSymbols;
 
-namespace Strasciierry.UI.Pages.Settings;
+namespace Strasciierry.UI.ViewModels;
 
-public partial class SettingsViewModel : ObservableRecipient
+public partial class SettingsViewModel : ViewModelBase
 {
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly IUsersSymbolsService _userSymbolsService;
-    private readonly IFontsService _fontsService;
     private readonly ILocalSettingsService _localSettingsService;
 
     [ObservableProperty]
@@ -31,9 +30,6 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     public partial string UsersSymbols { get; set; }
 
-    [ObservableProperty]
-    public partial bool ShowMonospacedFontsOnly { get; set; }
-
     public SettingsViewModel(
         IThemeSelectorService themeSelectorService, 
         IUsersSymbolsService userSymbolsService,
@@ -42,13 +38,11 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         _themeSelectorService = themeSelectorService;
         _userSymbolsService = userSymbolsService;
-        _fontsService = fontsService;
         _localSettingsService = localSettingsService;
 
         ElementTheme = _themeSelectorService.Theme;
         UsersSymbols = new string(_userSymbolsService.UsersSymbols);
         UsersSymbolsOn = _userSymbolsService.UsersSymbolsOn;
-        ShowMonospacedFontsOnly = _fontsService.ShowMonospacedFonstOnly;
         VersionDescription = GetVersionDescription();
     }
 
@@ -83,10 +77,6 @@ public partial class SettingsViewModel : ObservableRecipient
         // есть задержка, во время которой значение IsUserSymbolsOn все ещё равно старому значению.
         // Это баг элемента управления.
         => await _userSymbolsService.SetUsersSymbolsOnAsync(!UsersSymbolsOn);
-
-    [RelayCommand]
-    public async Task SetShowMonospacedFontsOnly()
-        => await _fontsService.SetShowMonospacedFontsOnly(!ShowMonospacedFontsOnly);
 
     private static string GetVersionDescription()
     {

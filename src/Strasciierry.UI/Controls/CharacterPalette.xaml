@@ -56,7 +56,9 @@
                    ItemsSource="{x:Bind _characters, Mode=OneWay}"
                    SelectionChanged="ItemsContainer_SelectionChanged"
                    ItemTemplate="{StaticResource CharacterItemTemplate}"
-                   MinWidth="{x:Bind _itemsContainerMinWidth, Mode=OneTime}">
+                   MinWidth="{x:Bind _itemsContainerMinWidth, Mode=OneTime}"
+                   IsItemInvokedEnabled="True"
+                   ItemInvoked="ItemsContainer_ItemInvoked">
 
             <ItemsView.Layout>
                 <UniformGridLayout MaximumRowsOrColumns="{x:Bind _columns, Mode=OneTime}"

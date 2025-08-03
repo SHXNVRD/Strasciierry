@@ -2,9 +2,10 @@
 using Microsoft.UI.Xaml.Controls;
 using Strasciierry.UI.Services.Activation.Handlers;
 using Strasciierry.UI.Services.Fonts;
+using Strasciierry.UI.Services.Localization;
 using Strasciierry.UI.Services.Theme;
 using Strasciierry.UI.Services.UsersSymbols;
-using ShellPage = Strasciierry.UI.Pages.Shell.ShellPage;
+using Strasciierry.UI.Views;
 
 namespace Strasciierry.UI.Services.Activation;
 
@@ -15,6 +16,7 @@ public class ActivationService : IActivationService
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly IUsersSymbolsService _userSymbolsService;
     private readonly IFontsService _fontsService;
+    private readonly ILocalizationService _localizationService;
     private UIElement? _shell = null;
 
     public ActivationService(
@@ -65,7 +67,7 @@ public class ActivationService : IActivationService
     {
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
         await _userSymbolsService.InitializeAsync().ConfigureAwait(false);
-        await _fontsService.InitializeAsync().ConfigureAwait(false);
+        _fontsService.Initialize();
         await Task.CompletedTask;
     }
 

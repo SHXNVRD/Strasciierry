@@ -14,12 +14,9 @@ internal class FontStyleToFontWeightConverter : IValueConverter
         if (!EnumHelper.IsValidFlag(fontStyle))
             throw new ArgumentException($"Invalid flags", nameof(value));
 
-        return fontStyle switch
-        {
-            FontStyle.Regular => FontWeights.Normal,
-            FontStyle.Bold => FontWeights.Bold,
-            _ => throw new ArgumentException($"Cannot convert value into FontWeight")
-        };
+        return fontStyle.HasFlag(FontStyle.Bold)
+            ? FontWeights.Bold
+            : FontWeights.Normal;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

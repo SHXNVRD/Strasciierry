@@ -199,4 +199,12 @@ public sealed partial class CharacterPalette : UserControlBase
         else
             ItemsContainer.StartBringItemIntoView(index, new BringIntoViewOptions());
     }
+
+    private async void ItemsContainer_ItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs args)
+    {
+        var dialog = App.GetService<CharacterPaletteItemEditDialog>();
+        dialog.EditingItem = (CharacterPaletteItem)args.InvokedItem;
+        dialog.XamlRoot = App.XamlRoot;
+        await dialog.ShowAsync();
+    }
 }

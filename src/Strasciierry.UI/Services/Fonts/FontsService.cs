@@ -1,38 +1,34 @@
-﻿using System.Collections.ObjectModel;
-using System.Drawing;
+﻿using System.Drawing;
 using Strasciierry.UI.Helpers;
-using Strasciierry.UI.Services.Settings;
 
 namespace Strasciierry.UI.Services.Fonts;
 public class FontsService : IFontsService
 {
-    private readonly ILocalSettingsService _settingsService;
+    private List<FontInfo> _fonts { get; set; } = [];
     private bool _initialized;
 
-    public const string UseMonospacedFonstOnlySettingsKey = "ShowMonospacedFonstOnly";
-
-    public bool ShowMonospacedFonstOnly { get; private set; }
-    public Collection<FontInfo> Fonts { get; private set; } = [];
-
-    public FontsService(ILocalSettingsService settingsService)
-    {
-        _settingsService = settingsService;
-    }
-
-    public async Task InitializeAsync()
+    public void Initialize()
     {
         if (!_initialized)
         {
-            ShowMonospacedFonstOnly = await _settingsService.ReadSettingAsync<bool>(UseMonospacedFonstOnlySettingsKey);
-            LoadFonts();
+             LoadFonts();
             _initialized = true;
         }
     }
 
-    public async Task SetShowMonospacedFontsOnly(bool value)
+    public IEnumerable<FontInfo> GetFonts()
     {
-        await _settingsService.SaveSettingAsync(UseMonospacedFonstOnlySettingsKey, value);
-        ShowMonospacedFonstOnly = value;
+        if (!_initialized)
+            Initialize();
+
+        return _fonts;
+    }
+
+    public IEnumerable<FontInfo> GetMonospacedFonts()
+    {
+        var fonts = GetFonts();
+
+        return fonts.Where(f => f.IsMonospaced);
     }
 
     private void LoadFonts()
@@ -40,7 +36,7 @@ public class FontsService : IFontsService
         foreach (var fontFamily in FontFamily.Families)
         {
             var isMonospaced = FontHelper.IsMonospaced(fontFamily);
-            ICollection<FontStyle> availableFontStyles = [];
+            List<FontStyle> availableFontStyles = [];
 
             foreach (FontStyle fontStyle in Enum.GetValues(typeof(FontStyle)))
             {
@@ -48,7 +44,7 @@ public class FontsService : IFontsService
                     availableFontStyles.Add(fontStyle);
             }
 
-            Fonts.Add(new FontInfo(fontFamily, isMonospaced, availableFontStyles));
+            _fonts.Add(new FontInfo(fontFamily, isMonospaced, availableFontStyles));
         }
     }
 }

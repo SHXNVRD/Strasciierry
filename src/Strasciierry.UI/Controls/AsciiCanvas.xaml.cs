@@ -445,4 +445,13 @@ public sealed partial class AsciiCanvas : UserControlBase
         if (startRow > endRow)
             throw new ArgumentException($"Start row ({startRow}) cannot be greater than end row ({endRow})", nameof(startRow));
     }
+
+    public class Selection
+    {
+        public Rectangle Area { get; set; }
+        public int InitialRow { get; set; }
+        public int InitialColumn { get; set; }
+        public int StartRow { get; set; }
+        public int StartColumn { get; set; }
+    }
 }

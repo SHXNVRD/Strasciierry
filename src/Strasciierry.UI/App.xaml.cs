@@ -11,17 +11,14 @@ using Strasciierry.UI.Services.Activation.Handlers;
 using Strasciierry.UI.Services.FilePicker;
 using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.ImageToChars;
+using Strasciierry.UI.Services.Localization;
 using Strasciierry.UI.Services.Navigation;
 using Strasciierry.UI.Services.Pages;
 using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.Theme;
 using Strasciierry.UI.Services.UsersSymbols;
-using ImageConverterPage = Strasciierry.UI.Pages.ImageConverter.ImageConverterPage;
-using ImageConverterViewModel = Strasciierry.UI.Pages.ImageConverter.ImageConverterViewModel;
-using SettingsPage = Strasciierry.UI.Pages.Settings.SettingsPage;
-using SettingsViewModel = Strasciierry.UI.Pages.Settings.SettingsViewModel;
-using ShellPage = Strasciierry.UI.Pages.Shell.ShellPage;
-using ShellViewModel = Strasciierry.UI.Pages.Shell.ShellViewModel;
+using Strasciierry.UI.ViewModels;
+using Strasciierry.UI.Views;
 
 namespace Strasciierry.UI;
 
@@ -29,7 +26,8 @@ public partial class App : Application
 {
     public IHost Host { get; }
     public static WindowEx MainWindow { get; } = new MainWindow();
-    public static FrameworkElement Root { get; private set; }
+    public  static new App Current => (App)Application.Current;
+    public static XamlRoot XamlRoot => MainWindow.Content.XamlRoot;
 
     public static UIElement? AppTitlebar
     {
@@ -39,7 +37,7 @@ public partial class App : Application
     public static T GetService<T>()
         where T : class
     {
-        if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
+        if (Current.Host.Services.GetService(typeof(T)) is not T service)
             throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
 
         return service;
@@ -81,6 +79,7 @@ public partial class App : Application
                 services.AddTransient<ShellViewModel>();
                 services.AddTransient<ImageConverterViewModel>();
                 services.AddTransient<ImageConverterPage>();
+                services.AddTransient<CharacterPaletteItemEditDialog>();
             }).
             Build();
 
@@ -104,7 +103,7 @@ public partial class App : Application
         Log.Fatal("[EXCEPTION] type: {type}, message: {description}, exception: {@exception}, inner exception: {@innerException}",
             ex.GetType().Name, ex.Message, ex, ex.InnerException);
 
-        await DialogHelper.ShowErrorAsync(App.Root.XamlRoot, $"{ex.Message}\n{ex}");
+        await DialogHelper.ShowErrorAsync(App.XamlRoot, $"{ex.Message}\n{ex}");
     }
 
     private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -114,7 +113,7 @@ public partial class App : Application
         Log.Fatal("[EXCEPTION] type: {type}, message: {description}, exception: {@exception}, inner exception: {@innerException}",
                 ex.GetType().Name, ex.Message, ex, ex.InnerException);
 
-        await DialogHelper.ShowErrorAsync(App.Root.XamlRoot, $"{e.Message}\n{e.Exception}");
+        await DialogHelper.ShowErrorAsync(App.XamlRoot, $"{e.Message}\n{e.Exception}");
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
@@ -122,6 +121,5 @@ public partial class App : Application
         base.OnLaunched(args);
 
         await GetService<IActivationService>().ActivateAsync(args);
-        Root = (FrameworkElement)MainWindow.Content;
     }
 }

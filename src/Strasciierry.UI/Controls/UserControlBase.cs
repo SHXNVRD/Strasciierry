@@ -3,9 +3,9 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Strasciierry.UI.Controls;
 
-public class UserControlBase : UserControl
+public abstract class UserControlBase : UserControl
 {
-    public void SetCursor(InputCursor cursor)
+    public virtual void SetCursor(InputCursor cursor)
     {
         ProtectedCursor = cursor;
     }

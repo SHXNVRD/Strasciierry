@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Strasciierry.UI.Controls;
@@ -20,5 +19,26 @@ public partial class CharacterPaletteItem : ObservableObject
     public CharacterPaletteItem(char character = '*')
     {
         Character = character;
+    }
+
+    public void Update(CharacterPaletteItem item)
+    {
+        Character = item.Character;
+        FontFamily = item.FontFamily;
+        Foreground = item.Foreground;
+        Background = item.Background;
+        FontStyle = item.FontStyle;
+    }
+
+    public CharacterPaletteItem Clone()
+    {
+        return new CharacterPaletteItem
+        {
+            Character = Character,
+            FontFamily = FontFamily,
+            Foreground = Foreground,
+            Background = Background,
+            FontStyle = FontStyle
+        };
     }
 }

@@ -34,10 +34,13 @@
     <None Remove="Assets\StoreLogo.scale-400.png" />
     <None Remove="Controls\ContentDialogs\ErrorContentDialog.xaml" />
     <None Remove="Controls\ErrorContentDialog.xaml" />
+    <None Remove="Styles\Borders.xaml" />
     <None Remove="Styles\Brushes.xaml" />
     <None Remove="Styles\Buttons.xaml" />
+    <None Remove="Styles\ColorPickers.xaml" />
     <None Remove="Styles\RadioButtons.xaml" />
     <None Remove="Styles\SettingsCards.xaml" />
+    <None Remove="Views\ShellPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +49,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
@@ -54,6 +58,7 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.1" />
+    <PackageReference Include="WinUI3Localizer" Version="2.3.0" />
     <PackageReference Include="WinUIEx" Version="2.5.0" />
   </ItemGroup>
 
@@ -64,6 +69,18 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Styles\Borders.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Styles\ColorPickers.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\ShellPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\CharacterPaletteItemEditDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Styles\Brushes.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,10 +113,6 @@
 
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

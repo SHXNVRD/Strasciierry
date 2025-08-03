@@ -1,11 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml.Navigation;
-using Strasciierry.UI.Pages.Settings;
 using Strasciierry.UI.Services.Navigation;
 
-namespace Strasciierry.UI.Pages.Shell;
+namespace Strasciierry.UI.ViewModels;
 
-public partial class ShellViewModel : ObservableRecipient
+public partial class ShellViewModel : ViewModelBase
 {
     public INavigationService NavigationService
     {

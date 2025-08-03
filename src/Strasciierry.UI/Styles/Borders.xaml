@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="Border" x:Key="CardBorderStyle">
+        <Setter Property="Background"
+                Value="{StaticResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="CornerRadius"
+                Value="{StaticResource ControlCornerRadius}" />
+        <Setter Property="BorderBrush"
+                Value="{StaticResource ControlElevationBorderBrush}" />
+    </Style>
+</ResourceDictionary>
