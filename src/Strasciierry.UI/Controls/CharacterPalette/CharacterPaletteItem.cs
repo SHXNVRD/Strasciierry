@@ -1,7 +1,8 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Strasciierry.UI.Controls;
+namespace Strasciierry.UI.Controls.CharacterPalette;
 
 public partial class CharacterPaletteItem : ObservableObject
 {
@@ -24,7 +25,7 @@ public partial class CharacterPaletteItem : ObservableObject
     public void Update(CharacterPaletteItem item)
     {
         Character = item.Character;
-        FontFamily = item.FontFamily;
+        FontFamily = new FontFamily(item.FontFamily.Name);
         Foreground = item.Foreground;
         Background = item.Background;
         FontStyle = item.FontStyle;
@@ -35,10 +36,38 @@ public partial class CharacterPaletteItem : ObservableObject
         return new CharacterPaletteItem
         {
             Character = Character,
-            FontFamily = FontFamily,
+            FontFamily = new FontFamily(FontFamily.Name),
             Foreground = Foreground,
             Background = Background,
             FontStyle = FontStyle
         };
+    }
+}
+
+public class CharacterPaletteItemValueComparer : EqualityComparer<CharacterPaletteItem>
+{
+    public override bool Equals(CharacterPaletteItem? x, CharacterPaletteItem? y)
+    {
+        if (x is null && y is null)
+            return true;
+
+        if (x is null || y is null)
+            return false;
+
+        return x.Character.Equals(y.Character)
+            && EqualityComparer<FontFamily>.Default.Equals(x.FontFamily, y.FontFamily)
+            && x.Foreground.Equals(y.Foreground)
+            && x.Background.Equals(y.Background)
+            && x.FontStyle == y.FontStyle;
+    }
+
+    public override int GetHashCode([DisallowNull] CharacterPaletteItem obj)
+    {
+        return HashCode.Combine(
+            obj.Character,
+            obj.FontFamily,
+            obj.Foreground,
+            obj.Background,
+            obj.FontStyle);
     }
 }

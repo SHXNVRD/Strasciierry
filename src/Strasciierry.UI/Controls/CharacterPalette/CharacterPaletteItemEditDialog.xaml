@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ContentDialog x:Class="Strasciierry.UI.Controls.CharacterPaletteItemEditDialog"
+<ContentDialog x:Class="Strasciierry.UI.Controls.CharacterPalette.CharacterPaletteItemEditDialog"
                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-               xmlns:local="using:Strasciierry.UI.Controls"
+               xmlns:local="using:Strasciierry.UI.Controls.CharacterPalette"
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                xmlns:tc="using:CommunityToolkit.WinUI.Controls"
@@ -49,17 +49,6 @@
         <Grid Grid.Column="1">
             <StackPanel Spacing="10">
 
-                <TextBlock x:Uid="CharacterPaletteItemEditDialogFontCategory"
-                           Style="{StaticResource SubtitleTextBlockStyle}" />
-
-                <ComboBox ItemsSource="{x:Bind Fonts, Mode=OneWay}"
-                          DisplayMemberPath="FontFamily.Name"
-                          SelectedItem="{x:Bind EditingItem.FontFamily, Mode=TwoWay}"
-                          IsEditable="False"
-                          HorizontalAlignment="Stretch"
-                          SelectedValue="{x:Bind EditingItem.FontFamily, Mode=TwoWay}"
-                          SelectedValuePath="FontFamily"/>
-
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -75,6 +64,7 @@
                                        TextAlignment="Center"
                                        Margin="{StaticResource XXSmallBottomtMargin}" />
                             <tc:ColorPickerButton HorizontalAlignment="Stretch"
+                                                  ColorPickerStyle="{StaticResource CharacterPaletteItemColorPickerStyle}"
                                                   Style="{StaticResource TransperantColorPickerButtonStyle}"
                                                   SelectedColor="{x:Bind EditingItem.Foreground, Converter={StaticResource ColorToColorConverter}, Mode=TwoWay}"/>
                         </StackPanel>
@@ -89,6 +79,7 @@
                                        TextAlignment="Center"
                                        Margin="{StaticResource XXSmallBottomtMargin}"/>
                             <tc:ColorPickerButton HorizontalAlignment="Stretch"
+                                                  ColorPickerStyle="{StaticResource CharacterPaletteItemColorPickerStyle}"
                                                   Style="{StaticResource TransperantColorPickerButtonStyle}"
                                                   SelectedColor="{x:Bind EditingItem.Background, Converter={StaticResource ColorToColorConverter}, Mode=TwoWay}"/>
                         </StackPanel>

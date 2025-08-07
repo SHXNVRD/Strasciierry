@@ -3,9 +3,12 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
+using Strasciierry.UI.Helpers;
 using Windows.Foundation;
 
-namespace Strasciierry.UI.Controls;
+namespace Strasciierry.UI.Controls.CharacterPalette;
 
 public sealed partial class CharacterPalette : UserControlBase
 {
@@ -48,12 +51,31 @@ public sealed partial class CharacterPalette : UserControlBase
         _itemsContainerMinWidth = _itemSize * _columns + (_columns - 1) * _itemSpacing;
     }
 
+    private async void OnCheckeredForegroundRectangleLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Rectangle rectangle)
+            return;
+
+        await SetCheckeredBackground(rectangle);
+    }
+
+    private async void OnCheckeredBackgroundRectangleLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Rectangle rectangle)
+            return;
+
+        await SetCheckeredBackground(rectangle);
+    }
+
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        RegisterPropertyChangedCallback(SelectedItemProperty, SelectedItemPropertyChanged);
         _scrollView = ItemsContainer.ScrollView;
-        _scrollView.ViewChanged += OnScrollViewChanged;
 
+        _scrollView.ViewChanged += OnScrollViewChanged;
+        CheckeredBackgroundRectangle.Loaded += OnCheckeredBackgroundRectangleLoaded;
+        CheckeredForegroundRectangle.Loaded += OnCheckeredForegroundRectangleLoaded;
+
+        RegisterPropertyChangedCallback(SelectedItemProperty, SelectedItemPropertyChanged);
         SelectedItem = _characters[0];
         UpdateThumbPosition();
     }
@@ -127,31 +149,42 @@ public sealed partial class CharacterPalette : UserControlBase
         thumbX = Math.Clamp(thumbX, 0, LayoutRoot.ActualWidth);
 
         var newCount = CalculateTargetItemCount(thumbX, thumbY);
-
         var delta = newCount - _characters.Count;
 
         if (delta > 0)
-            AddCharacters(delta);
+        {
+            var defaultItem = new CharacterPaletteItem();
+            Add(defaultItem, delta);
+        }
         if (delta < 0)
-            RemoveCharacters(-delta);
-
-        UpdateThumbPosition();
+        {
+            Remove(-delta);
+        }
+        
         SetCursor(InputSystemCursor.Create(InputSystemCursorShape.Arrow));
         Thumb.ReleasePointerCapture(e.Pointer);
     }
 
-    public void AddCharacters(int count)
+    public void Add(CharacterPaletteItem item)
+    {
+        _characters.Add(item);
+        UpdateThumbPosition();
+    }
+
+    public void Add(CharacterPaletteItem item, int count)
     {
         if (count <= 0)
             return;
 
         for (var i = 0; i < count; i++)
         {
-            _characters.Add(new CharacterPaletteItem());
+            _characters.Add(item.Clone());
         }
+
+        UpdateThumbPosition();
     }
 
-    public void RemoveCharacters(int count)
+    public void Remove(int count)
     {
         if (count <= 0)
             return;
@@ -166,6 +199,48 @@ public sealed partial class CharacterPalette : UserControlBase
         {
             _characters.RemoveAt(_characters.Count - 1);
         }
+
+        UpdateThumbPosition();
+    }
+
+    public void SelectOrAdd(CharacterPaletteItem item)
+    {
+        int index;
+        var comparer = new CharacterPaletteItemValueComparer();
+        var selectingItem = _characters.FirstOrDefault(c => comparer.Equals(c, item));
+
+        if (selectingItem is null)
+        {
+            Add(item);
+            index = _characters.Count - 1;
+        }
+        else
+        {
+            index = _characters.IndexOf(selectingItem);
+        }
+        
+        ItemsContainer.Select(index);
+    }
+
+    private async Task SetCheckeredBackground(Rectangle rectangle)
+    {
+        var width = Convert.ToInt32(rectangle.ActualWidth);
+        var height = Convert.ToInt32(rectangle.ActualHeight);
+
+        var brush = await CreateChecheredBrushAsync(width, height);
+
+        if (brush is not null)
+            rectangle.Fill = brush;
+    }
+
+    private async Task<ImageBrush?> CreateChecheredBrushAsync(int width, int height)
+    {
+        var bitmap = await RenderingHelper.CreateCheckeredBitmapAsync(width, height, RenderingHelper.CheckerBackgroundColor);
+
+        if (bitmap != null)
+            return await RenderingHelper.BitmapToBrushAsync(bitmap, width, height);
+
+        return default;
     }
 
     private void ControlThumb_PointerEntered(object sender, PointerRoutedEventArgs e)

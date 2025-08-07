@@ -17,9 +17,8 @@ using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.ImageToChars;
 using Strasciierry.UI.Services.Settings;
 using Strasciierry.UI.Services.UsersSymbols;
-using Strasciierry.UI.Controls;
-using CommunityToolkit.WinUI.Controls;
-
+using Strasciierry.UI.Controls.AsciiCanvas;
+using Strasciierry.UI.Controls.CharacterPalette;
 
 namespace Strasciierry.UI.ViewModels;
 

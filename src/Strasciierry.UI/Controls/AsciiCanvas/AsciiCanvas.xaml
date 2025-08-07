@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<local:UserControlBase x:Class="Strasciierry.UI.Controls.AsciiCanvas"
+<controlBase:UserControlBase x:Class="Strasciierry.UI.Controls.AsciiCanvas.AsciiCanvas"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Strasciierry.UI.Controls"
+                       xmlns:local="using:Strasciierry.UI.Controls.AsciiCanvas"
+                       xmlns:controlBase="using:Strasciierry.UI.Controls"
                        xmlns:converters="using:Strasciierry.UI.Converters"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d">
 
-    <local:UserControlBase.Resources>
+    <controlBase:UserControlBase.Resources>
         <converters:FontStyleToTextDecorationsConverter x:Key="FontStyleToTextDecorationsConverter" />
         <converters:SystemDrawingColorToBrushConverter x:Key="SystemDrawingColorToBrushConverter" />
         <converters:FontStyleToFontWeightConverter x:Key="FontStyleToFontWeightConverter" />
         <converters:SystemDrawingFontStyleToWindowsUiFontStyleConverter x:Key="FontStyleToFontStyleConverter" />
-    </local:UserControlBase.Resources>
+    </controlBase:UserControlBase.Resources>
     
     <ScrollView ZoomMode="Enabled"
                 HorizontalAlignment="Stretch"
@@ -23,7 +24,7 @@
 
             <Grid.Resources>
                 <MenuFlyout x:Name="CanvasActionMenu">
-                    <MenuFlyoutItem Text="Копировать"
+                    <MenuFlyoutItem x:Uid="AsciiCanvasActionMenuCopyAction"
                                     Click="OnCopyClick">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xE8C8;" />
@@ -33,7 +34,7 @@
                                                  Key="C" />
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Вставить"
+                    <MenuFlyoutItem x:Uid="AsciiCanvasActionMenuPasteAction"
                                     Click="OnPasteClick">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xE77F;" />
@@ -43,7 +44,7 @@
                                                  Key="V" />
                         </MenuFlyoutItem.KeyboardAccelerators>
                     </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Вырезать"
+                    <MenuFlyoutItem x:Uid="AsciiCanvasActionMenuCutAction"
                                     Click="OnCutClick">
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xE8C6;" />
@@ -101,4 +102,4 @@
                     IsHitTestVisible="False" />
         </Grid>
     </ScrollView>
-</local:UserControlBase>
+</controlBase:UserControlBase>

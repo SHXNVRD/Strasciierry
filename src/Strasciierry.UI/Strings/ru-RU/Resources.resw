@@ -246,4 +246,13 @@
   <data name="CharacterPaletteItemEditDialogCharacterForegorund.Text" xml:space="preserve">
     <value>Цвет символа</value>
   </data>
+  <data name="AsciiCanvasActionMenuCopyAction.Text" xml:space="preserve">
+    <value>Копировать</value>
+  </data>
+  <data name="AsciiCanvasActionMenuPasteAction.Text" xml:space="preserve">
+    <value>Вставить</value>
+  </data>
+  <data name="AsciiCanvasActionMenuCutAction.Text" xml:space="preserve">
+    <value>Вырезать</value>
+  </data>
 </root>

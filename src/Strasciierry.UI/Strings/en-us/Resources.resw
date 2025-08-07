@@ -195,4 +195,13 @@
   <data name="CharacterPaletteItemEditDialogCharacterForegorund.Text" xml:space="preserve">
     <value>Foreground</value>
   </data>
+  <data name="AsciiCanvasActionMenuCopyAction.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="AsciiCanvasActionMenuPasteAction.Text" xml:space="preserve">
+    <value>Вставить</value>
+  </data>
+  <data name="AsciiCanvasActionMenuCutAction.Text" xml:space="preserve">
+    <value>Cut</value>
+  </data>
 </root>

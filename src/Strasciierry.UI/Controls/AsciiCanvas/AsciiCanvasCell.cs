@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Strasciierry.UI.Controls;
+namespace Strasciierry.UI.Controls.AsciiCanvas;
 
 public partial class AsciiCanvasCell : ObservableObject
 {
@@ -23,5 +23,14 @@ public partial class AsciiCanvasCell : ObservableObject
     {
         Column = column;
         Row = row;
+    }
+
+    public void Update(AsciiCanvasCell cell)
+    {
+        Character = cell.Character;
+        Foreground = cell.Foreground;
+        Background = cell.Background;
+        FontFamily = new FontFamily(cell.FontFamily.Name);
+        FontStyle = cell.FontStyle;
     }
 }

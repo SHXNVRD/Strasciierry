@@ -5,8 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Strasciierry.UI.Controls.ToolHandlers;
-using Strasciierry.UI.Controls.ToolHandlers.Base;
+using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
 using Windows.ApplicationModel.DataTransfer;
 using Color = System.Drawing.Color;
 using FontFamily = System.Drawing.FontFamily;
@@ -14,9 +13,9 @@ using FontStyle = System.Drawing.FontStyle;
 using Point = Windows.Foundation.Point;
 using Rectangle = Microsoft.UI.Xaml.Shapes.Rectangle;
 
-namespace Strasciierry.UI.Controls;
+namespace Strasciierry.UI.Controls.AsciiCanvas;
 
-public sealed partial class AsciiCanvas : UserControlBase
+public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 {
     public DrawingTool DrawingTool
     {
@@ -128,21 +127,34 @@ public sealed partial class AsciiCanvas : UserControlBase
     public double CellWidth => CanvasRepeater.ActualWidth / Columns;
     public double CellHeight => CanvasRepeater.ActualHeight / Rows;
 
-    public static Color DefaultDrawingForeground { get; } = Color.White;
-    public static Color DefaultDrawingBackground { get; } = Color.Transparent;
-    public static FontFamily DefaultDrawingFontFamily { get; } = new FontFamily("Consolas");
-    public static FontStyle DefaultDrawingFontStyle { get; } = System.Drawing.FontStyle.Regular;
+    public static char DefaultCellCharacter => ' ';
+    public static Color DefaultDrawingForeground => Color.White;
+    public static Color DefaultDrawingBackground => Color.Transparent;
+    public static FontFamily DefaultDrawingFontFamily => new("Consolas");
+    public static FontStyle DefaultDrawingFontStyle => System.Drawing.FontStyle.Regular;
 
-    public const char DefaultCellCharacter = ' ';
-
-    private Selection? _selection;
+    public Selection Selection { get; private set; }
+    private Rectangle _selectionRect;
     private Point _lastCellPosition = new(-1, -1);
     private readonly ReadOnlyDictionary<DrawingTool, ToolHandler> _toolHandlers;
-    private ToolHandler _currentToolHandler;
+
+    public event EventHandler<DrawingPropertiesChangedEventArgs>? DrawingPropertiesChanged;
 
     public AsciiCanvas()
     {
         InitializeComponent();
+
+        _selectionRect = new Rectangle
+        {
+            Fill = new SolidColorBrush
+            {
+                Color = Windows.UI.Color.FromArgb(50, 0, 0, 0),
+                Opacity = 0.3
+            },
+            IsHitTestVisible = false
+        };
+
+        SelectionLayer.Children.Add(_selectionRect);
 
         _toolHandlers = new ReadOnlyDictionary<DrawingTool, ToolHandler>(
             new Dictionary<DrawingTool, ToolHandler>
@@ -152,12 +164,6 @@ public sealed partial class AsciiCanvas : UserControlBase
                 [DrawingTool.Selection] = new SelectionToolHandler(this),
                 [DrawingTool.Pipette] = new PipetteToolHandler(this)
             });
-
-        RegisterPropertyChangedCallback(DrawingToolProperty, (d, dp) =>
-        {
-            var canvas = (AsciiCanvas)d;
-            canvas._currentToolHandler = canvas._toolHandlers[canvas.DrawingTool];
-        });
     }
 
     private void InitializeCanvas()
@@ -193,7 +199,15 @@ public sealed partial class AsciiCanvas : UserControlBase
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
 
-        _currentToolHandler.HandlePointerPressed(cell, e);
+        var context = new ToolHandlerContext
+        {
+            PointerEvent = PointerEvent.Pressed,
+            PointerEventArgs = e,
+            CellRow = cell.Row,
+            CellColumn = cell.Column
+        };
+
+        HandleTool(context);
     }
 
     private void OnCellPointerEntered(object sender, PointerRoutedEventArgs e)
@@ -214,7 +228,15 @@ public sealed partial class AsciiCanvas : UserControlBase
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
 
-        _currentToolHandler.HandlePointerEntered(cell, e);
+        var context = new ToolHandlerContext
+        {
+            PointerEvent = PointerEvent.Entered,
+            PointerEventArgs = e,
+            CellRow = cell.Row,
+            CellColumn = cell.Column
+        };
+
+        HandleTool(context);
     }
 
     private void OnCellPointerExited(object sender, PointerRoutedEventArgs e)
@@ -243,13 +265,13 @@ public sealed partial class AsciiCanvas : UserControlBase
 
     private void OnCopyClick(object sender, RoutedEventArgs e)
     {
-        if (_selection is null)
+        if (_selectionRect is null)
             return;
 
-        var selectionEndColumn = (int)(_selection.Area.Width / CellWidth + _selection.StartColumn) - 1;
-        var selectionEndRow = (int)(_selection.Area.Height / CellHeight + _selection.StartRow) - 1;
+        var selectionEndColumn = Selection.Columns + Selection.StartColumn - 1;
+        var selectionEndRow = Selection.Rows + Selection.StartRow - 1;
 
-        var text = GetCharacters(_selection.StartColumn, _selection.StartRow, selectionEndColumn, selectionEndRow);
+        var text = GetCharacters(Selection.StartColumn, Selection.StartRow, selectionEndColumn, selectionEndRow);
 
         var package = new DataPackage
         {
@@ -261,7 +283,7 @@ public sealed partial class AsciiCanvas : UserControlBase
 
     private async void OnPasteClick(object sender, RoutedEventArgs e)
     {
-        if (_selection is null)
+        if (_selectionRect is null)
             return;
 
         var package = Clipboard.GetContent();
@@ -272,21 +294,18 @@ public sealed partial class AsciiCanvas : UserControlBase
         if (pastingText is null)
             return;
 
-        var selectedColumnsCount = (int)(_selection.Area.Width / CellWidth);
-        var selectedRowsCount = (int)(_selection.Area.Height / CellHeight);
-
-        PasteCharacters(_selection.StartColumn, _selection.StartRow, selectedColumnsCount, selectedRowsCount, pastingText);
+        PasteCharacters(Selection.StartColumn, Selection.StartRow, Selection.Columns, Selection.Rows, pastingText);
     }
 
     private void OnCutClick(object sender, RoutedEventArgs e)
     {
-        if (_selection is null)
+        if (_selectionRect is null)
             return;
 
-        var selectionEndColumn = (int)(_selection.Area.Width / CellWidth + _selection.StartColumn) - 1;
-        var selectionEndRow = (int)(_selection.Area.Height / CellHeight + _selection.StartRow) - 1;
+        var selectionEndColumn = Selection.Columns + Selection.StartColumn - 1;
+        var selectionEndRow = Selection.Rows + Selection.StartRow - 1;
 
-        var text = CutCharacters(_selection.StartColumn, _selection.StartRow, selectionEndColumn, selectionEndRow);
+        var text = CutCharacters(Selection.StartColumn, Selection.StartRow, selectionEndColumn, selectionEndRow);
 
         var package = new DataPackage
         {
@@ -296,63 +315,51 @@ public sealed partial class AsciiCanvas : UserControlBase
         Clipboard.SetContent(package);
     }
 
-    public void UpdateSelection(int column, int row)
+    public void SetSelection(Selection selection)
     {
-        ValidateCell(column, row);
+        Selection = selection;
 
-        if (_selection is null)
-        {
-            _selection = new Selection
-            {
-                Area = new Rectangle
-                {
-                    Fill = new SolidColorBrush
-                    {
-                        Color = Windows.UI.Color.FromArgb(50, 0, 0, 0),
-                        Opacity = 0.3
-                    },
-                    IsHitTestVisible = false
-                },
-                InitialColumn = column,
-                InitialRow = row,
-                StartRow = column,
-                StartColumn = row
-            };
+        double left = selection.StartColumn * CellWidth;
+        double top = selection.StartRow * CellHeight;
+        double width = selection.Columns * CellWidth;
+        double height = selection.Rows * CellHeight;
 
-            SelectionLayer.Children.Add(_selection.Area);
-        }
-
-        int minColumn = Math.Min(_selection.InitialColumn, column);
-        int maxColumn = Math.Max(_selection.InitialColumn, column);
-        int minRow = Math.Min(_selection.InitialRow, row);
-        int maxRow = Math.Max(_selection.InitialRow, row);
-
-        double left = minColumn * CellWidth;
-        double top = minRow * CellHeight;
-        double width = (maxColumn - minColumn + 1) * CellWidth;
-        double height = (maxRow - minRow + 1) * CellHeight;
-
-        _selection.StartColumn = minColumn;
-        _selection.StartRow = minRow;
-
-        Canvas.SetLeft(_selection.Area, left);
-        Canvas.SetTop(_selection.Area, top);
-        _selection.Area.Width = width;
-        _selection.Area.Height = height;
+        Canvas.SetLeft(_selectionRect, left);
+        Canvas.SetTop(_selectionRect, top);
+        _selectionRect.Width = width;
+        _selectionRect.Height = height;
     }
 
     public void ClearSelection()
-    {
-        SelectionLayer.Children.Clear();
-        _selection = null;
-    }
+        => SetSelection(new Selection());
 
-    private AsciiCanvasCell GetCell(int column, int row)
+    public AsciiCanvasCell GetCell(int column, int row)
     {
         ValidateCell(column, row);
 
         return Cells[row * Columns + column];
     }
+
+    public AsciiCanvasCell GetDefaultCell()
+        => new(0, 0)
+        {
+            Character = DefaultCellCharacter,
+            Foreground = DefaultDrawingForeground,
+            Background = DefaultDrawingBackground,
+            FontFamily = DefaultDrawingFontFamily,
+            FontStyle = DefaultDrawingFontStyle
+        };
+
+    public AsciiCanvasCell GetStyledCell()
+        => new(0, 0)
+        {
+            Character = DrawingChar,
+            Foreground = DrawingForeground,
+            Background = DrawingBackground,
+            // FontFamily = new FontFamily(DrawingFontFamily.Name); ????
+            FontFamily = DrawingFontFamily,
+            FontStyle = DrawingFontStyle
+        };
 
     private void PasteCharacters(int startColumn, int startRow, int columnsCount, int rowsCount, string text)
     {
@@ -407,6 +414,24 @@ public sealed partial class AsciiCanvas : UserControlBase
         return sb.ToString();
     }
 
+    public void ApplyDrawingPropertiesFromCell(AsciiCanvasCell cell)
+    {
+        DrawingChar = cell.Character;
+        DrawingForeground = cell.Foreground;
+        DrawingBackground = cell.Background;
+        DrawingFontFamily = cell.FontFamily;
+        DrawingFontStyle = cell.FontStyle;
+
+        var eventArgs = new DrawingPropertiesChangedEventArgs(
+            DrawingChar,
+            DrawingForeground,
+            DrawingBackground,
+            DrawingFontFamily,
+            DrawingFontStyle);
+
+        DrawingPropertiesChanged?.Invoke(this, eventArgs);
+    }
+
     private string CutCharacters(int startColumn, int startRow, int endColumn, int endRow)
     {
         ValidateCellRange(startColumn, startRow, endColumn, endRow);
@@ -446,12 +471,6 @@ public sealed partial class AsciiCanvas : UserControlBase
             throw new ArgumentException($"Start row ({startRow}) cannot be greater than end row ({endRow})", nameof(startRow));
     }
 
-    public class Selection
-    {
-        public Rectangle Area { get; set; }
-        public int InitialRow { get; set; }
-        public int InitialColumn { get; set; }
-        public int StartRow { get; set; }
-        public int StartColumn { get; set; }
-    }
+    private void HandleTool(ToolHandlerContext context)
+        => _toolHandlers[DrawingTool].Handle(context);
 }

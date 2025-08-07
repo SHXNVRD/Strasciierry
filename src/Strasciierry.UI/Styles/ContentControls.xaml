@@ -1,5 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conveters="using:Strasciierry.UI.Converters">
+
+    <conveters:SystemDrawingColorToBrushConverter x:Key="ColorToBrushConverter" />
 
     <Style TargetType="ContentControl"
            x:Key="CellContentStyle">
@@ -8,7 +11,7 @@
                 <ControlTemplate TargetType="ContentControl">
                     <Border BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                             BorderThickness="1"
-                            Background="Transparent">
+                            Background="{Binding Background, RelativeSource={RelativeSource Mode=TemplatedParent}}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />

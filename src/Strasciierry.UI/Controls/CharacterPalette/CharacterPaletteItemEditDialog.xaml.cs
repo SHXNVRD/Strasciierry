@@ -1,9 +1,8 @@
 using System.Drawing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Strasciierry.UI.Services.Fonts;
 
-namespace Strasciierry.UI.Controls;
+namespace Strasciierry.UI.Controls.CharacterPalette;
 
 public sealed partial class CharacterPaletteItemEditDialog : ContentDialog
 {
@@ -20,15 +19,10 @@ public sealed partial class CharacterPaletteItemEditDialog : ContentDialog
     }
 
     private CharacterPaletteItem _originItem;
-    public IEnumerable<FontInfo> Fonts { get; set; }
 
-    private readonly IFontsService _fontsService;
-
-    public CharacterPaletteItemEditDialog(IFontsService fontsService)
+    public CharacterPaletteItemEditDialog()
     {
         InitializeComponent();
-        _fontsService = fontsService;
-        Fonts = _fontsService.GetFonts();
     }
 
     private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

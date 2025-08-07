@@ -9,4 +9,13 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
+
+    <Style TargetType="controls:ColorPicker"
+           x:Key="CharacterPaletteItemColorPickerStyle">
+
+        <Setter Property="IsAlphaEnabled"
+                Value="True" />
+        <Setter Property="IsColorPaletteVisible"
+                Value="False" />
+    </Style>
 </ResourceDictionary>

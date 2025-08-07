@@ -4,7 +4,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:winui="using:CommunityToolkit.WinUI.Controls"
-      xmlns:controls="using:Strasciierry.UI.Controls"
+      xmlns:asciiCanas="using:Strasciierry.UI.Controls.AsciiCanvas"
+      xmlns:characterPalette="using:Strasciierry.UI.Controls.CharacterPalette"
       xmlns:converters="using:Strasciierry.UI.Converters"
       mc:Ignorable="d">
 
@@ -103,10 +104,10 @@
               HorizontalAlignment="Center"
               Margin="{StaticResource XSmallLeftTopRightBottomMargin}">
 
-            <controls:CharacterPalette x:Name="CharacterPalette"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch"
-                                       SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}" />
+            <characterPalette:CharacterPalette x:Name="CharacterPalette"
+                                               HorizontalAlignment="Stretch"
+                                               VerticalAlignment="Stretch"
+                                               SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}" />
         </Grid>
 
         <Border   Grid.Row="1"
@@ -140,17 +141,17 @@
                 </Border>
             </Grid>
                 -->
-            <controls:AsciiCanvas x:Name="DrawingCanvas"
-                                  Rows="50"
-                                  Columns="50"
-                                  DrawingTool="{x:Bind ViewModel.DrawingTool, Mode=OneWay}"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                  DrawingChar="{x:Bind ViewModel.SelectedItem.Character, Mode=OneWay}"
-                                  DrawingForeground="{Binding ElementName=CharacterPalette, Path=SelectedItem.Foreground, Mode=OneWay}"
-                                  DrawingBackground="{Binding ElementName=CharacterPalette, Path=SelectedItem.Background, Mode=OneWay}"
-                                  DrawingFontFamily="{Binding ElementName=CharacterPalette, Path=SelectedItem.FontFamily, Mode=OneWay}"
-                                  DrawingFontStyle="{Binding ElementName=CharacterPalette, Path=SelectedItem.FontStyle, Mode=OneWay}" />
+            <asciiCanas:AsciiCanvas x:Name="AsciiCanvas"
+                                    Rows="50"
+                                    Columns="50"
+                                    DrawingTool="{x:Bind ViewModel.DrawingTool, Mode=OneWay}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    DrawingChar="{x:Bind ViewModel.SelectedItem.Character, Mode=OneWay}"
+                                    DrawingForeground="{Binding ElementName=CharacterPalette, Path=SelectedItem.Foreground, Mode=OneWay}"
+                                    DrawingBackground="{Binding ElementName=CharacterPalette, Path=SelectedItem.Background, Mode=OneWay}"
+                                    DrawingFontFamily="{Binding ElementName=CharacterPalette, Path=SelectedItem.FontFamily, Mode=OneWay}"
+                                    DrawingFontStyle="{Binding ElementName=CharacterPalette, Path=SelectedItem.FontStyle, Mode=OneWay}" />
         </Border>
 
         <StackPanel Grid.Column="2"

@@ -1,4 +1,4 @@
-﻿namespace Strasciierry.UI.Controls;
+﻿namespace Strasciierry.UI.Controls.AsciiCanvas;
 
 public enum DrawingTool
 {
