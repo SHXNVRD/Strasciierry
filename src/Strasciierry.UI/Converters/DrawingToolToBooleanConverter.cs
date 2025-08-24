@@ -2,5 +2,5 @@
 
 namespace Strasciierry.UI.Converters;
 
-internal class DrawingToolToBooleanConverter : EnumToBooleanConverter<DrawingTool>
+internal class DrawingToolToBooleanConverter : EnumToBooleanConverter<GraphicTool>
 { }

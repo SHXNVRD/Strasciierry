@@ -3,14 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Serilog;
-using Strasciierry.Core.Services.Files;
+using Strasciierry.Core.Services;
+using Strasciierry.UI.Controls.AsciiCanvas.Commands;
 using Strasciierry.UI.Controls.CharacterPalette;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Services.Activation;
 using Strasciierry.UI.Services.Activation.Handlers;
-using Strasciierry.UI.Services.FilePicker;
 using Strasciierry.UI.Services.Fonts;
-using Strasciierry.UI.Services.ImageToChars;
 using Strasciierry.UI.Services.Localization;
 using Strasciierry.UI.Services.Navigation;
 using Strasciierry.UI.Services.Pages;
@@ -19,6 +18,9 @@ using Strasciierry.UI.Services.Theme;
 using Strasciierry.UI.Services.UsersSymbols;
 using Strasciierry.UI.ViewModels;
 using Strasciierry.UI.Views;
+using Strasciierry.UI.Extensions;
+using Strasciierry.UI.Services.ImageToSymbols;
+using UnhandledExceptionEventArgs = System.UnhandledExceptionEventArgs;
 
 namespace Strasciierry.UI;
 
@@ -53,32 +55,29 @@ public partial class App : Application
             ConfigureServices((context, services) =>
             { 
                 services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
-                services.Configure<ImageToCharOptions>(context.Configuration.GetSection(nameof(ImageToCharOptions)));
-                services.Configure<FilePickerOptions>(context.Configuration.GetSection(nameof(FilePickerOptions)));
 
                 services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
+                services.AddSaveArtStrategies();
                 services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
                 services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
-                services.AddSingleton<IFilePickerService, FilePickerService>();
-                services.AddSingleton<IUsersSymbolsService, UsersSymbolsService>();
+                services.AddSingleton<IUserSymbolsService, UserSymbolsService>();
                 services.AddSingleton<IFontsService, FontsService>();
-                services.AddTransient<IImageToCharsService, ImageToCharsService>();
+                services.AddTransient<IImageToSymbolsService, ImageToSymbolsService>();
 
                 services.AddSingleton<IActivationService, ActivationService>();
                 services.AddSingleton<IPageService, PageService>();
                 services.AddSingleton<INavigationService, NavigationService>();
 
                 services.AddSingleton<IFileService, FileService>();
+                services.AddSingleton<IGraphicToolCommandFactory, GraphicToolCommandFactory>();
 
                 services.AddTransient<SettingsViewModel>();
                 services.AddTransient<SettingsPage>();
-                services.AddTransient<ImageConverterViewModel>();
-                services.AddTransient<ImageConverterPage>();
                 services.AddTransient<ShellPage>();
                 services.AddTransient<ShellViewModel>();
-                services.AddTransient<ImageConverterViewModel>();
-                services.AddTransient<ImageConverterPage>();
+                services.AddTransient<AsciiArtPageViewModel>();
+                services.AddTransient<AsciiArtPage>();
                 services.AddTransient<CharacterPaletteItemEditDialog>();
             }).
             Build();
@@ -93,11 +92,17 @@ public partial class App : Application
             .WriteTo.File(Path.Combine(localAppDataFolder, appDataFolder, "log-.txt"), rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
             .CreateLogger();
 
-        UnhandledException += App_UnhandledException;
-        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+        UnhandledException += OnUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+        TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
     }
 
-    private async void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        
+    }
+
+    private async void TaskSchedulerOnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
         var ex = e.Exception;
         Log.Fatal("[EXCEPTION] type: {type}, message: {description}, exception: {@exception}, inner exception: {@innerException}",
@@ -106,14 +111,15 @@ public partial class App : Application
         await DialogHelper.ShowErrorAsync(App.XamlRoot, $"{ex.Message}\n{ex}");
     }
 
-    private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    private async void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        e.Handled = true;
         var ex = e.Exception;
         Log.Fatal("[EXCEPTION] type: {type}, message: {description}, exception: {@exception}, inner exception: {@innerException}",
                 ex.GetType().Name, ex.Message, ex, ex.InnerException);
 
         await DialogHelper.ShowErrorAsync(App.XamlRoot, $"{e.Message}\n{e.Exception}");
+
+        e.Handled = true;
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)

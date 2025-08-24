@@ -33,4 +33,16 @@ public partial class AsciiCanvasCell : ObservableObject
         FontFamily = new FontFamily(cell.FontFamily.Name);
         FontStyle = cell.FontStyle;
     }
+
+    public AsciiCanvasCell Clone()
+    {
+        return new AsciiCanvasCell(Column, Row)
+        {
+            Character = Character,
+            Foreground = Foreground,
+            Background = Background,
+            FontFamily = new FontFamily(FontFamily.Name),
+            FontStyle = FontStyle
+        };
+    }
 }

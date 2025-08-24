@@ -59,7 +59,7 @@
             </Grid.Resources>
 
             <ItemsRepeater x:Name="CanvasRepeater"
-                           ItemsSource="{x:Bind Cells, Mode=OneWay}"
+                           ItemsSource="{x:Bind ItemsSource, Mode=OneWay}"
                            VirtualizingStackPanel.VirtualizationMode="Recycling"
                            CacheMode="BitmapCache"
                            FlyoutBase.AttachedFlyout="{x:Bind CanvasActionMenu, Mode=OneWay}"
@@ -68,7 +68,7 @@
 
                 <ItemsRepeater.Layout>
                     <UniformGridLayout ItemsStretch="None"
-                                       MaximumRowsOrColumns="{x:Bind Rows, Mode=OneWay}"
+                                       MaximumRowsOrColumns="{x:Bind Columns, Mode=OneWay}"
                                        MinItemHeight="19"
                                        MinItemWidth="10"
                                        MinColumnSpacing="0"

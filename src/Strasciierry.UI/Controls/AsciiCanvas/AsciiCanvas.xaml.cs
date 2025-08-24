@@ -5,8 +5,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Strasciierry.UI.Controls.AsciiCanvas.ToolHandlers;
 using Windows.ApplicationModel.DataTransfer;
+using Microsoft.Extensions.DependencyInjection;
+using Strasciierry.UI.Controls.AsciiCanvas.Commands;
+using Strasciierry.UI.Controls.AsciiCanvas.EventArguments;
 using Color = System.Drawing.Color;
 using FontFamily = System.Drawing.FontFamily;
 using FontStyle = System.Drawing.FontStyle;
@@ -17,16 +19,16 @@ namespace Strasciierry.UI.Controls.AsciiCanvas;
 
 public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 {
-    public DrawingTool DrawingTool
+    public GraphicTool GraphicTool
     {
-        get => (DrawingTool)GetValue(DrawingToolProperty);
-        set => SetValue(DrawingToolProperty, value);
+        get => (GraphicTool)GetValue(GraphicToolProperty);
+        set => SetValue(GraphicToolProperty, value);
     }
 
-    public static readonly DependencyProperty DrawingToolProperty =
+    public static readonly DependencyProperty GraphicToolProperty =
         DependencyProperty.Register(
-            nameof(DrawingTool),
-            typeof(DrawingTool),
+            nameof(GraphicTool),
+            typeof(GraphicTool),
             typeof(AsciiCanvas),
             new PropertyMetadata(null));
 
@@ -106,7 +108,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             nameof(Rows),
             typeof(int),
             typeof(AsciiCanvas),
-            new PropertyMetadata(0, OnCanvasSizeChanged));
+            new PropertyMetadata(0));
 
     public int Columns
     {
@@ -119,10 +121,20 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             nameof(Columns),
             typeof(int),
             typeof(AsciiCanvas),
-            new PropertyMetadata(0, OnCanvasSizeChanged));
+            new PropertyMetadata(0));
 
-    public ObservableCollection<AsciiCanvasCell> Cells { get; }
-           = new ObservableCollection<AsciiCanvasCell>();
+    public IList<AsciiCanvasCell> ItemsSource
+    {
+        get => (IList<AsciiCanvasCell>)GetValue(ItemsSourceProperty);
+        set => SetValue(ItemsSourceProperty, value);
+    }
+
+    public static readonly DependencyProperty ItemsSourceProperty =
+        DependencyProperty.Register(
+            nameof(ItemsSource),
+            typeof(IList<AsciiCanvasCell>),
+            typeof(AsciiCanvas),
+            new PropertyMetadata(null));
 
     public double CellWidth => CanvasRepeater.ActualWidth / Columns;
     public double CellHeight => CanvasRepeater.ActualHeight / Rows;
@@ -136,9 +148,10 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
     public Selection Selection { get; private set; }
     private Rectangle _selectionRect;
     private Point _lastCellPosition = new(-1, -1);
-    private readonly ReadOnlyDictionary<DrawingTool, ToolHandler> _toolHandlers;
 
     public event EventHandler<DrawingPropertiesChangedEventArgs>? DrawingPropertiesChanged;
+
+    private readonly IGraphicToolCommandFactory _commandFactory;
 
     public AsciiCanvas()
     {
@@ -156,35 +169,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 
         SelectionLayer.Children.Add(_selectionRect);
 
-        _toolHandlers = new ReadOnlyDictionary<DrawingTool, ToolHandler>(
-            new Dictionary<DrawingTool, ToolHandler>
-            {
-                [DrawingTool.Pencil] = new PencilToolHandler(this),
-                [DrawingTool.Eraser] = new EraserToolHandler(this),
-                [DrawingTool.Selection] = new SelectionToolHandler(this),
-                [DrawingTool.Pipette] = new PipetteToolHandler(this)
-            });
-    }
-
-    private void InitializeCanvas()
-    {
-        if (Rows < 0 || Columns < 0)
-            throw new ArgumentException("Rows and Columns must be positive");
-
-        Cells.Clear();
-
-        for (var row = 0; row < Rows; row++)
-        {
-            for (var col = 0; col < Columns; col++)
-            {
-                Cells.Add(new AsciiCanvasCell(col, row));
-            }
-        }
-    }
-
-    private static void OnCanvasSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        (d as AsciiCanvas)?.InitializeCanvas();
+        _commandFactory = App.Current.Host.Services.GetRequiredService<IGraphicToolCommandFactory>();
     }
 
     private void OnCellPointerPressed(object sender, PointerRoutedEventArgs e)
@@ -199,15 +184,13 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
 
-        var context = new ToolHandlerContext
-        {
-            PointerEvent = PointerEvent.Pressed,
-            PointerEventArgs = e,
-            CellRow = cell.Row,
-            CellColumn = cell.Column
-        };
+        var context = new GraphicToolContext(
+            PointerEvent.Pressed,
+            e,
+            cell.Column,
+            cell.Row);
 
-        HandleTool(context);
+        HandleGraphicTool(context);
     }
 
     private void OnCellPointerEntered(object sender, PointerRoutedEventArgs e)
@@ -228,15 +211,13 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 
         _lastCellPosition = new Point(cell.Column, cell.Row);
 
-        var context = new ToolHandlerContext
-        {
-            PointerEvent = PointerEvent.Entered,
-            PointerEventArgs = e,
-            CellRow = cell.Row,
-            CellColumn = cell.Column
-        };
+        var context = new GraphicToolContext(
+            PointerEvent.Entered,
+            e,
+            cell.Column,
+            cell.Row);
 
-        HandleTool(context);
+        HandleGraphicTool(context);
     }
 
     private void OnCellPointerExited(object sender, PointerRoutedEventArgs e)
@@ -337,7 +318,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
     {
         ValidateCell(column, row);
 
-        return Cells[row * Columns + column];
+        return ItemsSource[row * Columns + column];
     }
 
     public AsciiCanvasCell GetDefaultCell()
@@ -346,7 +327,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             Character = DefaultCellCharacter,
             Foreground = DefaultDrawingForeground,
             Background = DefaultDrawingBackground,
-            FontFamily = DefaultDrawingFontFamily,
+            FontFamily = new FontFamily(DrawingFontFamily.Name),
             FontStyle = DefaultDrawingFontStyle
         };
 
@@ -356,8 +337,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             Character = DrawingChar,
             Foreground = DrawingForeground,
             Background = DrawingBackground,
-            // FontFamily = new FontFamily(DrawingFontFamily.Name); ????
-            FontFamily = DrawingFontFamily,
+            FontFamily = new FontFamily(DrawingFontFamily.Name),
             FontStyle = DrawingFontStyle
         };
 
@@ -456,7 +436,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
     {
         if (column < 0 || column > Columns)
             throw new ArgumentOutOfRangeException(nameof(column), column, $"Column must be in range [0, {Columns - 1}]");
-        if (row < 0 || row > Columns)
+        if (row < 0 || row > Rows)
             throw new ArgumentOutOfRangeException(nameof(row), row, $"Row must be in range [0, {Rows - 1}]");
     }
 
@@ -471,6 +451,23 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             throw new ArgumentException($"Start row ({startRow}) cannot be greater than end row ({endRow})", nameof(startRow));
     }
 
-    private void HandleTool(ToolHandlerContext context)
-        => _toolHandlers[DrawingTool].Handle(context);
+    private void HandleGraphicTool(GraphicToolContext context)
+    {
+        var command = _commandFactory.CreateCommand(this, context, GraphicTool);
+        command.Do();
+    }
 }
+
+public enum GraphicTool
+{
+    Pencil,
+    Eraser,
+    Selection,
+    Pipette
+}
+
+public record GraphicToolContext(
+    PointerEvent PointerEvent,
+    PointerRoutedEventArgs PointerEventArgs,
+    int Column,
+    int Row);

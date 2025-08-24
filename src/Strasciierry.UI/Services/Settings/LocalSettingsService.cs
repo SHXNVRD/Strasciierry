@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Strasciierry.Core.Helpers;
-using Strasciierry.Core.Services.Files;
 using Strasciierry.UI.Helpers;
 using Windows.Storage;
+using Strasciierry.Core.Services;
 
 namespace Strasciierry.UI.Services.Settings;
 
@@ -16,7 +16,7 @@ public class LocalSettingsService : ILocalSettingsService
 
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private readonly string _applicationDataFolder;
-    private readonly string _localsettingsFile;
+    private readonly string _settingsFileName;
 
     private IDictionary<string, object> _settings;
     private bool _isInitialized;
@@ -27,7 +27,7 @@ public class LocalSettingsService : ILocalSettingsService
         _options = options.Value;
 
         _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? DefaultApplicationDataFolder);
-        _localsettingsFile = _options.LocalSettingsFile ?? DefaultLocalSettingsFile;
+        _settingsFileName = _options.LocalSettingsFile ?? DefaultLocalSettingsFile;
 
         _settings = new Dictionary<string, object>();
     }
@@ -36,7 +36,7 @@ public class LocalSettingsService : ILocalSettingsService
     {
         if (!_isInitialized)
         {
-            _settings = await Task.Run(() => _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile)) ?? new Dictionary<string, object>();
+            _settings = await Task.Run(() => _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _settingsFileName)) ?? new Dictionary<string, object>();
 
             _isInitialized = true;
         }
@@ -53,7 +53,7 @@ public class LocalSettingsService : ILocalSettingsService
         {
             await InitializeAsync();
 
-            if (_settings != null && _settings.TryGetValue(key, out var obj))
+            if (_settings.TryGetValue(key, out var obj))
                 return await Json.ToObjectAsync<T>((string)obj);
         }
 
@@ -72,7 +72,7 @@ public class LocalSettingsService : ILocalSettingsService
 
             _settings[key] = await Json.StringifyAsync(value);
 
-            await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
+            await Task.Run(() => _fileService.Save(_applicationDataFolder, _settingsFileName, _settings));
         }
     }
 }

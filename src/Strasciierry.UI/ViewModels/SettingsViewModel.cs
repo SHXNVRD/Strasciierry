@@ -15,7 +15,7 @@ namespace Strasciierry.UI.ViewModels;
 public partial class SettingsViewModel : ViewModelBase
 {
     private readonly IThemeSelectorService _themeSelectorService;
-    private readonly IUsersSymbolsService _userSymbolsService;
+    private readonly IUserSymbolsService _userSymbolsService;
     private readonly ILocalSettingsService _localSettingsService;
 
     [ObservableProperty]
@@ -32,7 +32,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     public SettingsViewModel(
         IThemeSelectorService themeSelectorService, 
-        IUsersSymbolsService userSymbolsService,
+        IUserSymbolsService userSymbolsService,
         IFontsService fontsService,
         ILocalSettingsService localSettingsService)
     {
@@ -41,7 +41,7 @@ public partial class SettingsViewModel : ViewModelBase
         _localSettingsService = localSettingsService;
 
         ElementTheme = _themeSelectorService.Theme;
-        UsersSymbols = new string(_userSymbolsService.UsersSymbols);
+        UsersSymbols = new string(_userSymbolsService.UserSymbols);
         UsersSymbolsOn = _userSymbolsService.UsersSymbolsOn;
         VersionDescription = GetVersionDescription();
     }
@@ -64,10 +64,10 @@ public partial class SettingsViewModel : ViewModelBase
 
         var cleanSymbols = UsersSymbols.Where(c => !char.IsWhiteSpace(c)).ToArray();
 
-        if (_userSymbolsService.UsersSymbols != cleanSymbols)
+        if (_userSymbolsService.UserSymbols != cleanSymbols)
         {
-            await _userSymbolsService.SetUsersSymbolsAsync(cleanSymbols);
-            UsersSymbols = new string(_userSymbolsService.UsersSymbols);
+            await _userSymbolsService.SetUserSymbolsAsync(cleanSymbols);
+            UsersSymbols = new string(_userSymbolsService.UserSymbols);
         }
     }
 
@@ -76,7 +76,7 @@ public partial class SettingsViewModel : ViewModelBase
         // Между заданием значения свойства ToggleSwitch.IsOn и передачи его IsUserSymbolsOn
         // есть задержка, во время которой значение IsUserSymbolsOn все ещё равно старому значению.
         // Это баг элемента управления.
-        => await _userSymbolsService.SetUsersSymbolsOnAsync(!UsersSymbolsOn);
+        => await _userSymbolsService.SetUserSymbolsOnAsync(!UsersSymbolsOn);
 
     private static string GetVersionDescription()
     {

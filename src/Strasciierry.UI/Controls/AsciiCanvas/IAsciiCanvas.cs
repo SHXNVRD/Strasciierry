@@ -1,7 +1,14 @@
-﻿namespace Strasciierry.UI.Controls.AsciiCanvas;
+﻿using System.Drawing;
+
+namespace Strasciierry.UI.Controls.AsciiCanvas;
 
 public interface IAsciiCanvas
 {
+    char DrawingChar { get; set; }
+    Color DrawingForeground { get; set; }
+    Color DrawingBackground { get; set; }
+    FontStyle DrawingFontStyle { get; set; }
+    FontFamily DrawingFontFamily { get; set; }
     double CellHeight { get; }
     double CellWidth { get; }
     int Columns { get; set; }

@@ -11,7 +11,7 @@ public class PageService : IPageService
 
     public PageService()
     {
-        Configure<ImageConverterViewModel, ImageConverterPage>();
+        Configure<AsciiArtPageViewModel, AsciiArtPage>();
         Configure<SettingsViewModel, SettingsPage>();
     }
 

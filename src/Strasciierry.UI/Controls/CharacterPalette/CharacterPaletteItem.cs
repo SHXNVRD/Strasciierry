@@ -61,7 +61,7 @@ public class CharacterPaletteItemValueComparer : EqualityComparer<CharacterPalet
             && x.FontStyle == y.FontStyle;
     }
 
-    public override int GetHashCode([DisallowNull] CharacterPaletteItem obj)
+    public override int GetHashCode(CharacterPaletteItem obj)
     {
         return HashCode.Combine(
             obj.Character,

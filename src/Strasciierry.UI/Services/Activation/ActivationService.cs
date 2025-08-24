@@ -14,7 +14,7 @@ public class ActivationService : IActivationService
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
     private readonly IThemeSelectorService _themeSelectorService;
-    private readonly IUsersSymbolsService _userSymbolsService;
+    private readonly IUserSymbolsService _userSymbolsService;
     private readonly IFontsService _fontsService;
     private readonly ILocalizationService _localizationService;
     private UIElement? _shell = null;
@@ -23,7 +23,7 @@ public class ActivationService : IActivationService
         ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
         IEnumerable<IActivationHandler> activationHandlers,
         IThemeSelectorService themeSelectorService,
-        IUsersSymbolsService userSymbolsService,
+        IUserSymbolsService userSymbolsService,
         IFontsService fontsService)
     {
         _defaultHandler = defaultHandler;
