@@ -1,7 +1,7 @@
 ﻿using Windows.Storage;
 using Strasciierry.UI.ViewModels;
 
-namespace Strasciierry.UI.Media.SaveArtStrategies;
+namespace Strasciierry.UI.Helpers.SaveArtStrategies;
 
 public class TxtSaveArtStrategy : SaveArtStrategy
 {

@@ -8,4 +8,6 @@ public struct Selection
     public int StartColumn { get; set; }
     public int Columns { get; set; }
     public int Rows { get; set; }
+    public int EndColumn => Columns + StartColumn - 1;
+    public int EndRow => Rows + StartRow - 1;
 }

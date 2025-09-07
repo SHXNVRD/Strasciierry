@@ -9,7 +9,7 @@ public partial class AsciiCanvasCell : ObservableObject
     public int Row { get; }
 
     [ObservableProperty]
-    public partial char Character { get; set; } = ' ';
+    public partial char Symbol { get; set; } = ' ';
     [ObservableProperty]
     public partial FontFamily FontFamily { get; set; } = new FontFamily("Consolas");
     [ObservableProperty]
@@ -27,7 +27,7 @@ public partial class AsciiCanvasCell : ObservableObject
 
     public void Update(AsciiCanvasCell cell)
     {
-        Character = cell.Character;
+        Symbol = cell.Symbol;
         Foreground = cell.Foreground;
         Background = cell.Background;
         FontFamily = new FontFamily(cell.FontFamily.Name);
@@ -38,7 +38,7 @@ public partial class AsciiCanvasCell : ObservableObject
     {
         return new AsciiCanvasCell(Column, Row)
         {
-            Character = Character,
+            Symbol = Symbol,
             Foreground = Foreground,
             Background = Background,
             FontFamily = new FontFamily(FontFamily.Name),

@@ -6,6 +6,7 @@ namespace Strasciierry.UI.Controls.AsciiCanvas.Commands;
 public class DrawCommand(IAsciiCanvas canvas, GraphicToolContext context) : ICommand
 {
     private AsciiCanvasCell? _oldCell;
+
     public Task Do()
     {
         var eventArgs = context.PointerEventArgs;

@@ -83,7 +83,7 @@
                                         PointerExited="OnCellPointerExited"
                                         Background="{x:Bind Background, Converter={StaticResource SystemDrawingColorToBrushConverter}, Mode=OneWay}">
 
-                            <TextBlock Text="{x:Bind Character, Mode=OneWay}"
+                            <TextBlock Text="{x:Bind Symbol, Mode=OneWay}"
                                        FontFamily="{x:Bind FontFamily.Name, Mode=OneWay}"
                                        Foreground="{x:Bind Foreground, Converter={StaticResource SystemDrawingColorToBrushConverter},Mode=OneWay}"
                                        TextDecorations="{x:Bind FontStyle, Converter={StaticResource FontStyleToTextDecorationsConverter}, Mode=OneWay}"

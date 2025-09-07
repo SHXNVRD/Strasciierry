@@ -32,7 +32,7 @@ public class ChangeDrawingPropertiesCommand(IAsciiCanvas canvas, GraphicToolCont
         {
             var cell = new AsciiCanvasCell(0, 0)
             {
-                Character = _oldCharacter.Value,
+                Symbol = _oldCharacter.Value,
                 Foreground = _oldForeground.Value,
                 Background = _oldBackground.Value,
                 FontStyle = _oldFontStyle.Value,

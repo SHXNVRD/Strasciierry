@@ -6,6 +6,8 @@ using Strasciierry.UI.Controls.CharacterPalette;
 using Strasciierry.UI.Helpers;
 using Strasciierry.UI.ViewModels;
 using Strasciierry.UI.Controls.AsciiCanvas.EventArguments;
+using Windows.Storage;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Strasciierry.UI.Views;
 
@@ -50,7 +52,7 @@ public sealed partial class AsciiArtPage : Page
     private async Task OpenArtAsync()
     {
         var file = await FilePickerHelper
-            .CreateDocumentFileOpenPicker()
+            .CreateGenericFileOpenPicker()
             .PickSingleFileAsync();
 
         if (file == null)
@@ -58,7 +60,23 @@ public sealed partial class AsciiArtPage : Page
 
         FilePathTextBlock.Text = file.Path ?? string.Empty;
 
-        await ViewModel.LoadArtAsync(file);
+        if (FilePickerHelper.IsDocument(file.FileType))
+            await ViewModel.LoadArtAsync(file);
+        else if (FilePickerHelper.IsImage(file.FileType))
+        {
+            SetPreviewSourceImage(file);
+            await ViewModel.LoadImageAsync(file);
+        }
+    }
+
+    private void SetPreviewSourceImage(StorageFile file)
+    {
+        if (!FilePickerHelper.IsImage(file.FileType))
+            return;
+
+        var uri = new Uri(file.Path);
+        var image = new BitmapImage(uri);
+        PreviewSourceImage.Source = image;
     }
 
     private async Task SaveArtAsync()

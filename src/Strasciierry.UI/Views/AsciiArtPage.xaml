@@ -3,10 +3,12 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:winui="using:CommunityToolkit.WinUI.Controls"
+      xmlns:toolkitControls="using:CommunityToolkit.WinUI.Controls"
       xmlns:asciiCanvas="using:Strasciierry.UI.Controls.AsciiCanvas"
       xmlns:characterPalette="using:Strasciierry.UI.Controls.CharacterPalette"
+      xmlns:controls="using:Strasciierry.UI.Controls"
       xmlns:converters="using:Strasciierry.UI.Converters"
+      xmlns:toolkitConverters="using:CommunityToolkit.WinUI.Converters"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -20,6 +22,7 @@
             <converters:SystemDrawingFontStyleToWindowsUiFontStyleConverter x:Key="SystemDrawingFontStyleToWindowsUiFontStyleConverter" />
             <converters:FontStyleToTextDecorationsConverter x:Key="FontStyleToTextDecorationsConverter" />
             <converters:DrawingToolToBooleanConverter x:Key="DrawingToolToBooleanConverter" />
+            <toolkitConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <Flyout x:Key="FlyoutBackgroundColorPicker">
                 <ColorPicker x:Name="BackgroundColorPicker"
@@ -100,11 +103,11 @@
                                                SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}" />
         </Grid>
 
-        <Border   Grid.Row="1"
-                  Grid.Column="1"
-                  Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
-                  Background="{StaticResource ControlFillColorDefault}"
-                  CornerRadius="5">
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
+                Background="{StaticResource ControlFillColorDefault}"
+                CornerRadius="5">
 
             <!--
             <Grid>
@@ -145,67 +148,82 @@
                                      ItemsSource="{x:Bind ViewModel.Cells, Mode=OneWay}" />
         </Border>
 
-        <StackPanel Grid.Column="2"
-                    Grid.Row="1"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Center"
-                    Spacing="5"
-                    Margin="{StaticResource XSmallTopBottomMargin}"
-                    CornerRadius="4"
-                    Background="{StaticResource ControlFillColorDefault}">
+        <Grid  Grid.Column="2"
+               Grid.Row="1"
+               Margin="{StaticResource XSmallTopBottomMargin}">
 
-            <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
-                         IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Pencil, Mode=TwoWay}">
+            <StackPanel VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        Spacing="5"
+                        CornerRadius="4"
+                        Background="{StaticResource ControlFillColorDefault}">
 
-                <FontIcon Glyph="&#xE70F;" />
+                <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
+                             IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Pencil, Mode=TwoWay}">
 
-                <ToggleButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="B" />
-                </ToggleButton.KeyboardAccelerators>
-            </RadioButton>
+                    <FontIcon Glyph="&#xE70F;" />
 
-            <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
-                         IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Eraser, Mode=TwoWay}">
+                    <ToggleButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="B" />
+                    </ToggleButton.KeyboardAccelerators>
+                </RadioButton>
 
-                <FontIcon Glyph="&#xE75C;" />
+                <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
+                             IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Eraser, Mode=TwoWay}">
 
-                <ToggleButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="E" />
-                </ToggleButton.KeyboardAccelerators>
-            </RadioButton>
+                    <FontIcon Glyph="&#xE75C;" />
 
-            <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
-                         IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Pipette, Mode=TwoWay}">
+                    <ToggleButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="E" />
+                    </ToggleButton.KeyboardAccelerators>
+                </RadioButton>
 
-                <FontIcon Glyph="&#xEF3C;" />
+                <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
+                             IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Pipette, Mode=TwoWay}">
 
-                <ToggleButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="I" />
-                </ToggleButton.KeyboardAccelerators>
-            </RadioButton>
+                    <FontIcon Glyph="&#xEF3C;" />
 
-            <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
-                         IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Selection, Mode=TwoWay}">
+                    <ToggleButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="I" />
+                    </ToggleButton.KeyboardAccelerators>
+                </RadioButton>
 
-                <FontIcon Glyph="&#xE739;" />
+                <RadioButton Style="{StaticResource LikeToggleButtonStyle}"
+                             IsChecked="{x:Bind ViewModel.GraphicTool, Converter={StaticResource DrawingToolToBooleanConverter}, ConverterParameter=Selection, Mode=TwoWay}">
 
-                <RadioButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="W" />
-                </RadioButton.KeyboardAccelerators>
-            </RadioButton>
-        </StackPanel>
+                    <FontIcon Glyph="&#xE739;" />
 
-        <!-- Панель натсроек -->
-        <StackPanel x:Name="SettingsPanel"
+                    <RadioButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="W" />
+                    </RadioButton.KeyboardAccelerators>
+                </RadioButton>
+
+            </StackPanel>
+
+            <ToggleButton x:Name="SwitchArtFromImage"
+                          VerticalAlignment="Bottom"
+                          Background="{StaticResource ControlFillColorDefault}"
+                          Style="{StaticResource TransperantToggleButtonStyle}">
+
+                <FontIcon Glyph="&#xEB9F;" />
+            </ToggleButton>
+        </Grid>
+
+        <StackPanel Visibility="{Binding ElementName=SwitchArtFromImage, Path=IsChecked, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
                     Grid.Column="3"
                     Grid.Row="1"
                     Orientation="Vertical"
-                    Margin="{StaticResource XSmallTopMargin}"
+                    Margin="{StaticResource XSmallLeftTopMargin}"
                     Spacing="5">
 
-            <winui:SettingsCard x:Uid="Converting_Settings_ArtSize"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch">
+            <Image Stretch="UniformToFill"
+                   x:Name="PreviewSourceImage"
+                   Width="250"
+                   Height="250" />
+
+            <toolkitControls:SettingsCard x:Uid="Converting_Settings_ArtSize"
+                                          HorizontalAlignment="Stretch"
+                                          HorizontalContentAlignment="Stretch">
 
                 <Slider x:Name="SizeSlider"
                         IsThumbToolTipEnabled="True"
@@ -218,11 +236,11 @@
                         Width="300">
 
                 </Slider>
-            </winui:SettingsCard>
+            </toolkitControls:SettingsCard>
 
-            <winui:SettingsCard x:Uid="Converting_Settings_HeightReductionFactor"
-                                HorizontalContentAlignment="Stretch"
-                                HorizontalAlignment="Stretch">
+            <toolkitControls:SettingsCard x:Uid="Converting_Settings_HeightReductionFactor"
+                                          HorizontalContentAlignment="Stretch"
+                                          HorizontalAlignment="Stretch">
 
                 <Slider x:Name="HeightReductionFactorSlider"
                         HorizontalAlignment="Stretch"
@@ -233,12 +251,12 @@
                         Value="{x:Bind ViewModel.HeightReductionFactor, Mode=TwoWay}"
                         Width="300">
                 </Slider>
-            </winui:SettingsCard>
+            </toolkitControls:SettingsCard>
 
-            <winui:SettingsCard x:Uid="Converting_Settings_Inversion">
-                <winui:SettingsCard.Resources>
+            <toolkitControls:SettingsCard x:Uid="Converting_Settings_Inversion">
+                <toolkitControls:SettingsCard.Resources>
                     <x:Double x:Key="SettingsCardWrapThreshold">200</x:Double>
-                </winui:SettingsCard.Resources>
+                </toolkitControls:SettingsCard.Resources>
 
                 <ToggleSwitch HorizontalAlignment="Right"
                               IsOn="{x:Bind ViewModel.IsNegative, Mode=TwoWay}">
@@ -246,7 +264,7 @@
                         <ToolTip x:Uid="Converting_Settings_Inversion_ToolTip" />
                     </ToolTipService.ToolTip>
                 </ToggleSwitch>
-            </winui:SettingsCard>
+            </toolkitControls:SettingsCard>
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -254,7 +272,6 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock x:Uid="Converting_Settings_Background"
@@ -280,18 +297,18 @@
                         Grid.Column="3"
                         Flyout="{StaticResource FlyoutForegroundColorPicker}">
                 </Button>
-                
-                <Button Grid.Column="4"
-                        HorizontalAlignment="Stretch"
-                        x:Uid="Converting_Settings_Generate"
-                        Command="{x:Bind ViewModel.GenerateArtCommand}"
-                        Margin="0 0 5 0"
-                        Style="{StaticResource AccentButtonStyle}" />
             </Grid>
+
+            <Button HorizontalAlignment="Stretch"
+                    x:Uid="Converting_Settings_Generate"
+                    Command="{x:Bind ViewModel.GenerateArtCommand}"
+                    Margin="0 0 5 0"
+                    Style="{StaticResource AccentButtonStyle}" />
         </StackPanel>
 
         <!-- Панель статуса -->
         <Grid HorizontalAlignment="Stretch"
+              Margin="{StaticResource XSmallLeftMargin}"
               Grid.Row="2"
               Grid.Column="0"
               Grid.ColumnSpan="4"
@@ -302,23 +319,24 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0"
-                        Orientation="Horizontal">
+                        Orientation="Horizontal"
+                        Margin="{StaticResource XSmallRightMargin}">
                 <TextBlock x:Uid="Converting_StatusBar_FileName" />
                 <TextBlock x:Name="FilePathTextBlock"
-                           Margin="3 0 0 0" />
+                           Margin="{StaticResource XXSmallLeftMargin}" />
             </StackPanel>
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal">
                 <TextBlock x:Uid="Converting_StatusBar_ArtRows"
                            HorizontalAlignment="Right" />
-                <TextBlock Text="{x:Bind ViewModel.Height, Mode=OneWay}"
-                           Margin="3 0 0 0"
+                <TextBlock Text="{x:Bind ViewModel.Rows, Mode=OneWay}"
+                           Margin="{StaticResource XXSmallLeftMargin}"
                            HorizontalAlignment="Right" />
                 <TextBlock x:Uid="Converting_StatusBar_ArtColumns"
-                           Margin="10 0 0 0"
+                           Margin="{StaticResource SmallLeftMargin}"
                            HorizontalAlignment="Right" />
-                <TextBlock Text="{x:Bind ViewModel.Width, Mode=OneWay}"
-                           Margin="3 0 0 0"
+                <TextBlock Text="{x:Bind ViewModel.Columns, Mode=OneWay}"
+                           Margin="{StaticResource XXSmallLeftMargin}"
                            HorizontalAlignment="Right" />
             </StackPanel>
         </Grid>

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
-using Strasciierry.Core.Helpers;
 using Strasciierry.UI.Helpers;
 using Windows.Storage;
 using Strasciierry.Core.Services;
+using Strasciierry.Core.Helpers;
 
 namespace Strasciierry.UI.Services.Settings;
 

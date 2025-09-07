@@ -1,4 +1,6 @@
-﻿using Windows.Storage.Pickers;
+﻿using System.Collections.ObjectModel;
+using Strasciierry.Core.Exceptions;
+using Windows.Storage.Pickers;
 using WinRT.Interop;
 
 namespace Strasciierry.UI.Helpers;
@@ -12,9 +14,9 @@ public static class FilePickerHelper
     public static KeyValuePair<string, IReadOnlyCollection<string>> Tiff { get; } = new("TIFF", [".tiff"]);
     public static KeyValuePair<string, IReadOnlyCollection<string>> Webp { get; } = new("WEBP", [".webp"]);
     public static KeyValuePair<string, IReadOnlyCollection<string>> Heif { get; } = new("HEIF", [".heif"]);
-    public static KeyValuePair<string, IReadOnlyCollection<string>> Ico { get; } = new("Windows icon", [".ico"]);
-    public static KeyValuePair<string, IReadOnlyCollection<string>> Wmf { get; } = new("Windows Metafile", [".wmf"]);
-    public static KeyValuePair<string, IReadOnlyCollection<string>> Emf { get; } = new("Enhanced Metafile", [".emf"]);
+    public static KeyValuePair<string, IReadOnlyCollection<string>> Ico { get; } = new("ICO", [".ico"]);
+    public static KeyValuePair<string, IReadOnlyCollection<string>> Wmf { get; } = new("WMF", [".wmf"]);
+    public static KeyValuePair<string, IReadOnlyCollection<string>> Emf { get; } = new("EMF", [".emf"]);
 
     public static KeyValuePair<string, IReadOnlyCollection<string>> Txt { get; } = new("Plain text", [".txt"]);
     
@@ -36,6 +38,29 @@ public static class FilePickerHelper
     [
         Txt
     ];
+
+    public static IReadOnlyCollection<KeyValuePair<string, IReadOnlyCollection<string>>> ExtensionsAll { get; } =
+        [.. ImageAll, .. DocumentAll];
+
+    public static bool IsImage(string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+
+        if (extension is null)
+            return false;
+
+        return ImageAll.Any(i => i.Value.Contains(extension));
+    }
+
+    public static bool IsDocument(string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+
+        if ( extension is null) 
+            return false;
+
+        return DocumentAll.Any(d => d.Value.Contains(extension));
+    }
 
     public static FileSavePicker CreateImageFileSavePicker()
     {
@@ -127,5 +152,20 @@ public static class FilePickerHelper
         InitializeWithWindow.Initialize(filePicker, hWnd);
 
         return filePicker;
+    }
+
+    public static string GetFileFormat(string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+
+        if (string.IsNullOrEmpty(extension))
+            throw new ArgumentException("File extension cannot be null or am empty string");
+
+        var format = ExtensionsAll.FirstOrDefault(e => e.Value.Contains(extension));
+
+        if (format.Equals(default(KeyValuePair<string, IReadOnlyCollection<string>>)))
+            throw new FileFormatNotSupportedException(extension);
+
+        return format.Key;
     }
 }

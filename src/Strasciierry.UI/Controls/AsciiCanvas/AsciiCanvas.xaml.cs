@@ -1,14 +1,19 @@
 using System.Collections.ObjectModel;
+using System.Data.Common;
+using System.Drawing;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Windows.ApplicationModel.DataTransfer;
-using Microsoft.Extensions.DependencyInjection;
 using Strasciierry.UI.Controls.AsciiCanvas.Commands;
 using Strasciierry.UI.Controls.AsciiCanvas.EventArguments;
+using Strasciierry.UI.Helpers;
+using Windows.ApplicationModel.DataTransfer;
+using static System.Net.Mime.MediaTypeNames;
 using Color = System.Drawing.Color;
 using FontFamily = System.Drawing.FontFamily;
 using FontStyle = System.Drawing.FontStyle;
@@ -244,22 +249,13 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 
     }
 
-    private void OnCopyClick(object sender, RoutedEventArgs e)
+    private async void OnCopyClick(object sender, RoutedEventArgs e)
     {
         if (_selectionRect is null)
             return;
 
-        var selectionEndColumn = Selection.Columns + Selection.StartColumn - 1;
-        var selectionEndRow = Selection.Rows + Selection.StartRow - 1;
-
-        var text = GetCharacters(Selection.StartColumn, Selection.StartRow, selectionEndColumn, selectionEndRow);
-
-        var package = new DataPackage
-        {
-            RequestedOperation = DataPackageOperation.Copy
-        };
-        package.SetText(text);
-        Clipboard.SetContent(package);
+        var cells = CopyCells(Selection.StartColumn, Selection.StartRow, Selection.EndColumn, Selection.EndRow);
+        await ClipboardHelper.SetAsync(cells, ClipboardHelper.AsciiCanvasCellDataFormat, 3);
     }
 
     private async void OnPasteClick(object sender, RoutedEventArgs e)
@@ -267,15 +263,19 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
         if (_selectionRect is null)
             return;
 
-        var package = Clipboard.GetContent();
-        if (!package.Contains(StandardDataFormats.Text))
-            return;
+        var cells = await ClipboardHelper.GetAsync<IEnumerable<AsciiCanvasCell>>(ClipboardHelper.AsciiCanvasCellDataFormat);
+        if (cells is not null)
+        {
+            PasteSymbols(Selection.StartColumn, Selection.StartRow, Selection.Columns, Selection.Rows, [.. cells]);
+        }
+        else
+        {
+            var symbols = await ClipboardHelper.GetTextAsync();
+            if (string.IsNullOrEmpty(symbols))
+                return;
 
-        var pastingText = await package.GetTextAsync();
-        if (pastingText is null)
-            return;
-
-        PasteCharacters(Selection.StartColumn, Selection.StartRow, Selection.Columns, Selection.Rows, pastingText);
+            PasteSymbols(Selection.StartColumn, Selection.StartRow, Selection.Columns, Selection.Rows, symbols);
+        }
     }
 
     private void OnCutClick(object sender, RoutedEventArgs e)
@@ -324,7 +324,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
     public AsciiCanvasCell GetDefaultCell()
         => new(0, 0)
         {
-            Character = DefaultCellCharacter,
+            Symbol = DefaultCellCharacter,
             Foreground = DefaultDrawingForeground,
             Background = DefaultDrawingBackground,
             FontFamily = new FontFamily(DrawingFontFamily.Name),
@@ -334,14 +334,14 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
     public AsciiCanvasCell GetStyledCell()
         => new(0, 0)
         {
-            Character = DrawingChar,
+            Symbol = DrawingChar,
             Foreground = DrawingForeground,
             Background = DrawingBackground,
             FontFamily = new FontFamily(DrawingFontFamily.Name),
             FontStyle = DrawingFontStyle
         };
 
-    private void PasteCharacters(int startColumn, int startRow, int columnsCount, int rowsCount, string text)
+    private void PasteSymbols(int startColumn, int startRow, int columnsCount, int rowsCount, string text)
     {
         ValidateCell(startColumn, startRow);
 
@@ -349,12 +349,12 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             throw new ArgumentException($"Columns count must be greater than zero", nameof(columnsCount));
         if (rowsCount < 0)
             throw new ArgumentException($"Rows count must be greater than zero", nameof(rowsCount));
-        if (text is null)
-            return;
+        if (string.IsNullOrEmpty(text))
+            throw new ArgumentNullException(nameof(text));
 
-        var lines = text.Split("\r\n");
-
+        var lines = text.Split(Environment.NewLine);
         var totalRows = Math.Min(lines.Length, rowsCount);
+        var pastingCell = GetDefaultCell();
 
         for (var rowOffset = 0; rowOffset < totalRows; rowOffset++)
         {
@@ -365,38 +365,71 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             {
                 var col = startColumn + colOffset;
                 var row = startRow + rowOffset;
+                pastingCell.Symbol = line[colOffset];
 
-                var cell = GetCell(col, row);
-                if (cell is not null)
-                {
-                    cell.Character = line[colOffset];
-                }
+                GetCell(col, row).Update(pastingCell);
             }
         }
     }
 
-    private string GetCharacters(int startColumn, int startRow, int endColumn, int endRow)
+    private void PasteSymbols(int startColumn, int startRow, int columnsCount, int rowsCount, AsciiCanvasCell[] cells)
+    {
+        ValidateCell(startColumn, startRow);
+
+        if (columnsCount < 0)
+            throw new ArgumentException($"Columns count must be greater than zero", nameof(columnsCount));
+        if (rowsCount < 0)
+            throw new ArgumentException($"Rows count must be greater than zero", nameof(rowsCount));
+        if (cells is null)
+            throw new ArgumentNullException(nameof(cells));
+        if (!cells.Any())
+            return;
+
+        var minCol = cells.Min(c => c.Column);
+        var minRow = cells.Min(c => c.Row);
+        var maxCol = cells.Max(c => c.Column);
+        var maxRow = cells.Max(c => c.Row);
+
+        int sourceColumns = maxCol - minCol + 1;
+        int sourceRows = maxRow - minRow + 1;
+
+        var totalColumns = Math.Min(sourceColumns, columnsCount);
+        var totalRows = Math.Min(sourceRows, rowsCount);
+
+        for (var rowOffset = 0; rowOffset < totalRows; rowOffset++)
+        {
+            for (var colOffset = 0; colOffset < totalColumns; colOffset++)
+            {
+                var col = startColumn + colOffset;
+                var row = startRow + rowOffset;
+                var index = rowOffset * sourceColumns + colOffset;
+
+                GetCell(col, row).Update(cells[index]);
+            }
+        }
+    }
+
+    private IEnumerable<AsciiCanvasCell> CopyCells(int startColumn, int startRow, int endColumn, int endRow)
     {
         ValidateCellRange(startColumn, startRow, endColumn, endRow);
 
-        var sb = new StringBuilder();
+        var cells = new List<AsciiCanvasCell>();
 
         for (var row = startRow; row <= endRow; row++)
         {
             for (var column = startColumn; column <= endColumn; column++)
             {
-                var cell = GetCell(column, row);
-                sb.Append(cell.Character);
+                var cell = GetCell(column, row).Clone();
+                cells.Add(cell);
             }
-            sb.AppendLine();
         }
 
-        return sb.ToString();
+        return cells;
     }
 
     public void ApplyDrawingPropertiesFromCell(AsciiCanvasCell cell)
     {
-        DrawingChar = cell.Character;
+        DrawingChar = cell.Symbol;
         DrawingForeground = cell.Foreground;
         DrawingBackground = cell.Background;
         DrawingFontFamily = cell.FontFamily;
@@ -423,8 +456,8 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
             for (var column = startColumn; column <= endColumn; column++)
             {
                 var cell = GetCell(column, row);
-                sb.Append(cell.Character);
-                cell.Character = DefaultCellCharacter;
+                sb.Append(cell.Symbol);
+                cell.Symbol = DefaultCellCharacter;
             }
             sb.AppendLine();
         }

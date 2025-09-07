@@ -28,7 +28,7 @@ public partial class App : Application
 {
     public IHost Host { get; }
     public static WindowEx MainWindow { get; } = new MainWindow();
-    public  static new App Current => (App)Application.Current;
+    public static new App Current => (App)Application.Current;
     public static XamlRoot XamlRoot => MainWindow.Content.XamlRoot;
 
     public static UIElement? AppTitlebar
@@ -49,48 +49,11 @@ public partial class App : Application
     {
         InitializeComponent();
 
-        Host = Microsoft.Extensions.Hosting.Host.
-            CreateDefaultBuilder().
-            UseContentRoot(AppContext.BaseDirectory).
-            ConfigureServices((context, services) =>
-            { 
-                services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
-
-                services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
-
-                services.AddSaveArtStrategies();
-                services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
-                services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
-                services.AddSingleton<IUserSymbolsService, UserSymbolsService>();
-                services.AddSingleton<IFontsService, FontsService>();
-                services.AddTransient<IImageToSymbolsService, ImageToSymbolsService>();
-
-                services.AddSingleton<IActivationService, ActivationService>();
-                services.AddSingleton<IPageService, PageService>();
-                services.AddSingleton<INavigationService, NavigationService>();
-
-                services.AddSingleton<IFileService, FileService>();
-                services.AddSingleton<IGraphicToolCommandFactory, GraphicToolCommandFactory>();
-
-                services.AddTransient<SettingsViewModel>();
-                services.AddTransient<SettingsPage>();
-                services.AddTransient<ShellPage>();
-                services.AddTransient<ShellViewModel>();
-                services.AddTransient<AsciiArtPageViewModel>();
-                services.AddTransient<AsciiArtPage>();
-                services.AddTransient<CharacterPaletteItemEditDialog>();
-            }).
-            Build();
-
-        var config = Host.Services.GetRequiredService<IConfiguration>();
-        var appDataFolder = config["ApplicationLogsFolder"] ?? "Strasciierry/Logs";
-        var localAppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()
-            .WriteTo.File(Path.Combine(localAppDataFolder, appDataFolder, "log-.txt"), rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
-            .CreateLogger();
+        Host = Microsoft.Extensions.Hosting.Host
+            .CreateDefaultBuilder()
+            .UseContentRoot(AppContext.BaseDirectory)
+            .ConfigureServices((context, services) => services.ConfigureServices())
+            .Build();
 
         UnhandledException += OnUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;

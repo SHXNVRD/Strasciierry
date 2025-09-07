@@ -23,9 +23,10 @@ using Windows.Devices.PointOfService.Provider;
 using System.Text;
 using Windows.UI.Text;
 using CommunityToolkit.WinUI;
-using Strasciierry.UI.Media;
 using Strasciierry.UI.Services.ImageToSymbols;
 using FontStyle = System.Drawing.FontStyle;
+using Strasciierry.UI.Factories;
+using Windows.UI.Core;
 
 namespace Strasciierry.UI.ViewModels;
 
@@ -41,10 +42,6 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
 
     [ObservableProperty] public partial Color ArtForeground { get; set; } = _defaultArtForeground;
 
-    [ObservableProperty] public partial int Width { get; set; }
-
-    [ObservableProperty] public partial int Height { get; set; }
-
     [ObservableProperty] public partial int SizePercent { get; set; } = 100;
 
     [ObservableProperty] public partial double HeightReductionFactor { get; set; } = 1;
@@ -55,24 +52,32 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
 
     [ObservableProperty] public partial CharacterPaletteItem SelectedItem { get; set; }
 
-    [ObservableProperty] public partial int Columns { get; set; } = 75;
+    [ObservableProperty] public partial int Columns { get; set; }
 
-    [ObservableProperty] public partial int Rows { get; set; } = 35;
+    [ObservableProperty] public partial int Rows { get; set; }
 
     public ObservableCollection<AsciiCanvasCell> Cells { get; set; } = [];
 
     private readonly IImageToSymbolsService _imageToSymbolsService;
+    private readonly ISaveArtStrategyFactory _saveArtStrategyFactory;
 
-    public AsciiArtPageViewModel(IImageToSymbolsService imageToSymbolsService)
+    public AsciiArtPageViewModel(
+        IImageToSymbolsService imageToSymbolsService,
+        ISaveArtStrategyFactory saveArtStrategyFactory)
     {
         _imageToSymbolsService = imageToSymbolsService;
-        InitializeCells();
+        _saveArtStrategyFactory = saveArtStrategyFactory;
+        InitializeCanvas(25, 10);
     }
 
-    private void InitializeCells()
+    private void InitializeCanvas(int columns, int rows)
     {
-        if (Rows < 0 || Columns < 0)
+        if (columns < 0 || rows < 0)
             throw new ArgumentException("Rows and Columns must be positive");
+
+        Columns = columns;
+        Rows = rows;
+        Cells.Clear();
 
         for (var row = 0; row < Rows; row++)
         {
@@ -123,9 +128,9 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
             if (_bitmap == null)
                 return;
 
-            Width = _bitmap.PixelWidth * SizePercent / 100;
-            Height = (int)(_bitmap.PixelHeight / HeightReductionFactor * Width / _bitmap.PixelWidth);
-            using var resizedBitmap = _bitmap.Resize(Width, Height);
+            var width = _bitmap.PixelWidth * SizePercent / 100;
+            var height = (int)(_bitmap.PixelHeight / HeightReductionFactor * width / _bitmap.PixelWidth);
+            using var resizedBitmap = _bitmap.Resize(width, height);
             using var grayScaleBitMap = resizedBitmap.ConvertToGrayscale();
             string art;
 
@@ -138,7 +143,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
                 art = await _imageToSymbolsService.ConvertAsync(grayScaleBitMap);
             }
 
-            dispatcherQueue.TryEnqueue(() => SetArt(art));
+            dispatcherQueue.TryEnqueue(() => SetArt(art, true));
         }
         catch (Exception ex)
         {
@@ -153,7 +158,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
 
         try
         {
-            var saveStrategy = Extension.GetSaveArtStrategy(file.FileType);
+            var saveStrategy = _saveArtStrategyFactory.CreateStrategy(file.FileType);
             await saveStrategy.SaveAsync(this, file);
         }
         // TODO: Подумать как перенести нотификейшн во вью
@@ -220,7 +225,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
                 using (var foregroundBrush = new SolidBrush(cell.Foreground))
                 {
                     graphics.DrawString(
-                        cell.Character.ToString(),
+                        cell.Symbol.ToString(),
                         font,
                         foregroundBrush,
                         rect,
@@ -250,7 +255,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
             for (var column = 0; column < Columns; column++)
             {
                 var cell = Cells[row * Columns + column];
-                sb.Append(cell.Character);
+                sb.Append(cell.Symbol);
             }
 
             sb.AppendLine();
@@ -259,7 +264,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
         return sb.ToString();
     }
 
-    public void SetArt(string art)
+    public void SetArt(string art, bool resize = false)
     {
         if (string.IsNullOrEmpty(art))
             return;
@@ -267,6 +272,10 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
         Cells.Clear();
 
         var artLines = art.Split(Environment.NewLine);
+
+        if (resize)
+            InitializeCanvas(artLines[0].Length, artLines.Length);
+
         var rows = Math.Min(Rows, artLines.Length);
 
         for (var row = 0; row < rows; row++)
@@ -278,7 +287,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
             {
                 var cell = new AsciiCanvasCell(column, row)
                 {
-                    Character = line[column]
+                    Symbol = line[column]
                 };
 
                 Cells[row * Columns + column] = cell;

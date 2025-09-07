@@ -2,14 +2,14 @@
 using Windows.Storage;
 using Strasciierry.UI.ViewModels;
 
-namespace Strasciierry.UI.Media.SaveArtStrategies;
+namespace Strasciierry.UI.Helpers.SaveArtStrategies;
 
-public class BmpSaveArtStrategy : SaveArtStrategy
+public class HeifSaveArtStrategy : SaveArtStrategy
 {
     protected async override Task SaveAsyncCore(IAsciiArtPageViewModel context, StorageFile file)
     {
         using var img = context.DrawArt();
         await using var stream = await file.OpenStreamForWriteAsync();
-        await Task.Run(() => img.Save(stream, ImageFormat.Bmp));
+        await Task.Run(() => img.Save(stream, ImageFormat.Heif));
     }
 }
