@@ -90,10 +90,6 @@
     <Page Update="Controls\CharacterPalette.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Styles\ContentControls.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Update="Styles\RadioButtons.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,32 +1,37 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Automation;
+using Strasciierry.Core;
 using Strasciierry.Core.Extensions;
-using Strasciierry.UI.Extensions;
-using Strasciierry.UI.Helpers;
-using Strasciierry.UI.Services.Fonts;
-using Strasciierry.UI.Services.Settings;
-using Strasciierry.UI.Services.UsersSymbols;
 using Strasciierry.UI.Controls.AsciiCanvas;
 using Strasciierry.UI.Controls.CharacterPalette;
+using Strasciierry.UI.Extensions;
+using Strasciierry.UI.Factories;
+using Strasciierry.UI.Helpers;
+using Strasciierry.UI.Services.Fonts;
+using Strasciierry.UI.Services.ImageToSymbols;
+using Strasciierry.UI.Services.Settings;
+using Strasciierry.UI.Services.UsersSymbols;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.AllJoyn;
 using Windows.Devices.PointOfService.Provider;
-using System.Text;
-using Windows.UI.Text;
-using CommunityToolkit.WinUI;
-using Strasciierry.UI.Services.ImageToSymbols;
-using FontStyle = System.Drawing.FontStyle;
-using Strasciierry.UI.Factories;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.Text;
+using FontStyle = System.Drawing.FontStyle;
 
 namespace Strasciierry.UI.ViewModels;
 
@@ -56,7 +61,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
 
     [ObservableProperty] public partial int Rows { get; set; }
 
-    public ObservableCollection<AsciiCanvasCell> Cells { get; set; } = [];
+    public ObservableRangeCollection<AsciiCanvasCell> Cells { get; set; } = [];
 
     private readonly IImageToSymbolsService _imageToSymbolsService;
     private readonly ISaveArtStrategyFactory _saveArtStrategyFactory;
@@ -67,7 +72,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
     {
         _imageToSymbolsService = imageToSymbolsService;
         _saveArtStrategyFactory = saveArtStrategyFactory;
-        InitializeCanvas(25, 10);
+        InitializeCanvas(25, 15);
     }
 
     private void InitializeCanvas(int columns, int rows)
@@ -79,13 +84,17 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
         Rows = rows;
         Cells.Clear();
 
+        var cells = new AsciiCanvasCell[columns * rows];
+
         for (var row = 0; row < Rows; row++)
         {
             for (var column = 0; column < Columns; column++)
             {
-                Cells.Add(new AsciiCanvasCell(column, row));
+                cells[row * Columns + column] = new AsciiCanvasCell(column, row);
             }
         }
+
+        Cells.AddRange(cells);
     }
 
     public async Task LoadImageAsync(StorageFile file)
@@ -285,12 +294,7 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
 
             for (var column = 0; column < columns; column++)
             {
-                var cell = new AsciiCanvasCell(column, row)
-                {
-                    Symbol = line[column]
-                };
-
-                Cells[row * Columns + column] = cell;
+                Cells[row * Columns + column].Symbol = line[column];
             }
         }
     }
