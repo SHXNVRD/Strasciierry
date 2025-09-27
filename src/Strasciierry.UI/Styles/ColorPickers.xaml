@@ -14,7 +14,7 @@
            x:Key="CharacterPaletteItemColorPickerStyle">
 
         <Setter Property="IsAlphaEnabled"
-                Value="True" />
+                Value="False" />
         <Setter Property="IsColorPaletteVisible"
                 Value="False" />
     </Style>

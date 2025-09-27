@@ -22,9 +22,27 @@
         <DataTemplate x:Key="CharacterItemTemplate"
                       x:DataType="local:CharacterPaletteItem">
             <ItemContainer>
+                
+                <!-- 
+                Установка CornerRadius BorderThickness используются для стирания самого внешнего пикселя
+                фона элемента, т.к. он виден за рамкой, добавляемой стандартным стилем ItemsView при выделении
+                элемента. В будущем нужно исправить этот костыль, т.к. даже сейчас при многократном увеличении
+                на углах немного виден цвет фона за рамкой при выделении.
+                
+                Рассматривал размытие самого внешнего пикселя вместо его полной прозрачности, но визуально разница
+                не сильно большая, так что решил отказаться от лишнего биндинга:
+                BorderBrush="{Binding Background, 
+                              RelativeSource={RelativeSource Mode=Self}, 
+                              Converter={StaticResource BrushOpacityConverter}, 
+                              ConverterParameter=0.3}">
+                
+                TODO: Изменить рамку при выделении элемента
+                -->
                 <Border Background="{x:Bind Background, Converter={StaticResource SystemDrawingColorToBrushConverter}, Mode=OneWay}"
                         VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch">
+                        HorizontalAlignment="Stretch"
+                        CornerRadius="5"
+                        BorderThickness="1">
                     <TextBlock DataContext="{x:Bind}"
                                Text="{x:Bind Character, Mode=OneWay}"
                                FontFamily="{x:Bind FontFamily.Name, Mode=OneWay}"
