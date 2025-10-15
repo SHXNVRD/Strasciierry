@@ -41,4 +41,14 @@ public static class ArrayExtensions
 
         return builder.ToString();
     }
+
+    public static T[] Reverse<T>(this T[] array)
+    {
+        var newArray = new T[array.Length];
+
+        array.CopyTo(newArray, 0);
+        Array.Reverse(newArray);
+
+        return newArray;
+    }
 }

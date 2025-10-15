@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Strasciierry.UI.Helpers;
 
-public class NavigationHelper
+public static class NavigationHelper
 {
     public static string GetNavigateTo(NavigationViewItem item) => (string)item.GetValue(NavigateToProperty);
 

@@ -138,12 +138,6 @@
   <data name="Settings_About.Text" xml:space="preserve">
     <value>О программе</value>
   </data>
-  <data name="SettingsPage_GithubRepoLink.Content" xml:space="preserve">
-    <value>Github project repository</value>
-  </data>
-  <data name="SettingsPage_GithubRepoLink.NavigateUri" xml:space="preserve">
-    <value>https://github.com/SHXNVRD/Strasciierry</value>
-  </data>
   <data name="Converting_Settings_Inversion.Header" xml:space="preserve">
     <value>Инверсия</value>
   </data>
@@ -237,9 +231,6 @@
   <data name="CharacterPaletteItemEditDialog.CloseButtonText" xml:space="preserve">
     <value>Отмена</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Strasciierry</value>
-  </data>
   <data name="CharacterPaletteItemEditDialogCharacterBackground.Text" xml:space="preserve">
     <value>Фон</value>
   </data>
@@ -254,5 +245,38 @@
   </data>
   <data name="AsciiCanvasActionMenuCutAction.Text" xml:space="preserve">
     <value>Вырезать</value>
+  </data>
+  <data name="AsciiArtPageSettingsButton.Content" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SettingsWindowSaveButton.Content" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="SettingsWindowCancelButton.Content" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="SettingsPageGeneral.Content" xml:space="preserve">
+    <value>Общие</value>
+  </data>
+  <data name="SettingsPageAbout.Content" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="SettingsPageImageToSymbols.Content" xml:space="preserve">
+    <value>Генерация арта из изображения</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Strasciierry</value>
+  </data>
+  <data name="AboutControlGithubRepo.Content" xml:space="preserve">
+    <value>Репозиторий проекта</value>
+  </data>
+  <data name="SettingsPage_GithubRepoLink.NavigateUri" xml:space="preserve">
+    <value>https://github.com/SHXNVRD/Strasciierry</value>
+  </data>
+  <data name="SettingsWindow.Title" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="AboutControlVersion.Text" xml:space="preserve">
+    <value>Версия: </value>
   </data>
 </root>

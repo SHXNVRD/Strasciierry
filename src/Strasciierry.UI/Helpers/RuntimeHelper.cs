@@ -1,20 +1,38 @@
-﻿using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Reflection;
+using System.Runtime.InteropServices;
+using CommunityToolkit.WinUI;
+using Strasciierry.WinApi.Kernel32;
+using Windows.ApplicationModel;
 
 namespace Strasciierry.UI.Helpers;
 
 public class RuntimeHelper
 {
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern int GetCurrentPackageFullName(ref int packageFullNameLength, StringBuilder? packageFullName);
-
     public static bool IsMSIX
     {
         get
         {
-            var length = 0;
+            var length = 0U;
 
-            return GetCurrentPackageFullName(ref length, null) != 15700L;
+            return Kernel32.GetCurrentPackageFullName(ref length, null) != 15700;
         }
+    }
+
+    public static string GetVersionDescription()
+    {
+        Version version;
+
+        if (IsMSIX)
+        {
+            var packageVersion = Package.Current.Id.Version;
+
+            version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+        }
+        else
+        {
+            version = Assembly.GetExecutingAssembly().GetName().Version!;
+        }
+
+        return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
     }
 }

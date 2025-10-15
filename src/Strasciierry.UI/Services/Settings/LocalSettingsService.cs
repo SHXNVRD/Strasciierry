@@ -3,76 +3,62 @@ using Strasciierry.UI.Helpers;
 using Windows.Storage;
 using Strasciierry.Core.Services;
 using Strasciierry.Core.Helpers;
+using System.Xml;
+using Strasciierry.UI.ViewModels;
+using CommunityToolkit.WinUI;
+using Microsoft.UI.Dispatching;
 
 namespace Strasciierry.UI.Services.Settings;
 
-public class LocalSettingsService : ILocalSettingsService
+public class LocalSettingsService : ViewModelBase, ILocalSettingsService
 {
     private const string DefaultApplicationDataFolder = "Strasciierry/ApplicationData";
     private const string DefaultLocalSettingsFile = "LocalSettings.json";
 
-    private readonly IFileService _fileService;
-    private readonly LocalSettingsOptions _options;
-
-    private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private readonly string _applicationDataFolder;
     private readonly string _settingsFileName;
+    private readonly LocalSettingsOptions _options;
+    private readonly TimeSpan _debounceTimeout = TimeSpan.FromMilliseconds(300);
 
-    private IDictionary<string, object> _settings;
-    private bool _isInitialized;
+    public AppSettings AppSettings { get; }
 
-    public LocalSettingsService(IFileService fileService, IOptions<LocalSettingsOptions> options)
+    public LocalSettingsService(IOptions<LocalSettingsOptions> options)
     {
-        _fileService = fileService;
         _options = options.Value;
 
-        _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? DefaultApplicationDataFolder);
+        var localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        _applicationDataFolder = Path.Combine(localApplicationData, _options.ApplicationDataFolder ?? DefaultApplicationDataFolder);
         _settingsFileName = _options.LocalSettingsFile ?? DefaultLocalSettingsFile;
 
-        _settings = new Dictionary<string, object>();
+        AppSettings = ReadAppSettings();
+
+        AppSettings.GeneralSettings.PropertyChanged += GeneralSettings_PropertyChanged;
+        AppSettings.ImageToSymbolsSettings.PropertyChanged += ImageToSymbolsSettings_PropertyChanged;
     }
 
-    private async Task InitializeAsync()
+    private void SaveAppSettingsDebounce()
     {
-        if (!_isInitialized)
+        _dispatcherQueueTimer.Debounce(() =>
         {
-            _settings = await Task.Run(() => _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _settingsFileName)) ?? new Dictionary<string, object>();
-
-            _isInitialized = true;
-        }
+            _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, SaveAppSettings);
+        }, _debounceTimeout);
     }
 
-    public async Task<T?> ReadSettingAsync<T>(string key)
+    private AppSettings ReadAppSettings()
+        => FileHelper.Read<AppSettings>(_applicationDataFolder, _settingsFileName) ?? new AppSettings();
+
+    // TODO: По возможности сохранять в ApplicationData.Current.LocalSettings.Values
+    private void SaveAppSettings()
+        => FileHelper.Save(_applicationDataFolder, _settingsFileName, AppSettings);
+
+    private void GeneralSettings_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (RuntimeHelper.IsMSIX)
-        {
-            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-                return await Json.ToObjectAsync<T>((string)obj);
-        }
-        else
-        {
-            await InitializeAsync();
+        if (e.PropertyName == nameof(GeneralSettings.AppTheme))
+            ThemeHelper.ChangeTheme(AppSettings.GeneralSettings.AppTheme);
 
-            if (_settings.TryGetValue(key, out var obj))
-                return await Json.ToObjectAsync<T>((string)obj);
-        }
-
-        return default;
+        SaveAppSettingsDebounce();
     }
 
-    public async Task SaveSettingAsync<T>(string key, T value)
-    {
-        if (RuntimeHelper.IsMSIX)
-        {
-            ApplicationData.Current.LocalSettings.Values[key] = await Json.StringifyAsync(value);
-        }
-        else
-        {
-            await InitializeAsync();
-
-            _settings[key] = await Json.StringifyAsync(value);
-
-            await Task.Run(() => _fileService.Save(_applicationDataFolder, _settingsFileName, _settings));
-        }
-    }
+    private void ImageToSymbolsSettings_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        => SaveAppSettingsDebounce();
 }

@@ -12,7 +12,6 @@ public class PageService : IPageService
     public PageService()
     {
         Configure<AsciiArtPageViewModel, AsciiArtPage>();
-        Configure<SettingsViewModel, SettingsPage>();
     }
 
     public Type GetPageType(string key)

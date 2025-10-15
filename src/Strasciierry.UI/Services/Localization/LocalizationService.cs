@@ -92,11 +92,13 @@ public class LocalizationService : ILocalizationService
 
     private async Task<string?> LoadLanguageFromSettingsAsync()
     {
-        return await _localSettingsService.ReadSettingAsync<string>(SettingsKey);
+        //return await _localSettingsService.ReadSettingAsync<string>(SettingsKey);
+
+        return null;
     }
 
     private async Task SaveLanguageInSettingsAsync(string language)
     {
-        await _localSettingsService.SaveSettingAsync(SettingsKey, language);
+        //await _localSettingsService.SaveSettingAsync(SettingsKey, language);
     }
 }

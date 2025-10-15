@@ -1,96 +1,63 @@
-﻿<Page x:Class="Strasciierry.UI.Views.SettingsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:Strasciierry.UI.Converters"
-    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:c="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:xaml="using:Microsoft.UI.Xaml"
-    mc:Ignorable="d">
+<?xml version="1.0" encoding="utf-8"?>
+<Page x:Class="Strasciierry.UI.Views.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Strasciierry.UI.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:converters="using:Strasciierry.UI.Converters"
+      xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+      xmlns:uc="using:Strasciierry.UI.Controls"
+      xmlns:c="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:xaml="using:Microsoft.UI.Xaml"
+      xmlns:ui="using:CommunityToolkit.WinUI"
+      mc:Ignorable="d">
+
     <Page.Resources>
         <converters:ThemeToBooleanConverter x:Key="ThemeToBooleanConverter" />
     </Page.Resources>
 
-    <ScrollView HorizontalScrollMode="Disabled"
-                VerticalScrollBarVisibility="Hidden">
-        <StackPanel Margin="56,44">
-            <controls:SettingsExpander x:Uid="Settings_Theme">
-                
-                <controls:SettingsExpander.HeaderIcon>
-                    <FontIcon Glyph="&#xE790;"/>
-                </controls:SettingsExpander.HeaderIcon>
+    <Grid>
+        <NavigationView IsBackButtonVisible="Collapsed"
+                        IsSettingsVisible="False"
+                        SelectionChanged="NavigationView_SelectionChanged">
 
-                <controls:SettingsExpander.Items>
-                    <controls:SettingsCard ContentAlignment="Left">
-                        <RadioButtons>
-                            <RadioButton
-                                x:Uid="Settings_Theme_Light"
-                                Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                         IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource ThemeToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}">
-                                <RadioButton.CommandParameter>
-                                    <xaml:ElementTheme>Light</xaml:ElementTheme>
-                                </RadioButton.CommandParameter>
-                            </RadioButton>
-                            <RadioButton
-                                x:Uid="Settings_Theme_Dark"
-                                Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                         IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource ThemeToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}">
-                                <RadioButton.CommandParameter>
-                                    <xaml:ElementTheme>Dark</xaml:ElementTheme>
-                                </RadioButton.CommandParameter>
-                            </RadioButton>
-                            <RadioButton
-                                x:Uid="Settings_Theme_Default"
-                                Command="{x:Bind ViewModel.SwitchThemeCommand}"
-                                         IsChecked="{x:Bind ViewModel.ElementTheme, Converter={StaticResource ThemeToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}">
-                                <RadioButton.CommandParameter>
-                                    <xaml:ElementTheme>Default</xaml:ElementTheme>
-                                </RadioButton.CommandParameter>
-                            </RadioButton>
-                        </RadioButtons>
-                    </controls:SettingsCard>
-                </controls:SettingsExpander.Items>
-            </controls:SettingsExpander>
+            <NavigationView.MenuItems>
+                <NavigationViewItem Icon="{ui:FontIcon Glyph=&#xECAA;}"
+                                    x:Uid="SettingsPageGeneral"
+                                    Tag="General"
+                                    IsSelected="True"/>
 
-            <controls:SettingsExpander x:Uid="Settings_UserSymbols">
-                <controls:SettingsExpander.HeaderIcon>
-                    <FontIcon Glyph="&#xED58;" />
-                </controls:SettingsExpander.HeaderIcon>
+                <NavigationViewItem Icon="{ui:FontIcon Glyph=&#xED58;}"
+                                    x:Uid="SettingsPageImageToSymbols"
+                                    Tag="ImageToSymbols" />
 
-                <ToggleSwitch x:Name="tsUseCustomSymbols"
-                              IsOn="{x:Bind ViewModel.UsersSymbolsOn, Mode=TwoWay}">
+                <NavigationViewItem Icon="{ui:FontIcon Glyph=&#xE946;}"
+                                    x:Uid="SettingsPageAbout"
+                                    Tag="About" />
+            </NavigationView.MenuItems>
 
-                    <i:Interaction.Behaviors>
-                        <c:EventTriggerBehavior EventName="Toggled">
-                            <c:InvokeCommandAction Command="{x:Bind ViewModel.SetUsersSymbolsOnCommand}" />
-                        </c:EventTriggerBehavior>
-                    </i:Interaction.Behaviors>
-                </ToggleSwitch>
+            <controls:SwitchPresenter x:Name="ViewSwitchPresenter"
+                                      Padding="30">
+                <controls:SwitchPresenter.ContentTransitions>
+                    <TransitionCollection>
+                        <PopupThemeTransition />
+                    </TransitionCollection>
+                </controls:SwitchPresenter.ContentTransitions>
 
-                <controls:SettingsExpander.Items>
-                    <controls:SettingsCard x:Uid="Settings_UserSymbols_SettingCard">
+                <controls:Case Value="General">
 
-                        <TextBox MinWidth="200"
-                                 MaxWidth="300"
-                                 Text="{x:Bind ViewModel.UsersSymbols, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 LostFocus="TextBox_LostFocus" />
-                    </controls:SettingsCard>
-                </controls:SettingsExpander.Items>
-            </controls:SettingsExpander>
+                </controls:Case>
 
-            <TextBlock x:Uid="Settings_About" 
-                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Margin="0 20 0 0"/>
+                <controls:Case Value="ImageToSymbols">
 
-            <StackPanel Margin="{StaticResource XSmallTopMargin}">
-                <TextBlock Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" 
-                           Style="{ThemeResource BodyTextBlockStyle}" />
+                </controls:Case>
 
-                <HyperlinkButton x:Uid="SettingsPage_GithubRepoLink" 
-                                 Margin="{StaticResource SettingsPageHyperlinkButtonMargin}" />
-            </StackPanel>
-        </StackPanel>
-    </ScrollView>
+                <controls:Case Value="About">
+                    <uc:AboutControl />
+                </controls:Case>
+            </controls:SwitchPresenter>
+        </NavigationView>
+    </Grid>
 </Page>

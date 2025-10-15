@@ -1,11 +1,11 @@
-﻿<windowex:WindowEx
+﻿<winuiex:WindowEx
     x:Class="Strasciierry.UI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Strasciierry.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:windowex="using:WinUIEx"
+    xmlns:winuiex="using:WinUIEx"
     MinWidth="500"
     MinHeight="500"
     PersistenceId="MainWindow"
@@ -13,4 +13,4 @@
     <Window.SystemBackdrop>
         <MicaBackdrop/>
     </Window.SystemBackdrop>
-</windowex:WindowEx>
+</winuiex:WindowEx>

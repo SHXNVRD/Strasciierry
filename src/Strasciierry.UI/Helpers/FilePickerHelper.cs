@@ -159,7 +159,7 @@ public static class FilePickerHelper
         var extension = Path.GetExtension(fileName);
 
         if (string.IsNullOrEmpty(extension))
-            throw new ArgumentException("File extension cannot be null or am empty string");
+            throw new ArgumentException("File extension cannot be null or an empty string");
 
         var format = ExtensionsAll.FirstOrDefault(e => e.Value.Contains(extension));
 

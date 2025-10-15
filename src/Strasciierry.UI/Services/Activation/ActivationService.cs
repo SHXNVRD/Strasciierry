@@ -1,10 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Strasciierry.UI.Services.Activation.Handlers;
 using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.Localization;
-using Strasciierry.UI.Services.Theme;
-using Strasciierry.UI.Services.UsersSymbols;
 using Strasciierry.UI.Views;
 
 namespace Strasciierry.UI.Services.Activation;
@@ -13,24 +13,14 @@ public class ActivationService : IActivationService
 {
     private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
-    private readonly IThemeSelectorService _themeSelectorService;
-    private readonly IUserSymbolsService _userSymbolsService;
-    private readonly IFontsService _fontsService;
-    private readonly ILocalizationService _localizationService;
     private UIElement? _shell = null;
 
     public ActivationService(
         ActivationHandler<LaunchActivatedEventArgs> defaultHandler,
-        IEnumerable<IActivationHandler> activationHandlers,
-        IThemeSelectorService themeSelectorService,
-        IUserSymbolsService userSymbolsService,
-        IFontsService fontsService)
+        IEnumerable<IActivationHandler> activationHandlers)
     {
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
-        _themeSelectorService = themeSelectorService;
-        _userSymbolsService = userSymbolsService;
-        _fontsService = fontsService;
     }
 
     public async Task ActivateAsync(object activationArgs)
@@ -39,8 +29,8 @@ public class ActivationService : IActivationService
 
         if (App.MainWindow.Content == null)
         {
-            _shell = App.GetService<ShellPage>();
-            App.MainWindow.Content = _shell ?? throw new NullReferenceException($"{typeof(ShellPage)} is not registered");
+            _shell = Ioc.Default.GetRequiredService<ShellPage>();
+            App.MainWindow.Content = _shell;
         }
 
         await HandleActivationAsync(activationArgs);
@@ -65,15 +55,11 @@ public class ActivationService : IActivationService
 
     private async Task InitializeAsync()
     {
-        await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
-        await _userSymbolsService.InitializeAsync().ConfigureAwait(false);
-        _fontsService.Initialize();
         await Task.CompletedTask;
     }
 
     private async Task StartupAsync()
     {
-        await _themeSelectorService.SetRequestedThemeAsync().ConfigureAwait(false);
         await Task.CompletedTask;
     }
 }

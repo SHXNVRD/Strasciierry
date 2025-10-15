@@ -138,12 +138,6 @@
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
   </data>
-  <data name="SettingsPage_GithubRepoLink.Content" xml:space="preserve">
-    <value>Github project repository</value>
-  </data>
-  <data name="SettingsPage_GithubRepoLink.NavigateUri" xml:space="preserve">
-    <value>https://github.com/SHXNVRD/Strasciierry</value>
-  </data>
   <data name="Converting_Settings_Inversion.Header" xml:space="preserve">
     <value>Inversion</value>
   </data>
@@ -165,8 +159,59 @@
   <data name="Converting_StatusBar_FileName.Text" xml:space="preserve">
     <value>Path:</value>
   </data>
+  <data name="Converting_Settings_Inversion_ToolTip.Content" xml:space="preserve">
+    <value>Turn on for correct display on a light background</value>
+  </data>
+  <data name="Settings_UserSymbols.Header" xml:space="preserve">
+    <value>User symbols</value>
+  </data>
+  <data name="Settings_UserSymbols_SettingCard.Header" xml:space="preserve">
+    <value>Enter characters</value>
+  </data>
   <data name="Shell_Image_Convert.Content" xml:space="preserve">
     <value>Image to art</value>
+  </data>
+  <data name="Converting_Copy_Button.Content" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Converting_StatusBar_ArtRows.Text" xml:space="preserve">
+    <value>Rows:</value>
+  </data>
+  <data name="Converting_StatusBar_ArtColumns.Text" xml:space="preserve">
+    <value>Columns:</value>
+  </data>
+  <data name="Converting_Settings_Background.Text" xml:space="preserve">
+    <value>Backgroud</value>
+  </data>
+  <data name="Converting_Settings_Foreground.Text" xml:space="preserve">
+    <value>Foreground</value>
+  </data>
+  <data name="Settings_Use_Monospaced_Fonts_Only.Header" xml:space="preserve">
+    <value>Use only monospace fonts</value>
+  </data>
+  <data name="Settings_Use_Monospaced_Fonts_Only.Description" xml:space="preserve">
+    <value>To display art correctly, it is recommended to use monospace fonts</value>
+  </data>
+  <data name="Pencil_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pencil (B)</value>
+  </data>
+  <data name="Eraser_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Erase (E)</value>
+  </data>
+  <data name="Pipette_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pipette</value>
+  </data>
+  <data name="Selection_Tool.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Selection (W)</value>
+  </data>
+  <data name="Menu_File.Title" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Menu_File_Open.Text" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Menu_File_Save.Text" xml:space="preserve">
+    <value>Save</value>
   </data>
   <data name="CharacterPaletteItemEditDialog.Title" xml:space="preserve">
     <value>Edit character</value>
@@ -186,9 +231,6 @@
   <data name="CharacterPaletteItemEditDialog.CloseButtonText" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Strasciierry</value>
-  </data>
   <data name="CharacterPaletteItemEditDialogCharacterBackground.Text" xml:space="preserve">
     <value>Background</value>
   </data>
@@ -203,5 +245,38 @@
   </data>
   <data name="AsciiCanvasActionMenuCutAction.Text" xml:space="preserve">
     <value>Cut</value>
+  </data>
+  <data name="AsciiArtPageSettingsButton.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsWindowSaveButton.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SettingsWindowCancelButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SettingsPageGeneral.Content" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsPageAbout.Content" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsPageImageToSymbols.Content" xml:space="preserve">
+    <value>Generating art from an image</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Strasciierry</value>
+  </data>
+  <data name="AboutControlGithubRepo.Content" xml:space="preserve">
+    <value>Project repository</value>
+  </data>
+  <data name="SettingsPage_GithubRepoLink.NavigateUri" xml:space="preserve">
+    <value>https://github.com/SHXNVRD/Strasciierry</value>
+  </data>
+  <data name="SettingsWindow.Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="AboutControlVersion.Text" xml:space="preserve">
+    <value>Version: </value>
   </data>
 </root>

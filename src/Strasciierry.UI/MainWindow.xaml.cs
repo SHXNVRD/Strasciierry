@@ -25,7 +25,6 @@ public sealed partial class MainWindow : WindowEx
         settings.ColorValuesChanged += Settings_ColorValuesChanged;
     }
 
-
     private void Settings_ColorValuesChanged(UISettings sender, object args)
     {
         dispatcherQueue.TryEnqueue(() =>

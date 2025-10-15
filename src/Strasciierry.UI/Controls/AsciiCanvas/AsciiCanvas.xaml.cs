@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Drawing;
 using System.Text;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -174,7 +175,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 
         SelectionLayer.Children.Add(_selectionRect);
 
-        _commandFactory = App.Current.Host.Services.GetRequiredService<IGraphicToolCommandFactory>();
+        _commandFactory = Ioc.Default.GetRequiredService<IGraphicToolCommandFactory>();
     }
 
     private void OnCellPointerPressed(object sender, PointerRoutedEventArgs e)

@@ -20,10 +20,9 @@ using Strasciierry.UI.Controls.CharacterPalette;
 using Strasciierry.UI.Extensions;
 using Strasciierry.UI.Factories;
 using Strasciierry.UI.Helpers;
+using Strasciierry.UI.ImageConverters;
 using Strasciierry.UI.Services.Fonts;
-using Strasciierry.UI.Services.ImageToSymbols;
 using Strasciierry.UI.Services.Settings;
-using Strasciierry.UI.Services.UsersSymbols;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.AllJoyn;
 using Windows.Devices.PointOfService.Provider;
@@ -63,15 +62,15 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
 
     public ObservableRangeCollection<AsciiCanvasCell> Cells { get; set; } = [];
 
-    private readonly IImageToSymbolsService _imageToSymbolsService;
     private readonly ISaveArtStrategyFactory _saveArtStrategyFactory;
+    private readonly ILocalSettingsService _settingsService;
 
     public AsciiArtPageViewModel(
-        IImageToSymbolsService imageToSymbolsService,
-        ISaveArtStrategyFactory saveArtStrategyFactory)
+        ISaveArtStrategyFactory saveArtStrategyFactory,
+        ILocalSettingsService settingsService)
     {
-        _imageToSymbolsService = imageToSymbolsService;
         _saveArtStrategyFactory = saveArtStrategyFactory;
+        _settingsService = settingsService;
         InitializeCanvas(25, 15);
     }
 
@@ -145,11 +144,11 @@ public partial class AsciiArtPageViewModel : ViewModelBase, IAsciiArtPageViewMod
 
             if (IsNegative)
             {
-                art = await _imageToSymbolsService.ConvertNegativeAsync(grayScaleBitMap);
+                art = await Task.Run(() => ImageToSymbolsConverter.Convert(grayScaleBitMap, _settingsService.AppSettings.ImageToSymbolsSettings.ImageToSymbolsCharacters.Reverse()));
             }
             else
             {
-                art = await _imageToSymbolsService.ConvertAsync(grayScaleBitMap);
+                art = await Task.Run(() => ImageToSymbolsConverter.Convert(grayScaleBitMap, _settingsService.AppSettings.ImageToSymbolsSettings.ImageToSymbolsCharacters));
             }
 
             dispatcherQueue.TryEnqueue(() => SetArt(art, true));

@@ -3,14 +3,14 @@ using Strasciierry.UI.Services.Navigation;
 
 namespace Strasciierry.UI.ViewModels;
 
-public partial class ShellViewModel : ViewModelBase
+public partial class ShellPageViewModel : ViewModelBase
 {
     public INavigationService NavigationService
     {
         get;
     }
 
-    public ShellViewModel(INavigationService navigationService)
+    public ShellPageViewModel(INavigationService navigationService)
     {
         NavigationService = navigationService;
     }

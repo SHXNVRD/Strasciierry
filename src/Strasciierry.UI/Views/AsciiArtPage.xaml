@@ -86,6 +86,8 @@
                         </MenuFlyoutItem>
                     </MenuBarItem>
                 </MenuBar>
+                <Button x:Uid="AsciiArtPageSettingsButton"
+                        Command="{x:Bind ShowSettingsWindowCommand}"/>
             </StackPanel>
         </Grid>
 

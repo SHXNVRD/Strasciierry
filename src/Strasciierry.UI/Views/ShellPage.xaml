@@ -31,7 +31,7 @@
                        Margin="28,0,0,0" />
         </Grid>
         <Grid Grid.Row="1"
-              Margin="{StaticResource NavigationViewPageContentMargin}">
+              Margin="{StaticResource NavigationViewContentMargin}">
             <Frame x:Name="NavigationFrame" />
         </Grid>
     </Grid>

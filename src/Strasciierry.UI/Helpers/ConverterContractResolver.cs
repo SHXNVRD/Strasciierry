@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -12,7 +13,7 @@ public class ConverterContractResolver : DefaultContractResolver
     {
         var contract = base.CreateContract(objectType);
 
-        var converter = App.Current.Host.Services.GetKeyedService<JsonConverter>(objectType);
+        var converter = Ioc.Default.GetKeyedService<JsonConverter>(objectType);
 
         if (converter is not null)
             contract.Converter = converter;

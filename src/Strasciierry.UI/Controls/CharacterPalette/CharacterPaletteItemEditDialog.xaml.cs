@@ -23,6 +23,8 @@ public sealed partial class CharacterPaletteItemEditDialog : ContentDialog
     public CharacterPaletteItemEditDialog()
     {
         InitializeComponent();
+        RequestedTheme = ((FrameworkElement)App.MainWindow.Content).RequestedTheme;
+        XamlRoot = App.XamlRoot;
     }
 
     private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strasciierry.UI", "src\Stra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strasciierry.Core", "src\Strasciierry.Core\Strasciierry.Core.csproj", "{67CD112B-E651-45AE-8D0C-F71CA13FC390}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strasciierry.WinApi", "src\Strasciierry.WinApi\Strasciierry.WinApi.csproj", "{85FD9B47-CD0C-4480-83CA-D8B1E615746B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|arm64 = Debug|arm64
@@ -49,6 +51,18 @@ Global
 		{67CD112B-E651-45AE-8D0C-F71CA13FC390}.Release|x64.Build.0 = Release|x64
 		{67CD112B-E651-45AE-8D0C-F71CA13FC390}.Release|x86.ActiveCfg = Release|x86
 		{67CD112B-E651-45AE-8D0C-F71CA13FC390}.Release|x86.Build.0 = Release|x86
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Debug|arm64.Build.0 = Debug|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Debug|x64.Build.0 = Debug|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Debug|x86.Build.0 = Debug|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Release|arm64.ActiveCfg = Release|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Release|arm64.Build.0 = Release|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Release|x64.ActiveCfg = Release|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Release|x64.Build.0 = Release|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Release|x86.ActiveCfg = Release|Any CPU
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,5 +70,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{25574106-AF90-4BD9-9573-7F33489D5C29} = {0CDD3A70-724E-464D-8C01-23C33FC559FC}
 		{67CD112B-E651-45AE-8D0C-F71CA13FC390} = {0CDD3A70-724E-464D-8C01-23C33FC559FC}
+		{85FD9B47-CD0C-4480-83CA-D8B1E615746B} = {0CDD3A70-724E-464D-8C01-23C33FC559FC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E8C7CC7-8B75-4FA9-8247-3331D6138FA1}
 	EndGlobalSection
 EndGlobal

@@ -1,23 +1,18 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 using Strasciierry.UI.ViewModels;
 
 namespace Strasciierry.UI.Views;
 
 public sealed partial class SettingsPage : Page
 {
-    public SettingsViewModel ViewModel
-    {
-        get;
-    }
+    public SettingsPageViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
 
     public SettingsPage()
     {
-        ViewModel = App.GetService<SettingsViewModel>();
         InitializeComponent();
     }
 
-    private async void TextBox_LostFocus(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        await ViewModel.SetUsersSymbolsAsync();
-    }
+    private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        => ViewSwitchPresenter.Value = ((NavigationViewItem)args.SelectedItem).Tag;
 }

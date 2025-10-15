@@ -8,6 +8,9 @@ using Strasciierry.UI.ViewModels;
 using Strasciierry.UI.Controls.AsciiCanvas.EventArguments;
 using Windows.Storage;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Windowing;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Strasciierry.UI.Views;
 
@@ -18,15 +21,17 @@ public sealed partial class AsciiArtPage : Page
         get;
     }
 
-    public ICommand OpenFileCommand { get; }
-    public ICommand SaveFileCommand { get; }
+    public IRelayCommand OpenFileCommand { get; }
+    public IRelayCommand SaveFileCommand { get; }
+    public IRelayCommand ShowSettingsWindowCommand { get; }
 
     public AsciiArtPage()
     {
         InitializeComponent();
-        ViewModel = App.GetService<AsciiArtPageViewModel>();
+        ViewModel = Ioc.Default.GetRequiredService<AsciiArtPageViewModel>();
         OpenFileCommand = new AsyncRelayCommand(OpenArtAsync);
         SaveFileCommand = new AsyncRelayCommand(SaveArtAsync);
+        ShowSettingsWindowCommand = new RelayCommand(ShowSettingsWindow);
         Loaded += OnLoaded;
     }
 
@@ -90,4 +95,7 @@ public sealed partial class AsciiArtPage : Page
 
         await ViewModel.SaveArtAsync(file);
     }
+
+    private void ShowSettingsWindow()
+        => WindowHelper.OpenWindow<SettingsWindow>();
 }
