@@ -1,12 +1,14 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
+using Strasciierry.Core;
 using Strasciierry.UI.ViewModels;
 
 namespace Strasciierry.UI.Views;
 
 public sealed partial class SettingsPage : Page
 {
-    public SettingsPageViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
+    public SettingsPageViewModel ViewModel { get; } = KeyedIoc.Instance.GetRequiredService<SettingsPageViewModel>();
 
     public SettingsPage()
     {

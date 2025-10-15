@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Strasciierry.Core;
 using Strasciierry.UI.Controls.AsciiCanvas.Commands;
 using Strasciierry.UI.Controls.AsciiCanvas.EventArguments;
 using Strasciierry.UI.Helpers;
@@ -175,7 +176,7 @@ public sealed partial class AsciiCanvas : UserControlBase, IAsciiCanvas
 
         SelectionLayer.Children.Add(_selectionRect);
 
-        _commandFactory = Ioc.Default.GetRequiredService<IGraphicToolCommandFactory>();
+        _commandFactory = KeyedIoc.Instance.GetRequiredService<IGraphicToolCommandFactory>();
     }
 
     private void OnCellPointerPressed(object sender, PointerRoutedEventArgs e)

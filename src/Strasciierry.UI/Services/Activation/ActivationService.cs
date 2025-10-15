@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Strasciierry.Core;
 using Strasciierry.UI.Services.Activation.Handlers;
 using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.Localization;
@@ -29,7 +30,7 @@ public class ActivationService : IActivationService
 
         if (App.MainWindow.Content == null)
         {
-            _shell = Ioc.Default.GetRequiredService<ShellPage>();
+            _shell = KeyedIoc.Instance.GetRequiredService<ShellPage>();
             App.MainWindow.Content = _shell;
         }
 

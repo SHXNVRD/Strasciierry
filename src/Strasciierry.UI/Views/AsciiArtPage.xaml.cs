@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Strasciierry.Core;
 
 namespace Strasciierry.UI.Views;
 
@@ -28,7 +29,7 @@ public sealed partial class AsciiArtPage : Page
     public AsciiArtPage()
     {
         InitializeComponent();
-        ViewModel = Ioc.Default.GetRequiredService<AsciiArtPageViewModel>();
+        ViewModel = KeyedIoc.Instance.GetRequiredService<AsciiArtPageViewModel>();
         OpenFileCommand = new AsyncRelayCommand(OpenArtAsync);
         SaveFileCommand = new AsyncRelayCommand(SaveArtAsync);
         ShowSettingsWindowCommand = new RelayCommand(ShowSettingsWindow);

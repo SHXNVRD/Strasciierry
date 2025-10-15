@@ -1,11 +1,13 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
+using Strasciierry.Core;
 using Strasciierry.UI.Helpers;
 using Windows.Foundation;
 
@@ -278,7 +280,7 @@ public sealed partial class CharacterPalette : UserControlBase
 
     private async void ItemsContainer_ItemInvoked(ItemsView sender, ItemsViewItemInvokedEventArgs args)
     {
-        var dialog = Ioc.Default.GetRequiredService<CharacterPaletteItemEditDialog>();
+        var dialog = KeyedIoc.Instance.GetRequiredService<CharacterPaletteItemEditDialog>();
         dialog.EditingItem = (CharacterPaletteItem)args.InvokedItem;
         await dialog.ShowAsync();
     }

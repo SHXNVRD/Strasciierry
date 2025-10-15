@@ -1,14 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Strasciierry.UI.Services.Activation;
 using Strasciierry.UI.Extensions;
 using UnhandledExceptionEventArgs = System.UnhandledExceptionEventArgs;
 using System.Runtime.ExceptionServices;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.WinUI.Controls;
-using Strasciierry.UI.ViewModels;
+using Strasciierry.Core;
 
 namespace Strasciierry.UI;
 
@@ -19,15 +16,11 @@ public partial class App : Application
     public static XamlRoot XamlRoot => MainWindow.Content.XamlRoot;
     public static UIElement? AppTitlebar { get; set; }
 
-    // https://github.com/CommunityToolkit/dotnet/issues/803
-    public static IServiceProvider Services { get; set; }
-
     public App()
     {
         InitializeComponent();
 
         ConfigureServices();
-        Services = Ioc.Default.GetRequiredService<IServiceProvider>();
 
         UnhandledException += OnUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
@@ -37,7 +30,7 @@ public partial class App : Application
 
     private static void ConfigureServices()
     {
-        Ioc.Default.ConfigureServices(
+        KeyedIoc.Instance.ConfigureServices(
             new ServiceCollection()
             .ConfigureServices()
             .BuildServiceProvider());
@@ -77,7 +70,7 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
-        await Ioc.Default
+        await KeyedIoc.Instance
             .GetRequiredService<IActivationService>()
             .ActivateAsync(args);
     }

@@ -1,14 +1,10 @@
 ﻿using System.Drawing;
-using System.Drawing.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Newtonsoft.Json;
 using Serilog;
-using Strasciierry.Core;
 using Strasciierry.Core.Helpers;
-using Strasciierry.Core.Services;
 using Strasciierry.UI.Controls.AsciiCanvas.Commands;
 using Strasciierry.UI.Controls.CharacterPalette;
 using Strasciierry.UI.Factories;
@@ -16,7 +12,6 @@ using Strasciierry.UI.Helpers;
 using Strasciierry.UI.Helpers.SaveArtStrategies;
 using Strasciierry.UI.Services.Activation;
 using Strasciierry.UI.Services.Activation.Handlers;
-using Strasciierry.UI.Services.Fonts;
 using Strasciierry.UI.Services.Navigation;
 using Strasciierry.UI.Services.Pages;
 using Strasciierry.UI.Services.Settings;
@@ -105,7 +100,7 @@ public static class ServiceCollectionExtensions
             .AddKeyedTransient<SaveArtStrategy, WebpSaveArtStrategy>(FilePickerHelper.Webp.Key)
             .AddKeyedTransient<SaveArtStrategy, WmfSaveArtStrategy>(FilePickerHelper.Wmf.Key)
             .AddSingleton<ISaveArtStrategyFactory, SaveArtStrategyFactory>()
-            .Configure<LocalSettingsOptions>(config.GetSection(nameof(LocalSettingsOptions)))
+            .Configure<LocalSettingsOptions>(options => config.GetSection(nameof(LocalSettingsOptions)))
             .AddSingleton<ILocalSettingsService, LocalSettingsService>()
             .AddSingleton<IPageService, PageService>()
             .AddSingleton<INavigationService, NavigationService>()
